@@ -94,18 +94,18 @@
   };
 </script>
 
-  <meta name="description" content="#数据库系统以关系数据库为基础介绍：  基本关系与模型 数据库语言 数据建模与数据库设计 数据库管理系统的实现   特点：  抽象 思维 应用 管理 案例  ##第一讲 初步认识数据库现在社会处于大数据时代，了解数据以及数据库来给予以往的数据来预测和分析接下来的发展。 即：数据累积变成数据库，数据库的汇集成为大数据，分析和应用造福相应人。 Table：表  按行按列的形式数据。 Database：">
+  <meta name="description" content="数据库的部分知识，基于MySQL，同时包括了数据库结构，数据库的模型以及大篇幅的在MySQL中的SQL语句用法和JDBC的使用简略步骤。 作为数据库学习的第一部分，接下来还会继续学习数据库的设计以及数据存储、查询以及事务管理的内容。在接下来的时间还会学习数据仓库和数据挖掘的内容。将会慢慢的添加进来。">
 <meta name="keywords" content="DataBase,MySQL">
 <meta property="og:type" content="article">
-<meta property="og:title" content="数据库学习记录">
+<meta property="og:title" content="数据库学习记录（一）">
 <meta property="og:url" content="http://xiangzi1019.github.io/2019/07/24/数据库学习记录/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
-<meta property="og:description" content="#数据库系统以关系数据库为基础介绍：  基本关系与模型 数据库语言 数据建模与数据库设计 数据库管理系统的实现   特点：  抽象 思维 应用 管理 案例  ##第一讲 初步认识数据库现在社会处于大数据时代，了解数据以及数据库来给予以往的数据来预测和分析接下来的发展。 即：数据累积变成数据库，数据库的汇集成为大数据，分析和应用造福相应人。 Table：表  按行按列的形式数据。 Database：">
+<meta property="og:description" content="数据库的部分知识，基于MySQL，同时包括了数据库结构，数据库的模型以及大篇幅的在MySQL中的SQL语句用法和JDBC的使用简略步骤。 作为数据库学习的第一部分，接下来还会继续学习数据库的设计以及数据存储、查询以及事务管理的内容。在接下来的时间还会学习数据仓库和数据挖掘的内容。将会慢慢的添加进来。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-24T09:08:22.778Z">
+<meta property="og:updated_time" content="2019-07-24T09:39:09.478Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="数据库学习记录">
-<meta name="twitter:description" content="#数据库系统以关系数据库为基础介绍：  基本关系与模型 数据库语言 数据建模与数据库设计 数据库管理系统的实现   特点：  抽象 思维 应用 管理 案例  ##第一讲 初步认识数据库现在社会处于大数据时代，了解数据以及数据库来给予以往的数据来预测和分析接下来的发展。 即：数据累积变成数据库，数据库的汇集成为大数据，分析和应用造福相应人。 Table：表  按行按列的形式数据。 Database：">
+<meta name="twitter:title" content="数据库学习记录（一）">
+<meta name="twitter:description" content="数据库的部分知识，基于MySQL，同时包括了数据库结构，数据库的模型以及大篇幅的在MySQL中的SQL语句用法和JDBC的使用简略步骤。 作为数据库学习的第一部分，接下来还会继续学习数据库的设计以及数据存储、查询以及事务管理的内容。在接下来的时间还会学习数据仓库和数据挖掘的内容。将会慢慢的添加进来。">
 
 
 
@@ -124,7 +124,7 @@
 </script>
 
   
-  <title>数据库学习记录 | 小骚鸡de博客</title>
+  <title>数据库学习记录（一） | 小骚鸡de博客</title>
   
 
 
@@ -362,7 +362,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">数据库学习记录
+          <h1 class="post-title" itemprop="name headline">数据库学习记录（一）
 
               
             
@@ -388,7 +388,7 @@
                 
               
 
-              <time title="创建时间：2019-07-24 17:06:54 / 修改时间：17:08:22" itemprop="dateCreated datePublished" datetime="2019-07-24T17:06:54+08:00">2019-07-24</time>
+              <time title="创建时间：2019-07-24 17:06:54 / 修改时间：17:39:09" itemprop="dateCreated datePublished" datetime="2019-07-24T17:06:54+08:00">2019-07-24</time>
             </span>
           
 
@@ -440,7 +440,15 @@
       
 
       
-        <p>#数据库系统<br>以关系数据库为基础介绍：</p>
+        <p>数据库的部分知识，基于MySQL，同时包括了数据库结构，数据库的模型以及大篇幅的在MySQL中的SQL语句用法和JDBC的使用简略步骤。</p>
+<p>作为数据库学习的第一部分，接下来还会继续学习数据库的设计以及数据存储、查询以及事务管理的内容。在接下来的时间还会学习数据仓库和数据挖掘的内容。将会慢慢的添加进来。</p>
+<a id="more"></a>
+
+
+
+
+
+<p>#数据库系统<br>以关系数据库为基础介绍：</p>
 <ul>
 <li>基本关系与模型</li>
 <li>数据库语言</li>
@@ -1623,7 +1631,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="http://xiangzi1019.github.io/2019/07/24/数据库学习记录/" title="数据库学习记录">http://xiangzi1019.github.io/2019/07/24/数据库学习记录/</a>
+    <a href="http://xiangzi1019.github.io/2019/07/24/数据库学习记录/" title="数据库学习记录（一）">http://xiangzi1019.github.io/2019/07/24/数据库学习记录/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
