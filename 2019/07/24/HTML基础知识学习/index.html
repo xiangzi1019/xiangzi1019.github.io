@@ -95,14 +95,14 @@
 </script>
 
   <meta name="description" content="网页设计之HTML基础语法学习。作为网页制作和设计的基础课程，通过两天熟悉了其中的基本语法和简要设计，故记录以下学习的内容概要。">
-<meta name="keywords" content="HTML,网页">
+<meta name="keywords" content="网页,HTML">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HTML基础知识学习">
 <meta property="og:url" content="http://xiangzi1019.github.io/2019/07/24/HTML基础知识学习/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
 <meta property="og:description" content="网页设计之HTML基础语法学习。作为网页制作和设计的基础课程，通过两天熟悉了其中的基本语法和简要设计，故记录以下学习的内容概要。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-25T03:49:07.130Z">
+<meta property="og:updated_time" content="2019-07-25T04:00:59.525Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HTML基础知识学习">
 <meta name="twitter:description" content="网页设计之HTML基础语法学习。作为网页制作和设计的基础课程，通过两天熟悉了其中的基本语法和简要设计，故记录以下学习的内容概要。">
@@ -261,7 +261,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">4</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">5</span></a>
 
   </li>
         
@@ -297,7 +297,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">3</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">4</span></a>
 
   </li>
 
@@ -403,7 +403,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-25 11:49:07" itemprop="dateModified" datetime="2019-07-25T11:49:07+08:00">2019-07-25</time>
+                <time title="修改时间：2019-07-25 12:00:59" itemprop="dateModified" datetime="2019-07-25T12:00:59+08:00">2019-07-25</time>
               </span>
             
           
@@ -516,8 +516,25 @@
 <p><strong>alt:</strong>图片加载失败后的提示语</p>
 <p><em>图片是不会自动换行的(行内元素)</em></p>
 <pre><code>相对路径:从当前文件出发查找另一个文件所经过的路径
-绝对路径:从根盘符出发所查找文件的路径</code></pre><p>###超链接标签学习:<br>    a标签:<br>        href:要跳转的网页资源路径<br>             本地资源:相对路径<br>             网络资源:网络资源(网页)的URL<br>        target:指明要跳转的网页资源的显示位置<br>             _self   在当前页中刷新显示<br>             _blank  在新的标签页中显示<br>             _top    在顶层页面中显示<br>             _parent    在父级页面中显示<br>    注意:<br>        超链接标签中一定要声明访问方式,访问方式可以是文字也可以是图片.<br>    锚点学习:<br>        作用:在一张网页中进行资源跳转<br>        使用:<br>            先使用超链接标签在指定的网页位置增加锚点.格式为:<br>                &lt;a name=”锚点名” &gt;&lt;/a&gt;<br>            使用a标签可以跳转指定的锚点,达到网页内部资源跳转的目的,格式:<br>                &lt;a href=”#锚点名” &gt;访问方式&lt;/a&gt;</p>
-<p>###表格标签学习:</p>
+绝对路径:从根盘符出发所查找文件的路径</code></pre><p>###超链接标签学习:</p>
+<pre><code>a标签:
+    href:要跳转的网页资源路径
+         本地资源:相对路径
+         网络资源:网络资源(网页)的URL
+    target:指明要跳转的网页资源的显示位置
+         _self   在当前页中刷新显示
+         _blank  在新的标签页中显示
+         _top    在顶层页面中显示
+         _parent    在父级页面中显示
+注意:
+    超链接标签中一定要声明访问方式,访问方式可以是文字也可以是图片.
+锚点学习:
+    作用:在一张网页中进行资源跳转
+    使用:
+        先使用超链接标签在指定的网页位置增加锚点.格式为:
+            &amp;lt;a name=&quot;锚点名&quot; &amp;gt;&amp;lt;/a&amp;gt;
+        使用a标签可以跳转指定的锚点,达到网页内部资源跳转的目的,格式:
+            &amp;lt;a href=&quot;#锚点名&quot; &amp;gt;访问方式&amp;lt;/a&amp;gt;</code></pre><p>###表格标签学习:</p>
 <pre><code>table :声明一个表格
     tr:声明一行,设置行高及改行所有单元格的高度.
         th:声明一个单元格,表头格.默认居中加黑显示
@@ -540,11 +557,83 @@
     根据要合并的单元格,找到其所在的源码位置
 第三步:
     行合并:在要合并的单元格中的第一个单元格上使用属性rowspan=&quot;要合并的单元格的个数&quot;,并删除其他要合并的单元格完成合并
-    列合并:在要合并的单元格中的任意一个上使用属性colspan=&quot;要合并的单元格的个数&quot;,并删除要合并的其他单元格</code></pre><p>###内嵌标签:<br>    iframe<br>        src:要显示的网页资源路径<br>            可以是本地(相对路径)也可以是网络资源(URL)<br>    注意:<br>            默认当前页面打开及加载src指向的资源<br>        width:设置显示区域的宽度<br>        height:设置显示区域的高度<br>        name:设置内嵌区域的名字,结合超链接标签的target属性使用.<br>    作用:<br>        在当前网页中加载其他网页的资源,达到不同网页资源之间不相互干扰,并能在同一个页面中展现给用户的目的.</p>
-<p>###框架标签学习:<br>    frameset<br>        rows:按照行进行切分页面<br>        cols:按照列进行切分页面<br>    子标签:<br>        frame:进行切分区域的占位,一个frame可以单独加载网页资源.<br>        src:资源路径(本地或者网络)<br>        name:区域名,结合超链接使用</p>
-<p>###form表单标签学习:<br>    作用:收集并提交用户数据给指定服务器<br>    属性:<br>        action:收集的数据提交地址也就是URL<br>        method:收集的数据的提交方式<br>        get    :适合小量数据,表单数据以?隔开拼接在URL后面,不同的键值对使用&amp;符号隔开,不安全.<br>        post:适合大量数据,安全,隐式提交<br>    注意1:<br>        表单数据的提交,要提交的表单项必须拥有name属性值,否则不会提交.<br>        提交的表单项数据为键值对,键为name属性的值,值为用户书写的数据<br>    注意2:form标签会收集其标签内部的数据<br>    注意3:form表单的数据提交需要依赖于submit提交按钮.</p>
-<p>###form表单域标签学习:<br>    作用:给用户提供可以进行数据书写或者选择的标签.<br>    使用:<br>    文本框:<br>        input<br>            type:<br>            text  收集少量的文本数据,用户可见<br>            password  收集用户密码数据<br>            name:数据提交的键,也会被js使用<br>            value: 默认值<br>    单选框:<br>        input<br>            type:<br>            radio<br>            name:name属性值相同的单选框只能选择一项数据<br>            value:要提交的数据<br>            checked:checked 使用此属性的单选默认是选择状态<br>    多选框:<br>        input:<br>            type:<br>            checkbox<br>            name:一个多选组需要使用相同的name属性值<br>            value:要提交的数据<br>            checked:checked 使用此属性的多选框默认是选择状态<br>    单选下拉框:<br>            select:<br>            name:数据提交的键名,必须声明<br>            子标签option:一个option标签表示一个下拉选项<br>                    value:要提交的数据<br>    文本域:<br>        textarea:声明一个可以书写大量文字的文本区域<br>            name:数据提交的键名,js和css也会使用<br>            rows:声明文本域的行数<br>            cols:声明文本域的列数<br>    普通按钮:<br>        input:<br>            type:<br>                button<br>            value:<br>    隐藏标签:<br>        input<br>            type:<br>                hidden<br>            name<br>            value<br>        注意:表单数据提交提交的是表单域标签的value值<br>    form表单标签的使用:<br>        在点击数据提交时,form标签会将其内部所有form表单域标签中用户书写的数据按照method指明的提交方式<br>        提交给action属性所指明的提交地址.</p>
-
+    列合并:在要合并的单元格中的任意一个上使用属性colspan=&quot;要合并的单元格的个数&quot;,并删除要合并的其他单元格</code></pre><p>###内嵌标签:</p>
+<pre><code>iframe
+    src:要显示的网页资源路径
+        可以是本地(相对路径)也可以是网络资源(URL)
+注意:
+        默认当前页面打开及加载src指向的资源
+    width:设置显示区域的宽度
+    height:设置显示区域的高度
+    name:设置内嵌区域的名字,结合超链接标签的target属性使用.
+作用:
+    在当前网页中加载其他网页的资源,达到不同网页资源之间不相互干扰,并能在同一个页面中展现给用户的目的.</code></pre><p>###框架标签学习:</p>
+<pre><code>frameset
+    rows:按照行进行切分页面
+    cols:按照列进行切分页面
+子标签:
+    frame:进行切分区域的占位,一个frame可以单独加载网页资源.
+    src:资源路径(本地或者网络)
+    name:区域名,结合超链接使用</code></pre><p>###form表单标签学习:</p>
+<pre><code>作用:收集并提交用户数据给指定服务器
+属性:
+    action:收集的数据提交地址也就是URL
+    method:收集的数据的提交方式
+    get    :适合小量数据,表单数据以?隔开拼接在URL后面,不同的键值对使用&amp;符号隔开,不安全.
+    post:适合大量数据,安全,隐式提交
+注意1:
+    表单数据的提交,要提交的表单项必须拥有name属性值,否则不会提交.
+    提交的表单项数据为键值对,键为name属性的值,值为用户书写的数据
+注意2:form标签会收集其标签内部的数据
+注意3:form表单的数据提交需要依赖于submit提交按钮.</code></pre><p>###form表单域标签学习:</p>
+<pre><code>作用:给用户提供可以进行数据书写或者选择的标签.
+使用:
+文本框:
+    input
+        type:
+        text  收集少量的文本数据,用户可见
+        password  收集用户密码数据
+        name:数据提交的键,也会被js使用
+        value: 默认值
+单选框:
+    input
+        type:
+        radio
+        name:name属性值相同的单选框只能选择一项数据
+        value:要提交的数据
+        checked:checked 使用此属性的单选默认是选择状态
+多选框:
+    input:
+        type:
+        checkbox
+        name:一个多选组需要使用相同的name属性值
+        value:要提交的数据
+        checked:checked 使用此属性的多选框默认是选择状态
+单选下拉框:
+        select:
+        name:数据提交的键名,必须声明
+        子标签option:一个option标签表示一个下拉选项
+                value:要提交的数据
+文本域:
+    textarea:声明一个可以书写大量文字的文本区域
+        name:数据提交的键名,js和css也会使用
+        rows:声明文本域的行数
+        cols:声明文本域的列数
+普通按钮:
+    input:
+        type:
+            button
+        value:
+隐藏标签:
+    input
+        type:
+            hidden
+        name
+        value
+    注意:表单数据提交提交的是表单域标签的value值    
+form表单标签的使用:
+    在点击数据提交时,form标签会将其内部所有form表单域标签中用户书写的数据按照method指明的提交方式
+    提交给action属性所指明的提交地址.</code></pre>
       
     </div>
 
@@ -631,9 +720,9 @@
         
         <div class="post-tags">
           
-            <a href="/tags/HTML/" rel="tag"># HTML</a>
-          
             <a href="/tags/网页/" rel="tag"># 网页</a>
+          
+            <a href="/tags/HTML/" rel="tag"># HTML</a>
           
         </div>
       
@@ -655,6 +744,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/26/CSS基础知识学习/" rel="prev" title="CSS基础知识学习">
+                CSS基础知识学习 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -719,7 +812,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -765,7 +858,9 @@
         
           
         
-        <span class="site-state-item-count">4</span>
+          
+        
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
