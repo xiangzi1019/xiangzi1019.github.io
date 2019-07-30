@@ -94,20 +94,18 @@
   };
 </script>
 
-  <meta name="description" content="前端知识学习学习第二部分之CSS学习。 主要记录了学习CSS的语法和简单的使用，以及跟着学习步骤仿照baidu主页左了一个类似的主页。虽然功能没有加入，不过也是学习的一部分。学习过程”八错”哦。">
-<meta name="keywords" content="HTML,网页,CSS">
+  <meta name="description" content="在学习网页制作知识中涉及到的JavaScript相关的一些知识理论进行整理学习，涉及内容大约为：变量与声明，逻辑运算以及数组，函数，自定义类，事件机制，window对象。具体内容请参阅全文。">
+<meta name="keywords" content="网页,JavaScript">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CSS基础知识学习">
-<meta property="og:url" content="http://xiangzi1019.github.io/2019/07/26/CSS基础知识学习/index.html">
+<meta property="og:title" content="Javascript基础知识学习（一）">
+<meta property="og:url" content="http://xiangzi1019.github.io/2019/07/30/Javascript基础知识学习/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
-<meta property="og:description" content="前端知识学习学习第二部分之CSS学习。 主要记录了学习CSS的语法和简单的使用，以及跟着学习步骤仿照baidu主页左了一个类似的主页。虽然功能没有加入，不过也是学习的一部分。学习过程”八错”哦。">
+<meta property="og:description" content="在学习网页制作知识中涉及到的JavaScript相关的一些知识理论进行整理学习，涉及内容大约为：变量与声明，逻辑运算以及数组，函数，自定义类，事件机制，window对象。具体内容请参阅全文。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://xiangzi1019.github.io/images/BaiduWebTest.png">
-<meta property="og:updated_time" content="2019-07-26T05:42:47.171Z">
+<meta property="og:updated_time" content="2019-07-30T05:05:12.614Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CSS基础知识学习">
-<meta name="twitter:description" content="前端知识学习学习第二部分之CSS学习。 主要记录了学习CSS的语法和简单的使用，以及跟着学习步骤仿照baidu主页左了一个类似的主页。虽然功能没有加入，不过也是学习的一部分。学习过程”八错”哦。">
-<meta name="twitter:image" content="http://xiangzi1019.github.io/images/BaiduWebTest.png">
+<meta name="twitter:title" content="Javascript基础知识学习（一）">
+<meta name="twitter:description" content="在学习网页制作知识中涉及到的JavaScript相关的一些知识理论进行整理学习，涉及内容大约为：变量与声明，逻辑运算以及数组，函数，自定义类，事件机制，window对象。具体内容请参阅全文。">
 
 
 
@@ -115,7 +113,7 @@
 
   
   
-  <link rel="canonical" href="http://xiangzi1019.github.io/2019/07/26/CSS基础知识学习/">
+  <link rel="canonical" href="http://xiangzi1019.github.io/2019/07/30/Javascript基础知识学习/">
 
 
 
@@ -126,7 +124,7 @@
 </script>
 
   
-  <title>CSS基础知识学习 | 小骚鸡de博客</title>
+  <title>Javascript基础知识学习（一） | 小骚鸡de博客</title>
   
 
 
@@ -347,7 +345,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/07/26/CSS基础知识学习/">
+    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/07/30/Javascript基础知识学习/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="张文祥">
@@ -364,7 +362,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">CSS基础知识学习
+          <h1 class="post-title" itemprop="name headline">Javascript基础知识学习（一）
 
               
             
@@ -390,7 +388,7 @@
                 
               
 
-              <time title="创建时间：2019-07-26 12:23:49 / 修改时间：13:42:47" itemprop="dateCreated datePublished" datetime="2019-07-26T12:23:49+08:00">2019-07-26</time>
+              <time title="创建时间：2019-07-30 12:17:34 / 修改时间：13:05:12" itemprop="dateCreated datePublished" datetime="2019-07-30T12:17:34+08:00">2019-07-30</time>
             </span>
           
 
@@ -458,167 +456,231 @@
       
 
       
-        <p>前端知识学习学习第二部分之CSS学习。</p>
-<p>主要记录了学习CSS的语法和简单的使用，以及跟着学习步骤仿照baidu主页左了一个类似的主页。虽然功能没有加入，不过也是学习的一部分。学习过程”八错”哦。</p>
+        <p>在学习网页制作知识中涉及到的JavaScript相关的一些知识理论进行整理学习，涉及内容大约为：变量与声明，逻辑运算以及数组，函数，自定义类，事件机制，window对象。具体内容请参阅全文。</p>
 <a id="more"></a>
 
-<p>##CSS声明学习:</p>
-<pre><code> 1、在head标签中使用style标签声明：
-         作用：此声明一般声明当前网页的公共样式或者给某个标签的单独样式
- 2、在标签上使用style属性进行声明：
-         作用：此声明会将css样式直接作用于当前标签。
- 3、在head标签中使用link标签引入外部声明好的css文件
-        作用：此声明相当于调用,解决了不同网页间样式重复使用的问题
-            一次声明，随处使用
-问题：
-    不同的声明给同一个标签操作了同一个样式，会使用谁的？
-    如果Css的声明全部在head标签中，则遵循就近原则，谁离标签近，谁就会被显示。</code></pre><p>##css的选择器学习：</p>
-<pre><code>    标签选择器：
-        标签名{样式名1：样式值1;……}
-        作用：会将当前网页内的所有该标签增加相同的样式
-    id选择器:
-        #标签的id属性值{样式名1：样式值1;……}
-        作用：给某个指定的标签添加指定的样式
-    类选择器：
-        .类选择器名{样式名1：样式值1;……}
-        作用：给不同的标签添加相同的样式
-    全部选择选择器
-        *{样式名1：样式值1;……}
-        作用：选择所有的HTML标签，并添加相同的样式
+<p>##Js的概念和声明：</p>
+<p>由于网页的发展历程中，发现网页不能对用户的数据进行自动校验,和<br>提供一些特效，造成用户体验极差。于是引入了JavaScript这一概念。用来解决：</p>
+<pre><code>让网页和用户之间进行直接简单的交互.
+给网页制作特效和动画</code></pre><p>使用：</p>
+<p>声明子啊Js代码域中：</p>
+<pre><code>1.在head标签中使用script声明js代码域
+&lt;head&gt;
+    ....
+&lt;!--声明js代码域--&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+    function test(){
+        alert(&quot;哈哈,js学习起来很简单!!!&quot;);
+    }
+    &lt;/script&gt;
+&lt;/head&gt;
 
-    组合选择器：
-        选择器1,选择器2,……{样式名1：样式值1;……}
-        作用：解决不同的选择器之间重复样式的问题
-    子标签选择器
-        选择器1 子标签选择器{样式名1：样式值1;……}
-    属性选择器：
-        标签名[属性名=属性值]{样式名1：样式值1;……}
-        作用：选择某标签指定具备某属性并且属性值为某属性值的标签
-css的使用过程：
-    1、声明css代码域
-    2、使用选择器选择要添加样式的标签
-        根据需求来。
-            使用*选择器来给整个页面添加基础样式
-            使用类选择器给不同的标签添加基础样式
-            使用标签选择器给某类标签添加基础样式
-            使用id、属性选择器、style属性声明方式给某个标签添加个性化样式。
-    3、书写样式单
-        边框设置
-            border:solid 1px;
-        字体设置:
-            font-size:10px;设置字体大小
-            font-family:&quot;黑体&quot;;(设置字体的格式)
-            font-weight：bold;设置字体加粗
-        字体颜色设置
-            color:颜色;
-        背景颜色设置
-            background-color:颜色;
-        背景图片设置
-            background-img:url(图片的相对路径);
-            background-repeate:no-repeate;设置图片不重复
-            bacground-size:cover;图片平铺整个页面
-        高和宽设置
-        浮动设置
-            float:left|right
-        行高设置
-            line-height:10;</code></pre><p>##css的盒子模型学习：</p>
-<pre><code>div标签：
-    块级标签，主要是用来进行网页布局的，会将其中的子元素内容作为一个独立的整体存在。
-    特点：
-        默认宽度是页面的宽度，但是可以设置。
-        高度默认是没有的，但是可以设置。(可以顶开)
-        如果子元素设置了百分比的高或者宽，占据的是div的百分比，不是页面的。
-盒子模型：
-    外边距:margin
-        作用：用来设置元素和元素之间的间隔。
-        居中设置:margin:0px auto;上下间隔是0px,水平居中。
-        可以根据需求单独的设置上下左右的外边距。
-    边框：border
-        作用：用来设置元素的边框大小
-            可以单独设置上下左右
-    内边距：padding
-        作用：设置内容和边框之间的距离
-        注意：内边距不会改变内容区域的大小
-        可以单独的设置上下左右的内边距
-    内容区域：
-        作用：改变内容区域的大小。
-        设置宽和高即可改变内容区域的大小。</code></pre><p>##css的定位学习：</p>
-<pre><code>position
-    相对定位:relative
-        作用：相对元素原有位置移动指定的距离(相对的自己的原有位置)
-            可以使用top,left,right,bottom来进行设置。
-        注意：
-            其他元素的位置是不改变的。
-    绝对定位:absolute
-        作用：可以使用元素参照界面或者相对父元素来进行移动     
-        注意：
-            如果父级元素成为参照元素，必须使用相对定位属性
-            默认情况下是以界面为基准进行移动的。
-    固定定位:fixed
-        作用：将元素固定现在页面的指定位置，不会随着滚动条的移动而改变位置。
-    以上定位都可以使用top,left,right,bottom来进行移动。
-z-index:此属性是用来声明元素的显示级别的。</code></pre><p>##利用百度图标模拟百度页面</p>
-<p>###CSS文件声明</p>
-<pre><code>/*设置页面的基础样式*/
-    *{margin: 0px;padding: 0px;}
-/*设置header头部分的大小*/
-    #header{width: 100%;height: 45px;}
-    /*设置导航栏样式*/
-        #header_nav{position: absolute;right:92px;top:26px;}
-        #header_nav li{float: left;list-style-type: none;margin-left: 24px;}
-        #header_nav li a{color:  #333;font-size: 13px;font-weight: 700;line-height: 24px;}
-/*设置main主体部分的大小*/
-    #main{width:100%;height: 384px;text-align: center;}
-        #img_logo{margin-top: 30px;margin-bottom: 21px;}
-        /*设置搜索框样式*/
-        input[type=text]{height: 34px;width: 539px;border: solid 1px #4992FF;background-image: url(../img/inp.png);background-repeat: no-repeat;background-position-x: 500px;background-position-y: 3px;}
-        input[type=submit]{width: 100px;height: 34px;font-size: 15px;color: #fff;background-color: #2d78f4;border: solid #2d78f4;letter-spacing: 1px;position: relative;right: 5px;top:1px;}
-/*设置footer底部部分的大小*/
-     #footer{width: 100%;height: 206px;text-align: center;}
-/*使用伪类给标签添加样式*/
-    #header_nav li a:hover{color: blue;}</code></pre><p>###HTML页面声明</p>
-<pre><code>&lt;html&gt;
-    &lt;head&gt;
-        &lt;title&gt;百度首页模拟&lt;/title&gt;
-        &lt;meta charset=&quot;UTF-8&quot;/&gt;
-        &lt;!--引入外部声明的css文件--&gt;
-        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;css/baidu01.css&quot;/&gt;
-        &lt;!--引入网页标题图片--&gt;
-        &lt;link href=&quot;img/title.ico&quot; rel=&quot;shortcut icon&quot;/&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-        &lt;!--声明头 部分--&gt;
-        &lt;div id=&quot;header&quot;&gt;
-            &lt;!--声明导航栏--&gt;
-            &lt;ul id=&quot;header_nav&quot;&gt;
-                &lt;li&gt;&lt;a href=&quot;&quot;&gt;新闻&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href=&quot;&quot;&gt;hao123&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href=&quot;&quot;&gt;地图&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href=&quot;&quot;&gt;视频&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href=&quot;&quot;&gt;贴吧&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href=&quot;&quot;&gt;学术&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href=&quot;&quot;&gt;登录&lt;/a&gt;&lt;/li&gt;
-                &lt;li&gt;&lt;a href=&quot;&quot;&gt;设置&lt;/a&gt;&lt;/li&gt;
-            &lt;/ul&gt;
-        &lt;/div&gt;
-        &lt;!--声明主体--&gt;
-        &lt;div id=&quot;main&quot;&gt;
-            &lt;!--引入百度logo--&gt;
-            &lt;img id=&quot;img_logo&quot; src=&quot;img/bd_logo.png&quot; width=&quot;270px&quot; height=&quot;129px&quot;/&gt;
-            &lt;br /&gt;
-            &lt;!--声明搜索框和按钮--&gt;
-            &lt;input type=&quot;text&quot; name=&quot;&quot; id=&quot;&quot; value=&quot;&quot; /&gt;
-            &lt;input type=&quot;submit&quot; name=&quot;&quot; id=&quot;&quot; value=&quot;百度一下&quot; /&gt;
-        &lt;/div&gt;
-        &lt;!--声明底部--&gt;
-        &lt;div id=&quot;footer&quot;&gt;
-            &lt;!--声明网站声明内容--&gt;
-            &lt;img src=&quot;img/footer.png&quot;/&gt;
-        &lt;/div&gt;
-    &lt;/body&gt;
-&lt;/html&gt;</code></pre><p>##成品图展示</p>
-<p><img src="/images/BaiduWebTest.png" alt></p>
-
+2.在head标签中使用script引入外部声明的js文件
+&lt;head&gt;
+    ....
+&lt;!--声明js代码域--&gt;
+&lt;!--引入外部声明好的js文件--&gt;
+    &lt;script src=&quot;js/my.js&quot;
+        type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;</code></pre><p>##js的变量学习:</p>
+<pre><code>1 js的变量声明
+    使用var关键字进行变量声明,格式如下:
+    var 变量名=初始值;
+    例如: var a=&quot;呵呵&quot;;
+2 js变量的特点
+    a、 变量声明只有var关键字，声明的变量可以存储任意类型的数据。
+    b、 js中的代码可以不适用分号结尾，但是为了提升代码的阅读性，建议使用分号。
+    c、js中的变量允许出现同名变量，但是后面的会将前面的覆盖。
+    d、声明不赋值，默认值是undefined
+3 js的数据类型
+    使用换件typeof判断变量的数据类型
+    number:数值类型
+    string:字符类型,注意：在js中字符可以使用单引号也可以使用双引号
+    boolean:布尔类型
+    object:对象类型
+4 js的变量强转
+    使用Number()函数：将其他数据类型转换为数值类型，转换失败返回NaN(not a number)
+    使用Boolean()函数：将其他数据类型转换为布尔类型，有值返回true，无值返回false;
+5 特殊的值
+    null object
+    undefined undefined
+    NaN number
+作用:
+    变量是用来存储数据的,方便程序进行操作.</code></pre><p>##js的运算符和逻辑结构:</p>
+<pre><code>作用：
+    结合变量进行数据处理
+使用:
+    算术运算符：+,-,*,/,%
+    关系运算符:&gt;,&gt;=,&lt;,&lt;=,!=
+    等值符：==
+    如果类型一致则直接比较值
+    如果类型不一致则先使用Number强转为同一类型后再比较值
+    等同符：===
+    先判断类型，如果类型一致则再比较内容如果类型不一致则直接fasle
+逻辑运算符:
+    &amp;&amp; || !
+逻辑结构：
+    if(){}else if(){} else{}
+    switch(){}
+    for(){}
+    while(){}
+    do{}while()
+注意：
+    判断条件可以直接是变量。
+注意：
+    js中变量是没有类型的，但是数据是有类型的，在进行数据处理的时候要注意数据的类型。</code></pre><p>##js的数组学习：</p>
+<pre><code>问题：
+    使用变量存储数据，如果数据量比较大的时候，会造成需要声明
+    大量的变量去存储数据，代码整洁度及阅读性极差，数据的完整性得不到保证。
+解决：
+    使用数组
+作用：
+    存储数据
+使用：
+    js的数组的声明
+    var arr1=new Array();//声明一个空数组
+    var arr2=new Array(长度)//声明指定长度的数组。
+    var arr3=[]//声明一个空数组，也可以在声明时直接
+赋值：
+    例如：var arr3=[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;];
+js数组的使用
+    数组的赋值
+    数组名[角标]=值；
+注意：
+    js中赋值可以跳跃角标赋值，不存在的角标
+    也可以赋值，会对数组的大小进行改变。
+数组的取值:
+    var 变量名=数组名[角标名]
+注意：
+    如果获取的角标没有数据，则返回undefined;
+js的数组的特点
+特点1：
+    js中的数组可以存储任意类型的数据。
+特点2：
+    js的数组可以通过length属性动态的改变长度。
+    可以增加，也可以缩短。
+注意：
+    如果是增加，则使用逗号进行占位
+    如果是缩减则从后往前减少存储的数据。
+js的数组的遍历：
+    可以使用普通for循环
+    也可以使用增强for循环
+注意：
+    增强for循环中，循环条件声明的变量记录的是角标。
+js的数组的常用操作方法：
+    数组名.pop()//移除并返回最后一个元素。
+    数组名.push(要添加的数据)//在数组最后追加数据，并返回新的长度。
+值得一提的是：
+    由于在Js中使用同样变量var，因此在数组中可以存放任意类型的多种数据，这就是与其他语言不同的地方。</code></pre><p>##js的函数学习：</p>
+<pre><code>问题：
+    一般来说开发就是对现实生活中的问题使用代码进行解决，同类型的问题非常多，这样就需要每次都将代码重新声明一遍，造成代码过于冗余。
+解决：
+    因此基于以上问题，把代码封装成函数，不用重复声明，调用即可。
+使用:
+    函数的声明：
+    第一种声明方式：
+        function 函数名(形参1,形参2,...){函数体....}
+    第二种声明方式：
+        var 变量名=new Function(&quot;形参名1&quot;,&quot;形参名2&quot;,....,&quot;函数体&quot;);
+    注意：
+        在js中函数是作为对象存在的。
+    第三种声明方式：
+        var 变量名=function()(形参1,形参2,...){函数体....}
+    函数的形参:
+        在js中函数的形参在调用的时候可以不赋值，不报错，但是默认为undefined
+    在js中函数的形参在调用的时候可以不完全赋值，依次赋值。
+    注意：
+        js中没有函数重载，只有函数覆盖。
+函数的返回值:
+    在函数内部直接使用return语句返回即可，不需要返回值类型
+    注意：
+        默认返回undefined;
+函数的调用:
+    1、在加上代码域中直接调用(主要进行页面资源初始化)
+    2、使用事件机制(主要实现和用户之间的互动)
+    3、作为实参传递(主要是动态的调用函数)
+    注意：
+    小括号为函数的执行符，函数名()才会被执行，直接函数名则作为对象使用。
+    注意：
+        js的代码区域只有一个,包括引入的js代码，浏览器会将引入的js文件和内部声明的js代码解析成一个文件执行。
+        js代码的调用和声明都在一个区域内。</code></pre><p>##js的事件机制:</p>
+<pre><code>概念：
+    基于监听的。一个动作会触发其他事物的执行。
+作用：
+    根据用户在网页中的不同操作触发执行对应的功能函数。
+使用:
+    单双击事件:
+        单击事件 : onclick.
+        双击事件: ondblclick
+    鼠标移动事件:
+        鼠标悬停事件：onmouseover 当鼠标在HTML元素之上时触发
+        鼠标移出事件：onmouseout 当鼠标移出某个HTML元素时触发
+    键盘事件:
+        键盘下压事件：onkeydown 当键盘被按下时触发
+        键盘弹起事件：onkeyup 当键盘弹起时触发焦点事件：
+        获取焦点:onfocus 当获取焦点时触发
+        失去焦点:onblur 当失去焦点时触发
+    值改变事件：
+        专门给select标签使用：
+        onchange事件 当下拉框的值改变时触发
+        页面加载事件：
+        专门给body标签使用
+        onload 当页面加载成功后触发
+    注意：
+        事件是作为HTML标签的属性来使用的。一个HTML元素可以同时使用多个事件，但是注意事件之间的相互干扰。</code></pre><p>##Js的常用方法和对象学习:</p>
+<pre><code>String对象：操作字符的。
+    使用：字符串.函数名即可
+    大小写转换：
+        toUpperCase() 转换大写
+        toLowerCase() 转换小写
+    字符串截取
+        substr(0,1) 从指定开始位置截取指定长度的子字符串
+        substring(0,1) 从指定位置开始到指定的结束位置的子字符串（含头不含尾）
+    找字符位置
+        indexOf 返回指定字符第一次出现的位置。
+        lastIndexOf 返回指定字符最后一次出现的位置。
+    其他还有很多类似的封装号的方法，必要时再去查阅相关API即可。
+Date对象：
+    使用： var 变量名=new Date();
+    注意：
+        获取的是客户端的时间，不能作为系统功能校验的时间的。
+Math对象：
+    使用：Math.函数名
+    random()产生0-1之内的随机数，想要一定范围内的数时只需要乘以那个数即可。
+    round()方法可把一个数字舍入为最接近的整数。例如Math.round（3.5），结果为4.且括号内必须是数字。
+    ceil()对数进行上舍入。
+    floor()对数进行下舍入。
+    其他还有很多类似的封装号的方法，如同Java。必要时再去查阅相关API即可。
+Global对象
+    描述：
+        全局对象是预定义的对象，作为 JavaScript 的全局函数和全局属性的占位符。通过使用全局对象，可以访问所有其他所有预定义的对象、函数和属性。全局对象不是任何对象的属性，所以它没有名称。
+    相关使用：
+        eval(x)函数可计算某个字符串，并执行其中的的 JavaScript 代码。x必须为string类型数据。要计算的字符串，其中含有要计算的 JavaScript 表达式或要执行的语句。
+        isNaN()检查某个值是否是数字。
+        parseInt()解析一个字符串并返回一个整数。
+        parseFloat()解析一个字符串并返回一个浮点数。</code></pre><p>##window对象的属性学习</p>
+<pre><code>opener属性：
+    它返回的是打开当前窗口的窗口对象.如果窗口A弹出一个窗口B,那么在B中window.opener就是窗口对象A.
+location属性：
+    作用：地址栏属性，该属性是一个对象，封存了浏览器对地址栏的操作信息
+    例如：url
+使用：
+    URL操作:
+    window.location.href//返回当前网页的URL信息
+    window.location.href=&quot;资源路径&quot;//跳转指定的URL资源。
+页面刷新：
+    作用:重新加载页面资源。
+    window.location.reload();
+history属性：
+    forward()//前进，相当于浏览器中的前进功能
+    back()//后退，相当于浏览器中的后退功能
+    go()//跳转指定的历史记录
+screen属性
+    window.screen.width
+    window.screen.height
+    获取分辨率
+再提一句：
+    因为现在很多浏览器再带一些效果，所以即使一些内容我们设置成null值作为浏览器也会显示。</code></pre>
       
     </div>
 
@@ -689,7 +751,7 @@ z-index:此属性是用来声明元素的显示级别的。</code></pre><p>##利
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="http://xiangzi1019.github.io/2019/07/26/CSS基础知识学习/" title="CSS基础知识学习">http://xiangzi1019.github.io/2019/07/26/CSS基础知识学习/</a>
+    <a href="http://xiangzi1019.github.io/2019/07/30/Javascript基础知识学习/" title="Javascript基础知识学习（一）">http://xiangzi1019.github.io/2019/07/30/Javascript基础知识学习/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -705,11 +767,9 @@ z-index:此属性是用来声明元素的显示级别的。</code></pre><p>##利
         
         <div class="post-tags">
           
-            <a href="/tags/HTML/" rel="tag"># HTML</a>
-          
             <a href="/tags/网页/" rel="tag"># 网页</a>
           
-            <a href="/tags/CSS/" rel="tag"># CSS</a>
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
           
         </div>
       
@@ -722,8 +782,8 @@ z-index:此属性是用来声明元素的显示级别的。</code></pre><p>##利
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/24/HTML基础知识学习/" rel="next" title="HTML基础知识学习">
-                <i class="fa fa-chevron-left"></i> HTML基础知识学习
+              <a href="/2019/07/26/CSS基础知识学习/" rel="next" title="CSS基础知识学习">
+                <i class="fa fa-chevron-left"></i> CSS基础知识学习
               </a>
             
           </div>
@@ -731,10 +791,6 @@ z-index:此属性是用来声明元素的显示级别的。</code></pre><p>##利
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/07/30/Javascript基础知识学习/" rel="prev" title="Javascript基础知识学习（一）">
-                Javascript基础知识学习（一） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
