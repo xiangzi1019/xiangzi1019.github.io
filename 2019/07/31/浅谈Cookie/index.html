@@ -94,16 +94,20 @@
   };
 </script>
 
-  <meta name="description" content="talk is cheap,show me the code">
-<meta property="og:type" content="website">
-<meta property="og:title" content="小骚鸡de博客">
-<meta property="og:url" content="http://xiangzi1019.github.io/tags/网页/index.html">
+  <meta name="description" content="由于HTTP是无状态连接，这简化了服务器的设计，为了把服务器内容和用户联系起来，HTTP使用了Cookie技术，允许站点对用户进行跟踪。但是这种方式存在一定安全隐患，我们在此进行简要探讨。">
+<meta name="keywords" content="JavaEE,HTTP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈Cookie">
+<meta property="og:url" content="http://xiangzi1019.github.io/2019/07/31/浅谈Cookie/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
-<meta property="og:description" content="talk is cheap,show me the code">
+<meta property="og:description" content="由于HTTP是无状态连接，这简化了服务器的设计，为了把服务器内容和用户联系起来，HTTP使用了Cookie技术，允许站点对用户进行跟踪。但是这种方式存在一定安全隐患，我们在此进行简要探讨。">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/07/31/浅谈Cookie/source/images/cookie.PNG">
+<meta property="og:updated_time" content="2019-07-31T15:28:27.657Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="小骚鸡de博客">
-<meta name="twitter:description" content="talk is cheap,show me the code">
+<meta name="twitter:title" content="浅谈Cookie">
+<meta name="twitter:description" content="由于HTTP是无状态连接，这简化了服务器的设计，为了把服务器内容和用户联系起来，HTTP使用了Cookie技术，允许站点对用户进行跟踪。但是这种方式存在一定安全隐患，我们在此进行简要探讨。">
+<meta name="twitter:image" content="http://xiangzi1019.github.io/2019/07/31/浅谈Cookie/source/images/cookie.PNG">
 
 
 
@@ -111,7 +115,7 @@
 
   
   
-  <link rel="canonical" href="http://xiangzi1019.github.io/tags/网页/">
+  <link rel="canonical" href="http://xiangzi1019.github.io/2019/07/31/浅谈Cookie/">
 
 
 
@@ -122,7 +126,7 @@
 </script>
 
   
-  <title>标签: 网页 | 小骚鸡de博客</title>
+  <title>浅谈Cookie | 小骚鸡de博客</title>
   
 
 
@@ -170,7 +174,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -248,7 +252,7 @@
         
         
           
-          <li class="menu-item menu-item-tags menu-item-active">
+          <li class="menu-item menu-item-tags">
 
     
     
@@ -323,135 +327,298 @@
           
             
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
           
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block tag">
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>网页<small>标签</small>
-        </h1>
-      </div>
-
-      
-        
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/07/31/浅谈Cookie/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="张文祥">
+      <meta itemprop="description" content="talk is cheap,show me the code">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小骚鸡de博客">
+    </span>
+
+    
+      <header class="post-header">
+
         
-          <a class="post-title-link" href="/2019/07/30/Javascript基础知识学习/" itemprop="url">
-            
-              <span itemprop="name">Javascript基础知识学习（一）</span>
-            
-          </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">浅谈Cookie
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-07-30T12:17:34+08:00" content="2019-07-30">
-          07-30
-        </time>
-      </div>
+              
+            
+          </h1>
+        
 
-    </header>
-  </article>
+        <div class="post-meta">
 
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-31 22:42:51 / 修改时间：23:28:27" itemprop="dateCreated datePublished" datetime="2019-07-31T22:42:51+08:00">2019-07-31</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/后端/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">后端</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+                 阅读次数： 
+                <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+              </span>
+            </span>
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/07/26/CSS基础知识学习/" itemprop="url">
-            
-              <span itemprop="name">CSS基础知识学习</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-07-26T12:23:49+08:00" content="2019-07-26">
-          07-26
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
 
       
-        
+        <p>由于HTTP是无状态连接，这简化了服务器的设计，为了把服务器内容和用户联系起来，HTTP使用了Cookie技术，允许站点对用户进行跟踪。但是这种方式存在一定安全隐患，我们在此进行简要探讨。</p>
+<a id="more"></a>
+<p><strong>定义：</strong>某些网站为了辨别用户身份，进行session跟踪而存储在用户本地终端上的数据（通常经过加密），例如我们的商场购物车，身份认证等。</p>
+<p><strong>例如：</strong></p>
+<pre><code>客户端主机通过普通HTTP请求报文，发送给服务器主机，并且浏览了响应的一些页面信息，或者是把商品加入了本地购物车。
+此时，服务器主机为用户创建了ID（XXXX），且通过普通HTTP响应报文Set-cookie：XXXX发送给客户主机。
+客户主机再通过带有cookie的普通HTTP请求报文访问服务器主机。并且留下痕迹。cookie通过特定动作访问后端数据库。
+后端数据库再把带有需求的cookie信息发送给客户主机。即完成一次带有cookie的通信。
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/2019/07/24/HTML基础知识学习/" itemprop="url">
-            
-              <span itemprop="name">HTML基础知识学习</span>
-            
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-07-24T19:37:35+08:00" content="2019-07-24">
-          07-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+一段时间后，当你再访问上次的服务器时候，普通HTTP请求报文自带上次的cookie信息，然后通过特殊方式在此访问后端数据库。
+同时后端数据库给你上次的信息。鉴于此来实现cookie的功能。</code></pre><p>从实际中我们看到，cookie可以表示一个用户。用户在访问一个站点时候，可能需要提供一个用户标识。在后续的操作中，浏览器向服务器传递一个cookie首部，从而服务器表示了用户。因此cookie可以在无状态上建立一个会话层。</p>
+<p><img src="source/images/cookie.PNG" alt></p>
+<p><strong>cookie的属性</strong></p>
+<p>一般cookie所具有的属性，包括：</p>
+<p><em>Domain：</em>域，表示当前cookie所属于哪个域或子域下面。</p>
+<p>对于服务器返回的Set-Cookie中，如果没有指定Domain的值，那么其Domain的值是默认为当前所提交的http的请求所对应的主域名的。比如访问 <a href="http://www.example.com，返回一个cookie，没有指名domain值，那么其为值为默认的www.example.com。" target="_blank" rel="noopener">http://www.example.com，返回一个cookie，没有指名domain值，那么其为值为默认的www.example.com。</a></p>
+<p><em>Path：</em>表示cookie的所属路径。</p>
+<p>Expire time/Max-age：表示了cookie的有效期。expire的值，是一个时间，过了这个时间，该cookie就失效了。或者是用max-age指定当前cookie是在多长时间之后而失效。如果服务器返回的一个cookie，没有指定其expire time，那么表明此cookie有效期只是当前的session，即是session cookie，当前session会话结束后，就过期了。对应的，当关闭（浏览器中）该页面的时候，此cookie就应该被浏览器所删除了。</p>
+<p><em>secure：</em>表示该cookie只能用https传输。一般用于包含认证信息的cookie，要求传输此cookie的时候，必须用https传输。</p>
+<p><em>httponly：</em>表示此cookie必须用于http或https传输。这意味着，浏览器脚本，比如javascript中，是不允许访问操作此cookie的。</p>
+<p><strong>安全性问题：</strong></p>
+<p>尽管cookie常常简化了用户的因特网的某些活动，但是一些场合或者是使用方式被认为是对用户的隐私一种侵害。例如结合cookie和用户提供的账户信息，WEb站可以知道需要用户的信息，并且可能因此将信息出卖给他人。</p>
+<p>一些别有用心的人不需要知道这个cookie的具体含义，只需要将这个cookie向服务器提交（模拟身份验证），身份验证通过之后，就可以冒充被窃取cookie对应用户来访问网站，甚至获取到用户的隐私信息，对于用户的隐私造成非常严重的危害，这种方式就叫做cookie欺骗。</p>
+<p>并且，cookie以纯文本的形式在浏览器和服务器之间传递，在web通信时极容易被非法用户截获和利用。非法用户截获cookie后，在cookie的有效时间内重新发放给服务器，那么这个非法用户就拥有了这个合法用户的所有权限。</p>
+<p>因此啊，我们设置cookie有效期不要过长，在允许使用https的情况下尽量使用，或者说session和cookie同时使用。</p>
+<p><em>对于http和https的相关信息会在http中专门探讨。这里不做具体细说。</em></p>
 
       
     </div>
 
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>感谢您的鼓励.如果喜欢可以送我一包辣条。</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="张文祥 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/alipay.jpg" alt="张文祥 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>张文祥</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://xiangzi1019.github.io/2019/07/31/浅谈Cookie/" title="浅谈Cookie">http://xiangzi1019.github.io/2019/07/31/浅谈Cookie/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/JavaEE/" rel="tag"># JavaEE</a>
+          
+            <a href="/tags/HTTP/" rel="tag"># HTTP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/30/Servlet-And-JSP学习（一）/" rel="next" title="Servlet_And_JSP学习（一）">
+                <i class="fa fa-chevron-left"></i> Servlet_And_JSP学习（一）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+  </div>
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -779,6 +946,10 @@
 
 
   
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
 
   <script src="/js/next-boot.js?v=7.2.0"></script>
 
@@ -799,6 +970,8 @@
 
 
 
+
+  
 
 
 
