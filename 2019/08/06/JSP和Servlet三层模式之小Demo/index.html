@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="三层架构模式有别于之前所体到的MVC模式，主要的区别在于C（控制器）进行的M（模型）和V（视图）转交数据操作改变为视图面向服务端操作，服务端数据请求Dao资源包操作，Dao进行访问数据库。实现具体的小应用请点击详情页。">
+<meta name="keywords" content="JavaEE,小Demo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JSP和Servlet三层模式之小Demo">
+<meta property="og:url" content="http://xiangzi1019.github.io/2019/08/06/JSP和Servlet三层模式之小Demo/index.html">
+<meta property="og:site_name" content="小骚鸡de博客">
+<meta property="og:description" content="三层架构模式有别于之前所体到的MVC模式，主要的区别在于C（控制器）进行的M（模型）和V（视图）转交数据操作改变为视图面向服务端操作，服务端数据请求Dao资源包操作，Dao进行访问数据库。实现具体的小应用请点击详情页。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/06/JSP和Servlet三层模式之小Demo/%E4%B8%89%E5%B1%82.png">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/06/JSP和Servlet三层模式之小Demo/%E6%95%B4%E4%BD%93%E5%8C%BA%E5%88%AB.png">
+<meta property="og:updated_time" content="2019-08-06T15:24:57.623Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JSP和Servlet三层模式之小Demo">
+<meta name="twitter:description" content="三层架构模式有别于之前所体到的MVC模式，主要的区别在于C（控制器）进行的M（模型）和V（视图）转交数据操作改变为视图面向服务端操作，服务端数据请求Dao资源包操作，Dao进行访问数据库。实现具体的小应用请点击详情页。">
+<meta name="twitter:image" content="http://xiangzi1019.github.io/2019/08/06/JSP和Servlet三层模式之小Demo/%E4%B8%89%E5%B1%82.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://xiangzi1019.github.io/2019/08/06/JSP和Servlet三层模式之小Demo/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>JSP和Servlet三层模式之小Demo | 小骚鸡de博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小骚鸡de博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录点滴学习</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">14</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">4</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">10</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/08/06/JSP和Servlet三层模式之小Demo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="张文祥">
+      <meta itemprop="description" content="talk is cheap,show me the code">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小骚鸡de博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JSP和Servlet三层模式之小Demo
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-06 22:02:22 / 修改时间：23:24:57" itemprop="dateCreated datePublished" datetime="2019-08-06T22:02:22+08:00">2019-08-06</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JavaWeb/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">JavaWeb</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+                 阅读次数： 
+                <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+              </span>
+            </span>
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>三层架构模式有别于之前所体到的MVC模式，主要的区别在于C（控制器）进行的M（模型）和V（视图）转交数据操作改变为视图面向服务端操作，服务端数据请求Dao资源包操作，Dao进行访问数据库。实现具体的小应用请点击详情页。</p>
+<a id="more"></a>
+<p>小Demo具体实现了页面对数据库中信息的增删改查操作，运用三层架构进行设计，优化封装了数据层面的冗余信息，这里跟着代码进一步了解简单的实现过程。</p>
+<p><img src="/2019/08/06/JSP和Servlet三层模式之小Demo/%E4%B8%89%E5%B1%82.png" alt="三层架构的整体流程"></p>
+<p>首先在webContent的WEB-INF中创建用于登录的index.jsp文件，在body中写入：</p>
+<pre><code>&lt;table border=&quot;1px&quot;&gt;
+    &lt;tr&gt;
+        &lt;th&gt;学号&lt;/th&gt;
+        &lt;th&gt;姓名&lt;/th&gt;
+        &lt;th&gt;年龄&lt;/th&gt;
+        &lt;th&gt;地址&lt;/th&gt;
+    &lt;/tr&gt;
+        &lt;%
+        //获取request中的数据
+            List&lt;Student&gt; students = (List&lt;Student&gt;)request.getAttribute(&quot;students&quot;)
+            for(Student student:students){
+        %&gt;
+        &lt;tr&gt;
+        &lt;td&gt;&lt;a href=&quot;QueryStudentBySnoServlet?sno=&lt;%=student.getSno() %&gt;&quot;&gt;&lt;%=student.getSno() %&gt;&lt;/a&gt;      &lt;/td&gt;
+
+
+                    &lt;td&gt;&lt;%=student.getSname() %&gt;&lt;/td&gt;
+                    &lt;td&gt;&lt;%=student.getSage() %&gt;&lt;/td&gt;
+                    &lt;td&gt; &lt;a href=&quot;DeleteStudentServlet?sno=&lt;%=student.getSno() %&gt;   &quot;&gt;删除&lt;/a&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+
+        &lt;% 
+            }
+        %&gt;
+
+&lt;/table&gt;</code></pre><p>字段主要实现了显示信息为：学号，姓名，年龄，地址的页面框体。</p>
+<p>再者，由于我们操作的对象是人物，我们可以建立一个基于人物的java文件，我主要写的是Student对象，对数据封装实现其中的set和get方法以及有无实参的构造函数，以待调用：</p>
+<pre><code>public class Student {
+    private int sno;
+    private String sname;
+    private int sage;
+    private String saddress;
+
+    public Student() {
+    }
+    public Student( String sname, int sage, String saddress) {
+        this.sname = sname;
+        this.sage = sage;
+        this.saddress = saddress;
+    }
+    public Student(int sno, String sname, int sage, String saddress) {
+        this.sno = sno;
+        this.sname = sname;
+        this.sage = sage;
+        this.saddress = saddress;
+    }
+    public int getSno() {
+        return sno;
+    }
+    public void setSno(int sno) {
+        this.sno = sno;
+    }
+    public String getSname() {
+        return sname;
+    }
+    public void setSname(String sname) {
+        this.sname = sname;
+    }
+    public int getSage() {
+        return sage;
+    }
+    public void setSage(int sage) {
+        this.sage = sage;
+    }
+    public String getSaddress() {
+        return saddress;
+    }
+    public void setSaddress(String saddress) {
+        this.saddress = saddress;
+    }
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return this.getSno()+&quot;-&quot;+this.getSname()+&quot;-&quot;+this.getSage()+&quot;-&quot;+this.getSaddress();
+    }
+}</code></pre><p>其中的同toString方法主要是对toString的重写操作，便于直接输出我们想要的结果。</p>
+<p><img src="/2019/08/06/JSP和Servlet三层模式之小Demo/%E6%95%B4%E4%BD%93%E5%8C%BA%E5%88%AB.png" alt="MVC和三层架构的区别和联系"></p>
+<p>有人对象也有了页面的显示信息，我们下一步要做的就是连接数据库实现Dao包的对数据的增删改查操作，由于我们是对Demo的三层架构操作，我们应当独一的实现各类操作，然后再在需要的时候调用其中的一个乃至几个操作进行数据操作的封装，类似于我们要增加一个人，就要去先判断这个人是否存在，如果存在则不需要加入，如果不存在就再调用增函数实现数据的增加，然后加入数据库。由此可见，如果我们不进行底层的每一步的封装，那么在操作具体实现的时候就会产生更多的代码冗余。我们再创建具体的包，包名记为Servlet，具体先实现的代码为：</p>
+<p>首先是实现数据库的基本操作：</p>
+<pre><code>//数据访问层是原子性的增删改查
+public class StudentDao {
+    public String URL = &quot;jdbc:mysql://localhost:3306/db_stu&quot;;
+    public String USERNAME = &quot;root&quot;;
+    public String PASSWORD = &quot;xxxx&quot;;
+
+    //判断学生存在与否
+    public boolean isExist(int sno) {
+        return queryStudentBySno(sno)==null?false:true;
+    }
+    //增加学生
+    public boolean addStudent(Student student) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+            conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            String sql = &quot;insert into student(sno,sname,sage,saddress) values(?,?,?,?)&quot;;
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, student.getSno());
+            pstmt.setString(2, student.getSname());
+            pstmt.setInt(3, student.getSage());
+            pstmt.setString(4, student.getSaddress());
+            int count = pstmt.executeUpdate(sql);
+            if(count &gt; 0) {
+                return true;
+            }else {
+                return false;
+            }
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }finally {
+            try {
+                if(pstmt!=null) pstmt.close();
+                if(conn!=null) conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //删除一个学生
+    public boolean deleteStudentBySno(int Sno) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+            conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            String sql = &quot;delete from student where sno=?&quot;;
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, Sno);
+
+            int count = pstmt.executeUpdate(sql);
+            if(count &gt; 0) {
+                return true;
+            }else {
+                return false;
+            }
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }finally {
+            try {
+                if(pstmt!=null) pstmt.close();
+                if(conn!=null) conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }    
+    }
+    //改学生信息,根据Sno改成student的信息
+    public boolean updateStudentBySno(int Sno,Student student) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+            conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            String sql = &quot;update student set sname=?,sage=?,saddress=? where sno=?&quot;;
+            pstmt = conn.prepareStatement(sql);
+            //修改后的样子
+            pstmt.setString(1, student.getSname());
+            pstmt.setInt(2, student.getSage());
+            pstmt.setString(3, student.getSaddress());
+            pstmt.setInt(4, Sno);//修改的人
+
+            int count = pstmt.executeUpdate(sql);
+            if(count &gt; 0) {
+                return true;
+            }else {
+                return false;
+            }
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }finally {
+            try {
+                if(pstmt!=null) pstmt.close();
+                if(conn!=null) conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //查询全部学生
+    public List&lt;Student&gt; queryAllStudent() {
+        List&lt;Student&gt; students = new ArrayList&lt;&gt;();
+
+        Student student = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+            conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            String sql = &quot;selecrt * from student&quot;;
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                int no = rs.getInt(&quot;sno&quot;);
+                String name = rs.getString(&quot;sname&quot;);
+                int age = rs.getInt(&quot;sage&quot;);
+                String address = rs.getString(&quot;saddress&quot;);
+                student = new Student(no,name, age, address);
+                students.add(student);
+            }
+            return students;
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }finally {
+            try {
+                if(rs!=null) rs.close();
+                if(pstmt!=null) pstmt.close();
+                if(conn!=null) conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //根据学号查学生
+    public Student queryStudentBySno(int Sno) {
+        Student student = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+            conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            String sql = &quot;selecrt * from student where sno=?&quot;;
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, Sno);
+            rs = pstmt.executeQuery();
+
+            if(rs.next()) {
+                int no = rs.getInt(&quot;sno&quot;);
+                String name = rs.getString(&quot;sname&quot;);
+                int age = rs.getInt(&quot;sage&quot;);
+                String address = rs.getString(&quot;saddress&quot;);
+                student = new Student(no,name, age, address);
+            }
+            return student;
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }finally {
+            try {
+                if(rs!=null) rs.close();
+                if(pstmt!=null) pstmt.close();
+                if(conn!=null) conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+}</code></pre><p>因此我们要实现具体的操作，也就是业务逻辑性的增删改查，对Dao的组装，我们将这以操作创建名为service包中，里面的具体操作是根据我们的：</p>
+<pre><code>public class StudentService {
+    StudentDao studentDao = new StudentDao();
+
+    //根据学号查一个人
+    public Student queryStudentBySno(int sno) {
+        return studentDao.queryStudentBySno(sno);
+    }
+    //查询全部学生
+    public List&lt;Student&gt; queryAllStudents() {
+        return studentDao.queryAllStudent();
+    }
+
+
+    public boolean deleteStudentBySno(int sno) {
+        if(studentDao.isExist(sno)) {
+            return studentDao.deleteStudentBySno(sno);
+        }else {
+            return false;
+        }
+    }
+
+    public boolean updateStudentBySno(int sno,Student student) {
+        if(studentDao.isExist(sno)) {
+            return studentDao.updateStudentBySno(sno, student);
+        }else {
+            return false;
+        }
+    }
+
+
+    public boolean addStudent(Student student) {
+        //不存在就添加
+        if(!studentDao.isExist(student.getSno())) {
+            studentDao.addStudent(student);
+            return true;
+        }else {
+            System.out.println(&quot;此人已经存在&quot;);
+            return false;
+        }
+
+    }
+    }</code></pre><p>再者，根据我们以及实现的代码的进行对页面数据的操作：</p>
+<p>首先是增加数据的servlet封装：</p>
+<pre><code>public class AddStudentServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding(&quot;utf-8&quot;);
+        int no = Integer.parseInt(request.getParameter(&quot;sno&quot;));
+        String name = request.getParameter(&quot;sname&quot;);
+        int age = Integer.parseInt(request.getParameter(&quot;sage&quot;));
+        String address = request.getParameter(&quot;saddress&quot;);
+        Student student = new Student(no,name,age,address);
+        //数据的拼接
+        StudentService studentService = new StudentService();
+        boolean result = studentService.addStudent(student);
+
+        response.setContentType(&quot;text/html; charset=UTF-8&quot;);
+        response.setCharacterEncoding(&quot;utf-8&quot;);
+        PrintWriter out = response.getWriter();
+        if(result) {
+
+            out.println(&quot;增加成功！&quot;);
+        }else {
+            out.println(&quot;增减失败！&quot;);
+        }
+
+
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        doGet(request, response);
+    }
+    }</code></pre><p>再者是删除数据的封装：</p>
+<pre><code>public class DeleteStudentServlet extends HttpServlet {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //删除的功能
+        request.setCharacterEncoding(&quot;utf-8&quot;);
+        //接收前端传来的学号
+        int no = Integer.parseInt(request.getParameter(&quot;sno&quot;));
+
+        StudentService service = new StudentService();
+        boolean result = service.deleteStudentBySno(no);
+        response.setContentType(&quot;text/html; charset=UTF-8&quot;);
+        response.setCharacterEncoding(&quot;utf-8&quot;);
+        if(result) {
+            //response.getWriter().println(&quot;删除成功！&quot;);
+            response.sendRedirect(&quot;QueryAllStudentServlrt&quot;);
+        }else {
+            response.getWriter().println(&quot;删除失败！&quot;);
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
+
+}</code></pre><p>更新数据的封装：</p>
+<pre><code>public class UpdateStudentServlet extends HttpServlet {
+
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding(&quot;utf-8&quot;);
+        //获取待修改人的学号
+        int no = Integer.parseInt(request.getParameter(&quot;sno&quot;));
+        //获取修改的内容
+        String name = request.getParameter(&quot;sname&quot;);
+        int age = Integer.parseInt(request.getParameter(&quot;sage&quot;));
+        String address = request.getParameter(&quot;saddress&quot;);
+        //将修改后的内容封装到JavaBean中
+        Student student = new Student(name, age, address);
+
+        StudentService service = new StudentService();
+        boolean result = service.updateStudentBySno(no, student);
+        response.setContentType(&quot;text/html; charset=UTF-8&quot;);
+        response.setCharacterEncoding(&quot;utf-8&quot;);
+        PrintWriter out = response.getWriter();
+        if(result) {
+
+            out.println(&quot;修改成功！&quot;);
+        }else {
+            out.println(&quot;修改失败！&quot;);
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        doGet(request, response);
+    }
+
+}</code></pre><p>根据学号查询学生信息：</p>
+<pre><code>public class QueryStudentBySnoServlet extends HttpServlet {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding(&quot;utf-8&quot;);
+        int no = Integer.parseInt(request.getParameter(&quot;sno&quot;));
+        StudentService service = new StudentService();
+        Student student = service.queryStudentBySno(no);
+        System.out.println(student);
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        doGet(request, response);
+    }
+
+}</code></pre><p>查询所有信息：</p>
+<pre><code>public class QueryAllStudentServlet extends HttpServlet {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding(&quot;utf-8&quot;);
+        StudentService service = new StudentService();
+        List&lt;Student&gt; students = service.queryAllStudents();
+        System.out.println(students);
+        request.setAttribute(&quot;students&quot;, students);
+        //通过请求转发方式跳转
+        request.getRequestDispatcher(&quot;index.jsp&quot;).forward(request, response);
+    }
+
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        doGet(request, response);
+    }
+
+}</code></pre><p>由于Dao包中有着大量冗余的代码，例如我们申请数据库，或者关闭数据库的一些操作，现在这些都可以进行封装成一个类专门调用。我们把这个封装的数据库操作记为Util包，代码实现如下：</p>
+<pre><code>//通用的数据操作方法
+public class DBUtil {
+    private static final String URL = &quot;jdbc:mysql://localhost:3306/db_stu&quot;;
+    private static final String USERNAME = &quot;root&quot;;
+    private static final String PASSWORD = &quot;xxxx&quot;;
+    public static PreparedStatement pstmt = null ;
+    public static Connection connection = null ;
+    public static ResultSet rs = null ; 
+    //通用的增删改
+    public static boolean executeUpdate(String sql,Object[] params) {//{&quot;zs&quot;,1}
+        try {
+             Object[] obs = { name,age ,...,x} ; 
+              String sql = &quot;delete from xxx where Name = ? or id = ?  &quot; ;
+              pstmt.setInt(1,sno );
+              setXxx()方法的个数 依赖于 ?的个数， 而?的个数 又和 数组params的个数一致
+              setXxx()方法的个数 -&gt;数组params的个数一致
+                pstmt = createPreParedStatement(sql,params);
+              int count = pstmt.executeUpdate() ;
+              if(count&gt;0)
+                  return true ;
+              else 
+                  return false ;
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+              return false ;
+        } catch (SQLException e) {
+            e.printStackTrace();
+              return false ;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false ;
+        }
+        finally {
+            closeAll(null,pstmt,connection);
+        }
+}
+    //Statement
+    public static void closeAll(ResultSet rs,Statement stmt,Connection connection)
+    {
+        try {
+            if(rs!=null)rs.close();
+            if(pstmt!=null)pstmt.close();
+            if(connection!=null)connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } 
+
+
+    }
+
+
+    public static Connection getConnection() throws ClassNotFoundException, SQLException {
+         Class.forName(&quot;jdbc:mysql://localhost:3306/db_stu&quot;) ;
+         return  DriverManager.getConnection( URL,USERNAME,PASSWORD ) ;
+    }
+
+    public static PreparedStatement createPreParedStatement(String sql,Object[] params) throws ClassNotFoundException, SQLException {
+          pstmt = getConnection() .prepareStatement( sql) ;
+          if(params!=null ) {
+              for(int i=0;i&lt;params.length;i++) {
+                  pstmt.setObject(i+1, params[i]);
+              }
+          }
+          return pstmt;
+    }
+
+        //通用的查  :通用 表示  适合与 任何查询
+        public static ResultSet executeQuery( String sql ,Object[] params) {//select xxx from xx where name=? or id=?
+            Student student = null;
+
+            List&lt;Student&gt; students = new ArrayList&lt;&gt;();
+            try {
+
+                //                  String sql = &quot;select * from student&quot; ;//select enmae ,job from xxxx where...id&gt;3
+
+                pstmt = createPreParedStatement(sql,params);
+                 rs =  pstmt.executeQuery() ;
+                  return rs ;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                return null ; 
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null ; 
+            }catch (Exception e) {
+                e.printStackTrace();
+                return null ; 
+            }
+//            finally {
+//                    try {
+//                        if(rs!=null)rs.close();
+//                        if(pstmt!=null)pstmt.close();
+//                        if(connection!=null)connection.close();
+//                    } catch (SQLException e) {
+//                        e.printStackTrace();
+//                    } 
+//            }
+        }
+
+}</code></pre><p>鉴于此我们简单的实现了对数据的操作，这是再学习Servlet和JSP中跟着实践写的代码，教程源于<strong>lanqiao</strong>，通过自己的理解和些许天的学习，在Web上有了丝丝见解，而且基本能够读懂相应的代码。也许这就是学习的乐趣所在吧，能够自己见证自己的成长，确实挺好。</p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>感谢您的鼓励.如果喜欢可以送我一包辣条。</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="张文祥 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/alipay.jpg" alt="张文祥 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>张文祥</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://xiangzi1019.github.io/2019/08/06/JSP和Servlet三层模式之小Demo/" title="JSP和Servlet三层模式之小Demo">http://xiangzi1019.github.io/2019/08/06/JSP和Servlet三层模式之小Demo/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/JavaEE/" rel="tag"># JavaEE</a>
+          
+            <a href="/tags/小Demo/" rel="tag"># 小Demo</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/05/MVC设计模式看Web编程/" rel="next" title="MVC设计模式看Web编程">
+                <i class="fa fa-chevron-left"></i> MVC设计模式看Web编程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+
+
+<!--音乐连接-->
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1314334768&auto=1&height=66"></iframe>
+
+
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/author.jpg" alt="张文祥">
+  
+  <p class="site-author-name" itemprop="name">张文祥</p>
+  <div class="site-description motion-element" itemprop="description">talk is cheap,show me the code</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/xiangzi1019" title="GitHub &rarr; https://github.com/xiangzi1019" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:2624619631@qq.com" title="E-Mail &rarr; mailto:2624619631@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+  <div class="cc-license motion-element" itemprop="license">
+  
+  
+    
+  
+  
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张文祥</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+    
+    
+  
+  <script color="0,0,0" opacity="0.5" zindex="-1" count="150" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;"></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+
+</body>
+</html>
