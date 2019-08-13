@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="在网络学习中HTTP和Web学习的深入有利于理解和设计有关Web项目的相关事宜，在学习中深入理解在应用层的各类关系以及传输的模式和协议，记录学习点滴。本概述结合Computer Networking A Top-Down Approachde 的相关讲解和自己体会记录学习的内容。">
+<meta name="keywords" content="HTTP,Web,Computer_Networking">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Computer_Networking&#39;s_简述Web和HTTP">
+<meta property="og:url" content="http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/index.html">
+<meta property="og:site_name" content="小骚鸡de博客">
+<meta property="og:description" content="在网络学习中HTTP和Web学习的深入有利于理解和设计有关Web项目的相关事宜，在学习中深入理解在应用层的各类关系以及传输的模式和协议，记录学习点滴。本概述结合Computer Networking A Top-Down Approachde 的相关讲解和自己体会记录学习的内容。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/1.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/2.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/3.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/4.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/5.PNG">
+<meta property="og:updated_time" content="2019-08-13T15:01:28.002Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Computer_Networking&#39;s_简述Web和HTTP">
+<meta name="twitter:description" content="在网络学习中HTTP和Web学习的深入有利于理解和设计有关Web项目的相关事宜，在学习中深入理解在应用层的各类关系以及传输的模式和协议，记录学习点滴。本概述结合Computer Networking A Top-Down Approachde 的相关讲解和自己体会记录学习的内容。">
+<meta name="twitter:image" content="http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/1.PNG">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>Computer_Networking's_简述Web和HTTP | 小骚鸡de博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小骚鸡de博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录点滴学习</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">17</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">6</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">12</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="张文祥">
+      <meta itemprop="description" content="talk is cheap,show me the code">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小骚鸡de博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Computer_Networking's_简述Web和HTTP
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-13 18:01:55 / 修改时间：23:01:28" itemprop="dateCreated datePublished" datetime="2019-08-13T18:01:55+08:00">2019-08-13</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Computer-Networking/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">Computer_Networking</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+                 阅读次数： 
+                <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+              </span>
+            </span>
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在网络学习中HTTP和Web学习的深入有利于理解和设计有关Web项目的相关事宜，在学习中深入理解在应用层的各类关系以及传输的模式和协议，记录学习点滴。本概述结合Computer Networking A Top-Down Approachde 的相关讲解和自己体会记录学习的内容。</p>
+<a id="more"></a>
+
+<p>首先要理解为什么要发展Web？其实大家都已经习惯了在网上直接“百度一下”搜索想要的内容，这样快捷方便。我们可以理解web是按需操作的。同理，在Web发展之前呢，我们接收信息都是通过收音机或者报纸得到供应者提供的消息，这样就大大的降低了我们的主观能动性。所以在Web出来的时候就绽放光彩。</p>
+<p><strong>首先介绍HTTP</strong></p>
+<p>web的应用层协议是HTTP（超文本传输协议），它是Web的核心。HTTP由两个程序实现：一个是客户端程序一个是服务器程序。他们在不同的端系统中通过交换HTTP报文进行会话。（PS.在另外博客中，会实现基于java的简单Tomcat的服务器，如有需要可以翻阅）</p>
+<p>Web由对象组成，一个对象就是一个文件他们的通过URL地址寻址。HTML的基本文件呢通过对象的URL地址引用页面的其他对象。要注意的是，每个URL由两部分组成：存放对象的服务器主机名和对象的路径名。例如我们随便点击可以网址：<a href="http://www.nankai.edu.cn/162/list.htm这是南开大学的首页点击概况。其中http://是我们的协议，www.nankai.edu.cn是主机名，而162/list.htm记为对象的路径名。" target="_blank" rel="noopener">http://www.nankai.edu.cn/162/list.htm这是南开大学的首页点击概况。其中http://是我们的协议，www.nankai.edu.cn是主机名，而162/list.htm记为对象的路径名。</a></p>
+<p>HTTP定义了Web客户端向Web向服务器请求Web页面方式，以及服务器向客户端传送web页面的方式。即：当用户请求一个页面时候，浏览器向服务器发送该页面中所包含的对象的HTTP请求报文，服务器呢接收到请求并用包含这些对象的HTTP响应报文进行响应。</p>
+<p><img src="/2019/08/13/Computer-Networking-s-简述Web和HTTP/1.PNG" alt="HTTP相应"></p>
+<p>简单来说呢就好比你给你暗恋的女神送情书（现在看来比较low） :smile: 然后呢女神收到了礼物，并且响应你的请求对你说：“你还是走吧，我有祥子了”。这就是一次简单的Web响应。</p>
+<p>同时要说一点就是HTTP是使用TCP作为运输协议。即：HTTP客户首先发起一个与服务器的TCP连接，一旦连接建立，该浏览器和服务器进程就可以通过套接字接口访问TCP。我们呢在深入一点就是：客户向它的套接字接口发送HTTP请求报文并从它的套接字街廓接收HTTP响应报文。类似的，服务器从他的套接字接口接收HTTP请求报文和他的套接字接口发送HTTP响应报文。一旦客户端向它的套接字接口发的了一个请求报文，<em>该报文就脱离了客户控制并进入了TCP的控制。</em></p>
+<p>这个的意义就类似于，你和我说，你要给你女神送礼物（我可以连接女神）然后我说行，这个忙我帮定你了。于是呢我就接收了你的礼物（实际上等我接收后，礼物就归我管了），由于呢我是TCP，我就完完全全的帮你给了女神（PS.女神就和我在一起了）。哈哈然后女神收到消息，让我告诉你说其实她喜欢的是祥子。然后我就回到你家告诉你还是放弃吧，女神已经是我的了。</p>
+<p>这里看到了分层的最大优点，就是HTTP协议不需要担心数据的丢失，也不用关注TCP从网络数据丢失和乱序恢复的细节，只要关注报文发送成功即可。然后剩下的工作都是给TCP以及协议栈的。</p>
+<p>我们呢通过这个例子啊发现这样一个问题，就是：服务器向客户端发送被请求的文件，而不存储任何关于该客户的状态信息（听起来有点点可悲）。假如某个客户端在很短时间连续请求同一个对象，服务器并不会因为刚才为该用户提供了对象就不再做出反应，而是重新发送该对象。（没办法要再次声明女神是祥子的嘛）。这种方式被称为“无状态协议”。也许啊，就是这可怜的人发明了Cookie。哈哈哈</p>
+<p>注:关于Cookie的在另外的博客有介绍。</p>
+<p><strong>非持续性连接的HTTP</strong></p>
+<p>我们需要了解以下在非持续性连接状况下，服务器向客户端传送Web页面的步骤。</p>
+<pre><code>1.HTTP客户进程在80端口发起一个到服务器的TCP连接。在客户和服务器上分别有一个套接字与该连接相关。
+
+2.HTTP客户经它的套接字向该服务器发送一个HTTP请求报文。
+
+3.HTTP服务器进程经它的套接字接收该服务器请求报文，从其存储器（RAM或者磁盘）中检索对象，在一个HTTP响应报文中封装对象，并通过套接字向客户端发送响应报文。
+
+4.HTTP服务器进程通知TCP断开该TCP连接。（其实直到TCP确认客户已经完整的收到响应报文为止才会断开）
+
+5.HTTP客户端接收到响应报文，TCP连接关闭。
+
+6.对于重复对象要重复前4个步骤。</code></pre><p>由于浏览器与Web服务器之间发起了TCP连接，这便涉及了“三次握手”的过程。于是乎我们要讨论下什么是“三次握手”。</p>
+<p><img src="/2019/08/13/Computer-Networking-s-简述Web和HTTP/2.PNG" alt="三次握手"></p>
+<p>简单来说就是客户向服务器发送一个小TCP报文段，服务器用一个小TCP报文段做出确认和响应，最后客户端向服务器返回确认。我们可以看图知道，三次握手前两部分消耗的时间占一个RTT（往返时间：Round-Trip Time，指一个短分组从客户端到服务器然后再返回客户所花费的时间，包括了分组传播时延，分组在中间节点例如路由器的排队时延以及分组处理时延）。在完成前两个部分后，客户结合三次握手的第三部分（确认）向该TCP连接发送一个HTTP请求报文。一旦该请求报文到大服务器，服务器就在该TCP连接上发送两个HTML文件，可见响应也用掉了一个RTT。因此粗略的计算，总的响应时间就是两个RTT加上服务器传输HTML文件的时间。</p>
+<p><strong>持续连接的HTTP</strong></p>
+<p>因为非持续性连接缺点明显，例如1.必须为每一个请求对象建立和维护一个全新的连接，且都要分配TCP缓存区还要保持TCP变量，可见负担较大，同时每一个对象都要两个RTT交付时延，等待时间长久。所以啊在HTTP 1.1中，服务器发送响应后保持该TCP连接打开。在传输中，可以用单个持续TCP连接进行传输，如同流水线的样子处理请求。当然，连接时保持一定时间间隔的。超过时间间隔未使用就自动关闭。就好像你和朋友打电话，两个人忽然沉默了——过了好久也没人理你或者你也不说话，就关闭了通话。</p>
+<p><strong>HTTP报文格式</strong></p>
+<p>HTTP报文有两种：请求报文和响应报文。</p>
+<p>###请求报文</p>
+<pre><code>GET /user HTTP/1.1      请求行
+Host: www.user.com
+Accept-language： cn
+Connection: Keep-Alive
+User-agent: Mozilla/5.0.      以上是首部行
+（此处必须有一空行）  //空行分割header和请求内容 
+name=world   请求体</code></pre><p>第一行三个字段分别是：方法字段，URL以及HTTP版本</p>
+<p><img src="/2019/08/13/Computer-Networking-s-简述Web和HTTP/3.PNG" alt="请求报文"></p>
+<p>请求方法比较多，包括：GET、POST、HEAD、PUT、DELETE</p>
+<pre><code>1） GET
+传递参数长度受限制，因为传递的参数是直接表示在地址栏中，而特定浏览器和服务器对url的长度是有限制的。
+因此，GET不适合用来传递私密数据，也不适合拿来传递大量数据。
+一般的HTTP请求大多都是GET。
+2）POST
+POST把传递的数据封装在HTTP请求数据中，以名称/值的形式出现，可以传输大量数据，对数据量没有限制，也不会显示在URL中。
+表单的提交用的是POST。
+3）HEAD
+HEAD跟GET相似，不过服务端接收到HEAD请求时只返回响应头，不发送响应内容。所以，如果只需要查看某个页面的状态时，用HEAD更高效，因为省去了传输页面内容的时间。
+4）PUT
+把一个资源存放在指定的位置上。
+本质上来讲， PUT和POST极为相似，都是向服务器发送数据，但它们之间有一个重要区别，PUT通常指定了资源的存放位置，而POST则没有，POST的数据存放位置由服务器自己决定。
+5）DELETE
+允许删除Web服务器上的资源。</code></pre><p>请求头部</p>
+<pre><code>请求头部由关键字/值对组成，每行一对
+
+User-Agent : 产生请求的浏览器类型
+Accept : 客户端希望接受的数据类型，比如 Accept：text/xml（application/json）表示希望接受到的是xml（json）类型
+Content-Type：发送端发送的实体数据的数据类型。
+比如，Content-Type：text/html（application/json）表示发送的是html类型。
+Host : 请求的主机名，允许多个域名同处一个IP地址，即虚拟主机</code></pre><p>###响应报文</p>
+<pre><code>HTTP/1.1 200 OK
+Date：Sat, 13 Aug 2019 15:39:29 GMT
+Server:Apache/2.2.3 
+Last-Modified:Sat, 13 Aug 2019 15:11:29 GMT
+Content-Length: 6666
+Content-Type: text/html
+(空行)                                      
+(响应体)</code></pre><p>状态行也由三部分组成：服务器HTTP协议版本，响应状态码，状态码的文本描述</p>
+<p>状态码：由3位数字组成，第一个数字定义了响应的类别</p>
+<pre><code>1xx：指示信息，表示请求已接收，继续处理
+2xx：成功，表示请求已被成功接受，处理。
+    200 OK：客户端请求成功
+3xx：重定向
+    301 Moved Permanently：永久重定向，表示请求的资源已经永久的搬到了其他位置。
+4xx：客户端错误 
+    404 Not Found：请求资源不存在。比如，输入了错误的url
+5xx：服务器端错误，服务器未能实现合法的请求。 
+    500 Internal Server Error：服务器发生不可预期的错误。</code></pre><p><strong>Web缓存</strong></p>
+<p>Web缓存也叫代理服务器（proxy server）代表初始Web服务器来满足HTTP请求的网络实体。Web缓存器中有自己的磁盘存储空间，并在存储空间中保存最近请求过的对象副本。一旦浏览器被被指，每个对象的浏览器请求首先对定向到该Web缓存。</p>
+<p>工作机制:</p>
+<pre><code>1.浏览器创建一个到Web缓存器的TCP连接，并向Web缓存器中的对象发送一个HTTP请求。
+2.Web缓存器检查看看本地是否有存储该对象的副本。如果有，缓存服务器向客户浏览器用HTTP响应报文返回该对象。
+3.如果Web没有改对象，它就打开抑恶个与该对象的初始服务器的TCP来凝结，并且发送一个HTTP请求。然后服务器向该Web缓存器发送具有该对象的HTTP响应。
+4.当Web缓存器接收到该对象时，就在本地存储空间保存一份副本，并向客户端的浏览器用HTTP响应报文发送该副本。</code></pre><p>所以啊可以看到缓存服务器又是服务器又是客户端。</p>
+<p><img src="/2019/08/13/Computer-Networking-s-简述Web和HTTP/4.PNG" alt="Web缓存"></p>
+<p>为什么要网上部署Web缓存器呢？</p>
+<p>1.减少网络带宽消耗:无论对于网站运营者或者用户，带宽都代表着金钱，过多的带宽消耗，只会便宜了网络运营商。当Web缓存副本被使用时，只会产生极小的网络流量，可以有效的降低运营成本。</p>
+<p>2.降低服务器压力:给网络资源设定有效期之后，用户可以重复使用本地的缓存，减少对源服务器的请求，间接降低服务器的压力。同时，搜索引擎的爬虫机器人也能根据过期机制降低爬取的频率，也能有效降低服务器的压力。</p>
+<p>3.减少网络延迟，加快页面打开速度:带宽对于个人网站运营者来说是十分重要，而对于大型的互联网公司来说，真的不在乎这些花费。对于最终用户，缓存的使用能够明显加快页面打开速度，达到更好的体验。</p>
+<p><img src="/2019/08/13/Computer-Networking-s-简述Web和HTTP/5.PNG" alt="请求报文"></p>
+<p>由图我们来简单分析下花费。如果我们的access link要从1.54升级到154需要花费的资金数同比较与我们部署到网上1Gbps LAN的消费，一个时改变物理花费，而一个只需要部署网上就可享受更快捷更方便的行为。好处不言而喻。</p>
+<p>但是由于高速缓存减少了响应的时间，但是你可否想过这样一个问题，就是因为本地存储了一些网上缓存，但是如果有一天网上更新了内容，你又去找了旧缓存怎么办？就好像说你住到了野外，你身边只有一份报纸，时的，你每天要看报纸的时候都打开它，观看里面的内容发现，原来外面的生活一尘不变啊。其实只是自己的信息没有更新对吧。</p>
+<p>HTTP协议有一种机制，允许缓存器证实它的对象是最新的，这种机制就是条件GET方法。</p>
+<pre><code>HTTP/1.1 200 OK
+Date: Sat, 8 Oct 2018 15:39:29
+Server: Apache/1.3.0 (Unix)
+Last-Modified: Wed, 7 Sep 2018 09:23:24
+Content-Type: image/gif
+
+(data data data ...)</code></pre><p>一段时间以后当我们再去查阅相关网址时候浏览器通过cache请求了相同的对象，并且这个对象仍然在cache里。由于这个对象可能在过去的一周里被修改过，cachejiu 就发起一个conditional GET来做一个更新检查。</p>
+<pre><code>GET /user HTTP/1.1
+Host: www.user.com
+If-modified-since: Wed, 7 Sep 2018 09:23:24</code></pre><p>我们发现If-modified-since的值就是一周前Last-Modified的值。这个条件GET告诉服务器仅在对象在这个时间之后被修改的情况下才发送这个对象给我。</p>
+<p>如果没有被修改：</p>
+<pre><code>HTTP/1.1 304 Not Modified 
+Date: Sat, 15 Oct 2018 15:39:29 
+Server: Apache/1.3.0 (Unix)
+
+(empty entity body)</code></pre><p>我们可以看到，在回复条件GET时，web server依然发送 了一个响应报文但是并没有在响应消息中包含请求的对象。包含请求的对象会浪费带宽，增加用户感知响应时间。</p>
+<p>注意，最后一条响应报文有一个304的状态码，意思是Not Modified。这也就告知了缓存它可以继续了，将这个对象的cached copy发送给请求的browser.</p>
+<p>简单的说就是我们查阅的时候呢，不去关注里面的内容，只需要区看一下时间是否修改，这样就更加快捷。例如刚才的例子，你只需要看看报纸的时间就可以推断是否是以前的报纸。如果是就不需要看了，如果不是，就从新找找是否会有信息报纸送来（海贼王的海鸥）。</p>
+<p>这样呢就基本上简要的理解了Web服务和HTTP协议。</p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>感谢您的鼓励.如果喜欢可以送我一包辣条。</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="张文祥 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/alipay.jpg" alt="张文祥 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>张文祥</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/" title="Computer_Networking's_简述Web和HTTP">http://xiangzi1019.github.io/2019/08/13/Computer-Networking-s-简述Web和HTTP/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/HTTP/" rel="tag"># HTTP</a>
+          
+            <a href="/tags/Web/" rel="tag"># Web</a>
+          
+            <a href="/tags/Computer-Networking/" rel="tag"># Computer_Networking</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/07/Computer-Networking-s-网络传输/" rel="next" title="Computer_Networking's_网络核心">
+                <i class="fa fa-chevron-left"></i> Computer_Networking's_网络核心
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+
+
+<!--音乐连接-->
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1314334768&auto=1&height=66"></iframe>
+
+
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/author.jpg" alt="张文祥">
+  
+  <p class="site-author-name" itemprop="name">张文祥</p>
+  <div class="site-description motion-element" itemprop="description">talk is cheap,show me the code</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/xiangzi1019" title="GitHub &rarr; https://github.com/xiangzi1019" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:2624619631@qq.com" title="E-Mail &rarr; mailto:2624619631@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+  <div class="cc-license motion-element" itemprop="license">
+  
+  
+    
+  
+  
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张文祥</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+    
+    
+  
+  <script color="0,0,0" opacity="0.5" zindex="-1" count="150" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;"></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+
+</body>
+</html>
