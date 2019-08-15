@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="PI的值大家小学就接触过，那么这个值怎么得到的呢？我们今天来尝试一下从计算机的角度利用蒙特卡罗算法求解PI的近似值。如有兴趣可以查阅详情。">
+<meta name="keywords" content="算法,小Demo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法之蒙特卡洛Demo求PI值">
+<meta property="og:url" content="http://xiangzi1019.github.io/2019/08/14/算法之蒙特卡洛Demo求PI值/index.html">
+<meta property="og:site_name" content="小骚鸡de博客">
+<meta property="og:description" content="PI的值大家小学就接触过，那么这个值怎么得到的呢？我们今天来尝试一下从计算机的角度利用蒙特卡罗算法求解PI的近似值。如有兴趣可以查阅详情。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/14/算法之蒙特卡洛Demo求PI值/1.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/14/算法之蒙特卡洛Demo求PI值/2.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/14/算法之蒙特卡洛Demo求PI值/3.PNG">
+<meta property="og:updated_time" content="2019-08-15T08:56:27.731Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="算法之蒙特卡洛Demo求PI值">
+<meta name="twitter:description" content="PI的值大家小学就接触过，那么这个值怎么得到的呢？我们今天来尝试一下从计算机的角度利用蒙特卡罗算法求解PI的近似值。如有兴趣可以查阅详情。">
+<meta name="twitter:image" content="http://xiangzi1019.github.io/2019/08/14/算法之蒙特卡洛Demo求PI值/1.PNG">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://xiangzi1019.github.io/2019/08/14/算法之蒙特卡洛Demo求PI值/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>算法之蒙特卡洛Demo求PI值 | 小骚鸡de博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小骚鸡de博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录点滴学习</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">8</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">15</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/08/14/算法之蒙特卡洛Demo求PI值/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="张文祥">
+      <meta itemprop="description" content="talk is cheap,show me the code">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小骚鸡de博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">算法之蒙特卡洛Demo求PI值
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-14 22:43:31" itemprop="dateCreated datePublished" datetime="2019-08-14T22:43:31+08:00">2019-08-14</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-15 16:56:27" itemprop="dateModified" datetime="2019-08-15T16:56:27+08:00">2019-08-15</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">算法</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+                 阅读次数： 
+                <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+              </span>
+            </span>
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>PI的值大家小学就接触过，那么这个值怎么得到的呢？我们今天来尝试一下从计算机的角度利用蒙特卡罗算法求解PI的近似值。如有兴趣可以查阅详情。</p>
+<a id="more"></a>
+<p>我们呢先不说结果，来跟着这个小Demo尝试一下自己探索吧。</p>
+<p>首先还是介绍一下蒙特卡罗思想：</p>
+<p>蒙特卡罗方法于20世纪40年代美国在第二次世界大战中研制原子弹的“曼哈顿计划”计划的成员S.M.乌拉姆和J.冯·诺伊曼首先提出。是指使用随机数（或更常见的伪随机数）来解决很多计算问题的方法。数学家冯·诺伊曼用驰名世界的赌城—摩纳哥的Monte Carlo—来命名这种方法，为它蒙上了一层神秘色彩。在这之前，蒙特卡罗方法就已经存在。1777年，法国数学家布丰（Georges Louis Leclere de Buffon，1707—1788）提出用投针实验的方法求圆周率π。这被认为是蒙特卡罗方法的起源。</p>
+<p>在解决实际问题的时候应用蒙特·卡罗方法主要有两部分工作：</p>
+<ul>
+<li><p>用蒙特·卡罗方法模拟某一过程时，需要产生某一概率分布的随机变量。</p>
+</li>
+<li><p>用统计方法把模型的数字特征估计出来，从而得到实际问题的数值解。</p>
+</li>
+</ul>
+<p><strong>环境介绍：</strong></p>
+<ul>
+<li>语言：Java</li>
+<li>使用JDK：java 1.8</li>
+<li>工具：eclipse或者IDEA都可。</li>
+<li>主要技术：Swing awt</li>
+</ul>
+<p>我们这里不介绍swing和awt的实现，而是直接借用模板来操作。模板中封装好了需要的一些简要实现。<br>需要的可以在这里下载模板源代码。</p>
+<p><a href="https://gitee.com/xiangzi1019/template_code/tree/master" target="_blank" rel="noopener">https://gitee.com/xiangzi1019/template_code/tree/master</a></p>
+<p>再介绍一下模板：</p>
+<pre><code>1.主要包含了一个框架AlgoFrame，其中内容主要用于绘制内部信息，和双缓存的实现。
+2.AlgoVishelper看名称也可以知道，主要封装了一些帮助函数，例如绘制实体或者空心的圆、矩形、颜色等函数
+3.AlgoVisualizer主要就是视图可见的操作，例如你想事先声明功能都可以写在这里，然后调用数据和帮助类就可以实现。</code></pre><p>导入文档包之后呢，我们就先操作AlgoVisualizer类。</p>
+<p>首先呢我们要创建一个Circle类，用来生成正方形中的内切圆。</p>
+<pre><code>import java.awt.*;
+import javax.swing.*;
+public class Circle {
+
+    private int x, y, r;
+
+    public Circle(int x, int y, int r){
+        this.x = x;
+        this.y = y;
+        this.r = r;
+    }
+
+    public int getX(){ return x; }
+    public int getY(){ return y; }
+    public int getR(){ return r; }
+
+    public boolean contain(Point p){
+        return Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2) &lt;= r*r;
+    }
+}</code></pre><p>然后我们再创建一个MonteCarloPiData类专门用来保存和计算点的个数。我们呢在里面画抑恶个圆，并且设计方法得到正方形以及圆内的point的个数。分别用insideCircle表示圆内的点的个数，再用estimatePi方法返回当前得到的PI的值。</p>
+<pre><code>import java.util.LinkedList;
+import java.awt.*;
+
+public class MonteCarloPiData {
+
+    private Circle circle;
+    private LinkedList&lt;Point&gt; points;
+    private int insideCircle = 0;
+
+    public MonteCarloPiData(Circle circle){
+        this.circle = circle;
+        points = new LinkedList&lt;Point&gt;();
+    }
+
+    public Circle getCircle(){
+        return circle;
+    }
+
+    public int getPointsNumber(){
+        return points.size();
+    }
+
+    public Point getPoint(int i){
+        if(i &lt; 0 || i &gt;= points.size())
+            throw new IllegalArgumentException(&quot;out of bound in getPoint!&quot;);
+
+        return points.get(i);
+    }
+
+    public void addPoint(Point p){
+        points.add(p);
+        if(circle.contain(p))
+            insideCircle ++;
+    }
+
+    public double estimatePi(){
+
+        if(points.size() == 0)
+            return 0.0;
+
+        int circleArea = insideCircle;
+        int squareArea = points.size();
+        return (double)circleArea * 4 / squareArea;
+    }
+}</code></pre><p>有了前面的铺垫，我们再去设计框架里面的数据，这里我们呢传入三个数据，分别是生成的高和宽以及传入的点数：</p>
+<pre><code>private static int DELAY = 40;
+private MonteCarloPiData data;
+private AlgoFrame frame;
+private int N;
+
+public AlgoVisualizer(int sceneWidth, int sceneHeight, int N){
+
+    if(sceneWidth != sceneHeight)
+        throw new IllegalArgumentException(&quot;This demo must be run in a square window!&quot;);
+
+    this.N = N;
+    //圆心位置以及半径大小
+    Circle circle = new Circle(sceneWidth/2, sceneHeight/2, sceneWidth/2);
+    data = new MonteCarloPiData(circle);
+
+    // 初始化视图
+    EventQueue.invokeLater(() -&gt; {
+        frame = new AlgoFrame(&quot;Monte Carlo&quot;, sceneWidth, sceneHeight);
+
+        new Thread(() -&gt; {
+            run();
+        }).start();
+    });
+}</code></pre><p>run函数呢就是我们要对数据执行操作，每增加100个点我们就打印依次现在的PI值，并且使运行延迟40ms。我们的点也要生成，生成的位置设为x，y，然后再在界面中画出这个点。</p>
+<pre><code>public void run(){
+
+    for(int i = 0 ; i &lt; N ; i ++){
+
+        if( i % 100 == 0) {
+            frame.render(data);
+            AlgoVisHelper.pause(DELAY);
+            System.out.println(data.estimatePi());
+        }
+
+        int x = (int)(Math.random() * frame.getCanvasWidth());
+        int y = (int)(Math.random() * frame.getCanvasHeight());
+        data.addPoint(new Point(x, y));
+    }
+
+}</code></pre><p>最后呢我们要对界面的类进行数据操作：</p>
+<pre><code>private MonteCarloPiData data;
+public void render(MonteCarloPiData data){
+    this.data = data;
+    repaint();
+}</code></pre><p>并且在我们的绘画中我们实际的绘制为，意思使我们先确定绘制的粗细，然后选择绘制圆的颜色，随后呢我们在for循环中绘制points,如果圆中包含，我们就绘制红色，不包含就就绘制绿色，并且绘制的圆为实心大小为3个像素点：</p>
+<pre><code>AlgoVisHelper.setStrokeWidth(g2d, 3);
+AlgoVisHelper.setColor(g2d, AlgoVisHelper.Blue);
+Circle circle = data.getCircle();
+AlgoVisHelper.strokeCircle(g2d, circle.getX(), circle.getY(), circle.getR());
+
+for(int i = 0 ; i &lt; data.getPointsNumber() ; i ++){
+    Point p = data.getPoint(i);
+    if(circle.contain(p))
+        AlgoVisHelper.setColor(g2d, AlgoVisHelper.Red);
+    else
+        AlgoVisHelper.setColor(g2d, AlgoVisHelper.Green);
+
+    AlgoVisHelper.fillCircle(g2d, p.x, p.y, 3);
+}</code></pre><p>基本上呢我们这样就实现了简单的PI的操作，当然随着我们测试用例数据的增大，我们的值趋向于正确。</p>
+<p><img src="/2019/08/14/算法之蒙特卡洛Demo求PI值/1.PNG" alt></p>
+<p>这是我们测试10000个点的最终结果显示：</p>
+<p><img src="/2019/08/14/算法之蒙特卡洛Demo求PI值/2.PNG" alt></p>
+<p>这是我们每100个点打印一次所计算的PI的值，数据是最后几次计算：</p>
+<p><img src="/2019/08/14/算法之蒙特卡洛Demo求PI值/3.PNG" alt></p>
+<p>这样，我们就可以把实际生活中的一些具体问题通过可视化的方式展现出来，并且做成一个小Demo，不仅训练了思维能力，还提升了coding能力。</p>
+<p>声明：本文章是基于liuyubo老师的代码实例所写。只用于学习。别无其他。</p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>感谢您的鼓励.如果喜欢可以送我一包辣条。</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="张文祥 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/alipay.jpg" alt="张文祥 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>张文祥</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://xiangzi1019.github.io/2019/08/14/算法之蒙特卡洛Demo求PI值/" title="算法之蒙特卡洛Demo求PI值">http://xiangzi1019.github.io/2019/08/14/算法之蒙特卡洛Demo求PI值/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/算法/" rel="tag"># 算法</a>
+          
+            <a href="/tags/小Demo/" rel="tag"># 小Demo</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/14/算法之分钱问题小Demo/" rel="next" title="算法之分钱问题小Demo">
+                <i class="fa fa-chevron-left"></i> 算法之分钱问题小Demo
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/15/数据结构之二叉树/" rel="prev" title="数据结构之二叉树">
+                数据结构之二叉树 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+
+
+<!--音乐连接-->
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1314334768&auto=1&height=66"></iframe>
+
+
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/author.jpg" alt="张文祥">
+  
+  <p class="site-author-name" itemprop="name">张文祥</p>
+  <div class="site-description motion-element" itemprop="description">talk is cheap,show me the code</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/xiangzi1019" title="GitHub &rarr; https://github.com/xiangzi1019" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:2624619631@qq.com" title="E-Mail &rarr; mailto:2624619631@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+  <div class="cc-license motion-element" itemprop="license">
+  
+  
+    
+  
+  
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张文祥</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+    
+    
+  
+  <script color="0,0,0" opacity="0.5" zindex="-1" count="150" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;"></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+
+</body>
+</html>

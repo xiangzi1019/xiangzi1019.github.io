@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="分钱问题是这样的：假设房间有100人，每人都有100园区，并且这100个人都自己创造该有的财富，如果你需要别人的商品，你需要拿1元钱去购买。那么最后的结果该会是如何呢？ 显然这个问题就类似于生活在的日常，在持有相同金钱的社会中，随着社会的改变人们会产生商品并且消费。那么结果是如何呢？是持续着平均的经济体系还是加剧社会的分化呢？点击详情即可查看实现。">
+<meta name="keywords" content="算法,小Demo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法之分钱问题小Demo">
+<meta property="og:url" content="http://xiangzi1019.github.io/2019/08/14/算法之分钱问题小Demo/index.html">
+<meta property="og:site_name" content="小骚鸡de博客">
+<meta property="og:description" content="分钱问题是这样的：假设房间有100人，每人都有100园区，并且这100个人都自己创造该有的财富，如果你需要别人的商品，你需要拿1元钱去购买。那么最后的结果该会是如何呢？ 显然这个问题就类似于生活在的日常，在持有相同金钱的社会中，随着社会的改变人们会产生商品并且消费。那么结果是如何呢？是持续着平均的经济体系还是加剧社会的分化呢？点击详情即可查看实现。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/14/算法之分钱问题小Demo/1.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/14/算法之分钱问题小Demo/2.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/14/算法之分钱问题小Demo/3.PNG">
+<meta property="og:updated_time" content="2019-08-15T04:41:23.191Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="算法之分钱问题小Demo">
+<meta name="twitter:description" content="分钱问题是这样的：假设房间有100人，每人都有100园区，并且这100个人都自己创造该有的财富，如果你需要别人的商品，你需要拿1元钱去购买。那么最后的结果该会是如何呢？ 显然这个问题就类似于生活在的日常，在持有相同金钱的社会中，随着社会的改变人们会产生商品并且消费。那么结果是如何呢？是持续着平均的经济体系还是加剧社会的分化呢？点击详情即可查看实现。">
+<meta name="twitter:image" content="http://xiangzi1019.github.io/2019/08/14/算法之分钱问题小Demo/1.PNG">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://xiangzi1019.github.io/2019/08/14/算法之分钱问题小Demo/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>算法之分钱问题小Demo | 小骚鸡de博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小骚鸡de博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录点滴学习</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">8</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">15</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/08/14/算法之分钱问题小Demo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="张文祥">
+      <meta itemprop="description" content="talk is cheap,show me the code">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小骚鸡de博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">算法之分钱问题小Demo
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-14 22:41:51" itemprop="dateCreated datePublished" datetime="2019-08-14T22:41:51+08:00">2019-08-14</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-15 12:41:23" itemprop="dateModified" datetime="2019-08-15T12:41:23+08:00">2019-08-15</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">算法</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+                 阅读次数： 
+                <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+              </span>
+            </span>
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>分钱问题是这样的：假设房间有100人，每人都有100园区，并且这100个人都自己创造该有的财富，如果你需要别人的商品，你需要拿1元钱去购买。那么最后的结果该会是如何呢？</p>
+<p>显然这个问题就类似于生活在的日常，在持有相同金钱的社会中，随着社会的改变人们会产生商品并且消费。那么结果是如何呢？是持续着平均的经济体系还是加剧社会的分化呢？点击详情即可查看实现。</p>
+<a id="more"></a>
+<p>我们呢先不说结果，来跟着这个小Demo尝试一下自己探索吧。</p>
+<p><strong>环境介绍：</strong></p>
+<ul>
+<li>语言：Java</li>
+<li>使用JDK：java 1.8</li>
+<li>工具：eclipse或者IDEA都可。</li>
+<li>主要技术：Swing awt</li>
+</ul>
+<p>我们这里不介绍swing和awt的实现，而是直接借用模板来操作。模板中封装好了需要的一些简要实现。<br>需要的可以在这里下载模板源代码。</p>
+<p><a href="https://gitee.com/xiangzi1019/template_code/tree/master" target="_blank" rel="noopener">https://gitee.com/xiangzi1019/template_code/tree/master</a></p>
+<p>首先介绍一下模板：</p>
+<pre><code>1.主要包含了一个框架AlgoFrame，其中内容主要用于绘制内部信息，和双缓存的实现。
+2.AlgoVishelper看名称也可以知道，主要封装了一些帮助函数，例如绘制实体或者空心的圆、矩形、颜色等函数
+3.AlgoVisualizer主要就是视图可见的操作，例如你想事先声明功能都可以写在这里，然后调用数据和帮助类就可以实现。</code></pre><p>导入文档包之后呢，我们就先操作AlgoVisualizer类。我们根据我们的需求实现人和钱。这里呢主要创建了100个人，每人100元钱。</p>
+<pre><code>// TODO: 创建自己的数据
+private int[] money;        // 数据
+private AlgoFrame frame;    // 视图
+private static int DELAY = 40;
+public AlgoVisualizer(int sceneWidth, int sceneHeight){
+
+    // 初始化数据
+    //创建100个人，每人手里都有100元钱
+    money = new int[100];
+    for(int i = 0; i &lt; money.length; i++) {
+        money[i] = 100;
+    }</code></pre><p>关于视图对话框呢，这里使用的是JDK1.8的函数实编程，我们呢只需要改变它的标题即可。主要的意思就是，我们申请了一个线程，防止与主线程同步导致我们对话框难以其他操作。线程里调用了run方法实现我们的动画效果。然后直接start开始启动线程。</p>
+<pre><code>// 初始化视图
+EventQueue.invokeLater(() -&gt; {
+    frame = new AlgoFrame(&quot;分钱问题&quot;, sceneWidth, sceneHeight);
+
+    new Thread(() -&gt; {
+        run();
+    }).start();
+});</code></pre><p>run的逻辑基本为，当我们运行时候，对我们人用于钱数排序，sort其实调用的就是快排思想。然后调用frame的重绘着色，线程延迟DELAY（ms）时间，开始实现我们的给钱功能。实际上就是我们每一帧给定每个人都向外给1元钱来保证自己每日的需求。然后呢随机卖商品的人得到一元钱加入自己的总量。（实际上是不科学的，因为现实社会中我们会购买更好的东西或者花更多的钱消费高档次的生活，这里只做模拟，不考虑任何其他消费）</p>
+<pre><code>// 动画逻辑
+private void run(){
+    while(true) {
+        // TODO: 编写自己的动画逻辑
+        //排序输出
+        Arrays.sort(money);
+        //重绘着色
+        frame.render(money);
+        //延迟
+        AlgoVisHelper.pause(DELAY);
+        for(int k = 0; k &lt; 40; k++) {
+            for(int i = 0; i &lt; money.length; i++) {
+                int j = (int)(Math.random()*money.length);
+                money[i]-=1;
+                money[j]+=1;
+            }
+        }
+    }
+}</code></pre><p>其余本函数中不需要再做任何改变。因为得到了数据然后我们去AlgoFrame中去实现画面的显示操作。<br>首先我们也是设置数据，要求呢和之前数据保存一致。</p>
+<pre><code> // TODO: 设置自己的数据
+private int[] money;
+public void render(int[] money){
+    this.money = money;
+    repaint();
+}</code></pre><p>然后就直接跳到具体绘制，因为绘制图形需要着色或者说调用系统函数，所以我们把数据放到绘制中，结合双缓存和抗锯齿实现更加精美的效果。</p>
+<pre><code>//设置宽度
+int w = canvasWidth/money.length;
+for(int i = 0;i &lt; money.length; i++) {
+    //当前为证显示红色，为负显示绿色
+    //g2d为绘制的图形
+    if(money[i] &gt; 0) {
+        AlgoVisHelper.setColor(g2d, AlgoVisHelper.Red);
+        //设置矩形大小
+        AlgoVisHelper.fillRectangle(g2d, i*w+1, canvasHeight/2-money[i], w-1, money[i]);
+    }else {
+        AlgoVisHelper.setColor(g2d, AlgoVisHelper.Green);
+        AlgoVisHelper.fillRectangle(g2d, i*w+1, canvasHeight/2, w-1, -money[i]);
+    }
+}</code></pre><p>我们可以看到，先设置颜色，告诉系统我要什么什么颜色，然后再设置矩形大小，数据依次为：绘制的图形，宽度，左，右像素，宽度，高度。</p>
+<p>鉴于此我们就把这个程序弄完了，现在点击运行，就能得到结果。</p>
+<p>刚开始显示：</p>
+<p><img src="/2019/08/14/算法之分钱问题小Demo/1.PNG" alt></p>
+<p>持续一段时间出现了负值：</p>
+<p><img src="/2019/08/14/算法之分钱问题小Demo/2.PNG" alt></p>
+<p>又一段时间后，出现了函数式的曲线样式：</p>
+<p><img src="/2019/08/14/算法之分钱问题小Demo/3.PNG" alt></p>
+<p>由此可以我们分析一下，这应该挺符合资本社会中贫富差距巨大化的原因吧。提醒一点的是，我们看到的最大正负值不一定是同一个人，因为下一次它可能会给别人钱，然后有的人又成为了新的首富或者最穷。类比一下有可能大老板破产了呢，资金也能为负数。当然负数值意味着花呗？借呗？现在生活中的大量借记卡吧。</p>
+<p>声明：本文章是基于liuyubo老师的代码实例所写。只用于学习。别无其他。</p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>感谢您的鼓励.如果喜欢可以送我一包辣条。</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="张文祥 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/alipay.jpg" alt="张文祥 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>张文祥</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://xiangzi1019.github.io/2019/08/14/算法之分钱问题小Demo/" title="算法之分钱问题小Demo">http://xiangzi1019.github.io/2019/08/14/算法之分钱问题小Demo/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/算法/" rel="tag"># 算法</a>
+          
+            <a href="/tags/小Demo/" rel="tag"># 小Demo</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/13/Computer-Networking-s-简述Web和HTTP/" rel="next" title="Computer_Networking's_简述Web和HTTP">
+                <i class="fa fa-chevron-left"></i> Computer_Networking's_简述Web和HTTP
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/14/算法之蒙特卡洛Demo求PI值/" rel="prev" title="算法之蒙特卡洛Demo求PI值">
+                算法之蒙特卡洛Demo求PI值 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+
+
+<!--音乐连接-->
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1314334768&auto=1&height=66"></iframe>
+
+
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/author.jpg" alt="张文祥">
+  
+  <p class="site-author-name" itemprop="name">张文祥</p>
+  <div class="site-description motion-element" itemprop="description">talk is cheap,show me the code</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/xiangzi1019" title="GitHub &rarr; https://github.com/xiangzi1019" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:2624619631@qq.com" title="E-Mail &rarr; mailto:2624619631@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+  <div class="cc-license motion-element" itemprop="license">
+  
+  
+    
+  
+  
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张文祥</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+    
+    
+  
+  <script color="0,0,0" opacity="0.5" zindex="-1" count="150" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;"></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+
+</body>
+</html>
