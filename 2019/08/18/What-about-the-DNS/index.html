@@ -102,10 +102,14 @@
 <meta property="og:site_name" content="小骚鸡de博客">
 <meta property="og:description" content="你可曾想过信息传输的时候网络是如何确定目标主机的？那么来类比一下我们人类，当你想要联系某个人的时候，你是如何做的呢？也许你会打开手机联系人，搜索某人手机号，然后拨通，亦或者是点击WeChat找到某人微信号语音通话。凡此种种，类比于计算机上，我们来看看是如何做到的。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-19T13:30:33.186Z">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/18/What-about-the-DNS/1.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/18/What-about-the-DNS/2.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/08/18/What-about-the-DNS/3.PNG">
+<meta property="og:updated_time" content="2019-09-09T14:35:39.998Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="What_about_the_DNS">
 <meta name="twitter:description" content="你可曾想过信息传输的时候网络是如何确定目标主机的？那么来类比一下我们人类，当你想要联系某个人的时候，你是如何做的呢？也许你会打开手机联系人，搜索某人手机号，然后拨通，亦或者是点击WeChat找到某人微信号语音通话。凡此种种，类比于计算机上，我们来看看是如何做到的。">
+<meta name="twitter:image" content="http://xiangzi1019.github.io/2019/08/18/What-about-the-DNS/1.PNG">
 
 
 
@@ -297,7 +301,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">25</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">26</span></a>
 
   </li>
 
@@ -403,7 +407,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-08-19 21:30:33" itemprop="dateModified" datetime="2019-08-19T21:30:33+08:00">2019-08-19</time>
+                <time title="修改时间：2019-09-09 22:35:39" itemprop="dateModified" datetime="2019-09-09T22:35:39+08:00">2019-09-09</time>
               </span>
             
           
@@ -471,6 +475,35 @@
 <p>其实网络上的主机和我们一样，也有很多的标识，例如你点击我的博客：xiangzi1019.github.io,这个名字呢就是一台服务器终端，当然你也赶紧很容易记忆，或者说众所周知的<a href="http://www.baidu.com，也是如此。当然还有一些类似于cn表示中国，edu表示和教育有关，其实都是我们给网络主机起的别名。当然主机也可以是IP地址表示，但是相比较难记一些。因为一个IP地址由四个字节组成，例如：127.1.255.255，其实IP地址具有层次结构，我们再辨识的时候就是从左至右，就会越来越精确主机对于的位置。就好像你的快递总是写着说明省到什么市/区/街道等等。关于IP地址，会在另外章节专门介绍。" target="_blank" rel="noopener">www.baidu.com，也是如此。当然还有一些类似于cn表示中国，edu表示和教育有关，其实都是我们给网络主机起的别名。当然主机也可以是IP地址表示，但是相比较难记一些。因为一个IP地址由四个字节组成，例如：127.1.255.255，其实IP地址具有层次结构，我们再辨识的时候就是从左至右，就会越来越精确主机对于的位置。就好像你的快递总是写着说明省到什么市/区/街道等等。关于IP地址，会在另外章节专门介绍。</a></p>
 <p>我们根据刚才的介绍知道，辨识主机有两种方式，主机名或者IP地址。然而我们的路由器更喜欢IP地址。就好像快递员更喜欢精确的位置。于是为了这种，出现了我们要介绍的主角：DNS域名系统（Domain Name System），它实现了分布式数据库，而且使得主机能够查询分布式数据库的应用层协议。且DNS协议运行在UDP上，使用53号端口。[注：分布式数据库类似于Redis]</p>
 <p>DNS是应用层的协议，因为使用的是客户-服务器模式运行在通信的端系统之间。而且在用i性能的端系统之间通过下面的端到端运输协议来传输DNS报文。实际上就是为因特网上的用户应用程序以及其他软件提供一种核心功能，把主机名转换成IP地址。更为简单的理解就好比是我们快递的编号。根据编号会出现我们的信息，包括了寄的地址还有收获地址。DNS的作用就好比是快递专业站的扫描器。</p>
+<p>DNS通常是由其他应用层协议使用的，包括之间的HTTP以及SMTP，用户呢将提供的主机名解析成IP地址。由此可见DNS的作用就是获得Web服务器的IP地址。方法大致类似于：</p>
+<ol>
+<li>同一台主机上运行着DNS应用客户端。</li>
+<li>浏览器从URL中抽取主机名，并将这台主机名传给DNS应用的客户端</li>
+<li>DNS客户向DNS服务器发送一个包含主机名的请求</li>
+<li>DNS客户最终收到一份回答报文，且包含了主机名的IP地址。</li>
+<li>一旦浏览器收到了来自DNS的该IP地址，他就能够向位于该IP地址的80端口思维HTTP服务器进程发送一个TCP连接。</li>
+</ol>
+<p>其实除了进行主机名到IP地址的转换，DNS还提供一些重要的服务例如：</p>
+<ul>
+<li>主机别名： 就好比叫我的大名不太好记，大家习惯性的叫我“祥子”，于是乎祥子成了我的别名。就好比你登陆一个网站“<a href="http://binhai.nankai.edu.cn/”还有一个就是“222.30.63.15”显然都是一个网站，不过哪个更好记忆呢，这个答案不言而喻啦。" target="_blank" rel="noopener">http://binhai.nankai.edu.cn/”还有一个就是“222.30.63.15”显然都是一个网站，不过哪个更好记忆呢，这个答案不言而喻啦。</a></li>
+<li>邮件服务器别名： 主要就是人们希望电子邮件地址也像人名一样好记忆而涉及出来。</li>
+<li>负载分配： DNS也用在冗余的服务器之间进行负载分配。这个呢就好比AVL伸展树的实现算法。好比你常用的输入法输入文字，然后经常用的字就会出现在靠前的位置。同理呢，客户通常向IP地址排在前面的服务器发送HTTP请求报文，依次达到冗余的Web服务器之间循环分配负载。</li>
+</ul>
+<p><img src="/2019/08/18/What-about-the-DNS/1.PNG" alt></p>
+<p>实际上DNS就是一个提供简单、直接的转换服务的黑盒子。客户直接把所有的查询发往单一的DNS服务器，同时该DNS服务器直接堆所有查询客户做出响应。但是因为现代因特网的主机庞大，因此不适合现代因特网。存在的问题也比较明显：</p>
+<ul>
+<li>单点故障：如果一个DNS故障，整个因特网都将瘫痪。</li>
+<li>通信容量大：单个DNS要处理所有的请求查询。</li>
+<li>远距离的集中式数据库：因为距离太远时延过大。</li>
+<li>维护麻烦</li>
+</ul>
+<p>因此我们就有了上图的分布式、层次数据库，它是由<em>根DNS服务器</em>引导<em>顶级域服务器</em>例如常见的com、org、cn、edu。再到<em>权威DNS服务器</em>。</p>
+<p>此外还有一种重要的DNS服务器称为<em>本地DNS服务器</em>。</p>
+<p><img src="/2019/08/18/What-about-the-DNS/2.PNG" alt></p>
+<p>主机的本地DNS服务器通常临近本主机。但是我们一共产生了8份DNS报文，其中4份查询4份回答。不过我们还是要了解DNS缓存的方法，因为这种方法减少了流量的使用。</p>
+<p><img src="/2019/08/18/What-about-the-DNS/3.PNG" alt></p>
+<p>DNS缓存：当某个DNS服务器再即受到一个DNS回答时，他能将映射缓存到本地存储器中，并且可以缓存包含该回答的任何问题。你好像你来去大学第一天，你家长肯定会问老师以及宿管或者其他人你将会住在哪里，但是知道后，下次再来可以直接找到你的位置不是吗。</p>
+<p>鉴于此呢我们就大致了解DNS的内容。学习就是多多益善，多而广，广而精。</p>
 
       
     </div>
@@ -653,7 +686,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
