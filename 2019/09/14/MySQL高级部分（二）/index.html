@@ -94,18 +94,18 @@
   };
 </script>
 
-  <meta name="description" content="在根据HTTP超文本传输协议中的Cookie机制下引入Session，进一步了解客户端与服务器的对话请求和信息交互以及页面信息的保持连接机制。相关的Cookie知识已经在“浅谈Cookie”中介绍，本次只记录学习中的Session内容。">
-<meta name="keywords" content="JavaEE,Session机制">
+  <meta name="description" content="鉴于数据库（一）的知识点，我们再补充一些关于数据库结构优化以及索引支持的相关知识点。">
+<meta name="keywords" content="MySQL,DataBase">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Servlet-And-JSP学习（二）">
-<meta property="og:url" content="http://xiangzi1019.github.io/2019/08/03/Servlet-And-JSP学习（二）/index.html">
+<meta property="og:title" content="MySQL高级部分（二）">
+<meta property="og:url" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（二）/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
-<meta property="og:description" content="在根据HTTP超文本传输协议中的Cookie机制下引入Session，进一步了解客户端与服务器的对话请求和信息交互以及页面信息的保持连接机制。相关的Cookie知识已经在“浅谈Cookie”中介绍，本次只记录学习中的Session内容。">
+<meta property="og:description" content="鉴于数据库（一）的知识点，我们再补充一些关于数据库结构优化以及索引支持的相关知识点。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-03T14:12:33.054Z">
+<meta property="og:updated_time" content="2019-09-14T11:54:46.922Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Servlet-And-JSP学习（二）">
-<meta name="twitter:description" content="在根据HTTP超文本传输协议中的Cookie机制下引入Session，进一步了解客户端与服务器的对话请求和信息交互以及页面信息的保持连接机制。相关的Cookie知识已经在“浅谈Cookie”中介绍，本次只记录学习中的Session内容。">
+<meta name="twitter:title" content="MySQL高级部分（二）">
+<meta name="twitter:description" content="鉴于数据库（一）的知识点，我们再补充一些关于数据库结构优化以及索引支持的相关知识点。">
 
 
 
@@ -113,7 +113,7 @@
 
   
   
-  <link rel="canonical" href="http://xiangzi1019.github.io/2019/08/03/Servlet-And-JSP学习（二）/">
+  <link rel="canonical" href="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（二）/">
 
 
 
@@ -124,7 +124,7 @@
 </script>
 
   
-  <title>Servlet-And-JSP学习（二） | 小骚鸡de博客</title>
+  <title>MySQL高级部分（二） | 小骚鸡de博客</title>
   
 
 
@@ -345,7 +345,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/08/03/Servlet-And-JSP学习（二）/">
+    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（二）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="张文祥">
@@ -362,7 +362,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Servlet-And-JSP学习（二）
+          <h1 class="post-title" itemprop="name headline">MySQL高级部分（二）
 
               
             
@@ -388,7 +388,7 @@
                 
               
 
-              <time title="创建时间：2019-08-03 21:34:52 / 修改时间：22:12:33" itemprop="dateCreated datePublished" datetime="2019-08-03T21:34:52+08:00">2019-08-03</time>
+              <time title="创建时间：2019-09-14 18:39:24 / 修改时间：19:54:46" itemprop="dateCreated datePublished" datetime="2019-09-14T18:39:24+08:00">2019-09-14</time>
             </span>
           
 
@@ -407,8 +407,8 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JavaWeb/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
-                  #}<span itemprop="name">JavaWeb</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/DataBase/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">DataBase</span></a></span>
 
                 
                 
@@ -456,77 +456,96 @@
       
 
       
-        <p>在根据HTTP超文本传输协议中的Cookie机制下引入Session，进一步了解客户端与服务器的对话请求和信息交互以及页面信息的保持连接机制。相关的Cookie知识已经在“浅谈Cookie”中介绍，本次只记录学习中的Session内容。</p>
+        <p>鉴于数据库（一）的知识点，我们再补充一些关于数据库结构优化以及索引支持的相关知识点。</p>
 <a id="more"></a>
-<p>首先，什么时候要用到session呢？当我们在浏览网站时候的信息开始和关闭中其实就建立了session机制。异或是我们在购物时候输入了个人信息，浏览相关的页面并且留下了信息，再到退出时刻，一致在进行着session连接。</p>
-<p>##session机制：</p>
-<p>客户端第一次请求服务端时，（jsessionid-sessionid）服务端会产生一个session对象（用于保存该客户的信息）；<br>并且每个session对象 都会有一个唯一的 sessionId( 用于区分其他session);<br>服务端由会 产生一个cookie，并且 该cookie的name=JSESSIONID ,value=服务端sessionId的值；<br>然后 服务端会在 响应客户端的同时 将该cookie发送给客户端，至此 客户端就有了 一个cookie(JSESSIONID)；<br>因此，客户端的cookie就可以和服务端的session一一对应（JSESSIONID - sessionID）</p>
-<p>客户端第二/n次请求服务端时:服务端会先用客户端cookie种的JSESSIONID  去服务端的session中匹配sessionid,如果匹配成功（cookie  jsessionid和sesion sessionid），说明此用户 不是第一次访问,无需登录。</p>
-<p>就好比说：我们运动场上的运动员在进场时候，裁判会判断他们是否是运动员并且如果是的话就分给相应的比赛号码，当一段时间后运动员可能出去了但是比赛号码仍在身上，再一次进场的时候，只要号码匹配正确，就证明了是运动员，允许进入并且可以使用之前比赛获得的成绩。当这一届比赛结束后，号码被收回，运动员也失去了相应的成绩信息，然后可能在下一届比赛的时候再进行一次新的号码分发，并且可能上次成绩没有保留下来。</p>
-<p>##深入理解函数和用法</p>
-<p>###针对Cookie<br>1.response :响应对象</p>
-<p>提供的方法：</p>
-<p>void addCookie( Cookie cookie ); 服务端向客户端增加cookie对象</p>
-<p>void sendRedirect(String location ) throws IOException; 页面跳转的一种方式（重定向）</p>
-<p>void setContetType(String type):设置服务端响应的编码（设置服务端的contentType类型）</p>
-<p>2.session(服务端)</p>
-<p>Cookie（客户端，不是内置对象）:Cookie是由 服务端生成的 ，再发送给客户端保存。</p>
-<p>相当于本地缓存的作用： 客户端(hello.mp4,zs/abc)-&gt;服务端(hello.mp4；zs/abc)</p>
-<p>作用：提高访问服务端的效率，但是安全性较差。</p>
-<p>服务端准备Cookie：</p>
-<p>response.addCookie(Cookie cookie)页面跳转（转发，重定向）</p>
-<p>客户端获取cookie:  request.getCookies();</p>
-<p>a.服务端增加cookie :response对象；客户端获取对象：request对象</p>
-<p>b.不能直接获取某一个单独对象，只能一次性将 全部的cookie拿到</p>
-<p>通过F12可以发现除了自己设置的Cookie对象外，还有一个name为 JSESSIONID的cookie</p>
-<p>建议 cookie只保存  英文数字，否则需要进行编码、解码</p>
-<p>###针对Session<br>session:<br>a. session存储在服务端</p>
-<p>b. session是在 同一个用户（客户）请求时 共享</p>
-<p>c. 实现机制：第一次客户请求时 产生一个sessionid 并复制给 cookie的jsessionid 然后发给客户端。最终 通过session的sessionid-cookie的jsessionid</p>
-<p>session方法：</p>
-<p>String getId() :获取sessionId  </p>
-<p>boolean isNew() :判断是否是 新用户（第一次访问）</p>
-<p>void invalidate():使session失效  （退出登录、注销）</p>
-<p>void setAttribute()</p>
-<p>Object getAttribute();</p>
-<p>void setMaxInactiveInterval(秒) ：设置最大有效 非活动时间 </p>
-<p>int getMaxInactiveInterval():获取最大有效 非活动时间 </p>
-<p>客户端在第一次请求服务端时，如果服务端发现 此请求没有 JSESSIONID,则会创建一个 name=JSESIONID的cookie  并返回给客户端</p>
-<p>Cookie：</p>
-<p>a.不是内对对象，要使用必须new</p>
-<p>b.但是，服务端会 自动生成一个(服务端自动new一个cookie) name=JSESIONID的cookie  并返回给客户端</p>
-<p>###cookie和session的区别：</p>
-<pre><code>|--------    |session    |cookie
+<p>##数据库结构优化介绍<br>首先要说为什么要结构优化呢？</p>
+<pre><code>1.减少数据的冗余。
+2.尽量避免数据库维护中出现的更新，插入和删除操作。
+    插入：如果表中的某个实体随另一个实体的存在而存在
+        （例如学生信息，如果你只给学生的姓名而没有学号就不能添加进学生管理系统）
+    更新：如果更改表中的某个实体的单独属性时，需要对多行同时更新。
+        （类似于选修课，如果课程时间变动，那么选课的同学都要变动）
+    删除：如果删除一个实体，则会导致其他实体的消失
+        （选课后课程被取消）
+3.节约数据库存储空间。
+4.提高查询效率。</code></pre><p><strong>数据库结构设计</strong>（步骤）</p>
+<pre><code>1.需求分析：全面了解产品设计的存储需求，数据库处理需求，安全性以及完整性的需求。
+2.逻辑设计：设计数据库的逻辑存储结构，数据实体间的逻辑关系，解决数据冗余问题和维护异常。
+3.物理设计：根据所适用的数据库特点进行表结构设计。
+4.维护优化：根据实际情况对索引、存储结构进行优化。</code></pre><p>数据库设计范式（遵循三范式）</p>
+<pre><code>* 概念：设计数据库时，需要遵循的一些规范。要遵循后边的范式要求，必须先遵循前边的所有范式要求
 
-|保存的位置    |服务端        |客户端
+    设计关系数据库时，遵从不同的规范要求，设计出合理的关系型数据库，这些不同的规范要求被称为不同的范式，各种范式呈递次规范，越高的范式数据库冗余越小。
+    目前关系数据库有六种范式：第一范式（1NF）、第二范式（2NF）、第三范式（3NF）、巴斯-科德范式（BCNF）、第四范式(4NF）和第五范式（5NF，又称完美范式）。
 
-|安全性        |较安全        |较不安全
+* 分类：
+    1. 第一范式（1NF）：每一列都是不可分割的原子数据项，单一属性的列都是由基本数据类型构成，设计出来的表都是二维表
+    2. 第二范式（2NF）：在1NF的基础上，非码属性必须完全依赖于码（在1NF基础上消除非主属性对主码的部分函数依赖）
+        * 几个概念：
+            1. 函数依赖：A--&gt;B,如果通过A属性(属性组)的值，可以确定唯一B属性的值。则称B依赖于A
+                例如：学号--&gt;姓名。  （学号，课程名称） --&gt; 分数
+            2. 完全函数依赖：A--&gt;B， 如果A是一个属性组，则B属性值得确定需要依赖于A属性组中所有的属性值。
+                例如：（学号，课程名称） --&gt; 分数
+            3. 部分函数依赖：A--&gt;B， 如果A是一个属性组，则B属性值得确定只需要依赖于A属性组中某一些值即可。
+                例如：（学号，课程名称） -- &gt; 姓名
+            4. 传递函数依赖：A--&gt;B, B -- &gt;C . 如果通过A属性(属性组)的值，可以确定唯一B属性的值，在通过B属性（属性组）的值可以确定唯一C属性的值，则称 C 传递函数依赖于A
+                例如：学号--&gt;系名，系名--&gt;系主任
+            5. 码：如果在一张表中，一个属性或属性组，被其他所有属性所完全依赖，则称这个属性(属性组)为该表的码
+                例如：该表中码为：（学号，课程名称）
+                * 主属性：码属性组中的所有属性
+                * 非主属性：除过码属性组的属性
 
-|保存的内容    |Object        |String        </code></pre><p>##JSP9大内置对象</p>
-<pre><code>pageContext  JSP页面容器
-request   请求对象
-session   会话对象
-appliation 全局对象
-response  响应对象
-config  配置对象（服务器配置信息）
-out    输出对象
-page   当前JSP页面对象（相当于java中的this）
-exception 异常对象
+    3. 第三范式（3NF）：在2NF基础上，任何非主属性不依赖于其它非主属性（在2NF基础上消除了非主属性对主键的传递依赖）</code></pre><p><strong>需求分析和逻辑设计</strong></p>
+<p>例如现在要按照以下要求设计一个电子商务网站的数据库结构：</p>
+<pre><code>1.本网站只销售图书类商品
+2.需要具有以下的功能：
+    用户登录----商品展示----供应商管理
+    用户管理----商品管理----在线销售</code></pre><p>用户登录功能：</p>
+<pre><code>1.用户必须注册并登录系统才能进行网上交易。（因此需要一个不同的账号作为主键）
+2.同一时间一个用户只能登录一个地方。
+3.用户信息:{用户名，密码，手机号，姓名，注册日期，在线状态，出生日期等}</code></pre><p>首先呢设计商品展示以及商品管理功能</p>
+<pre><code>商品信息：{商品名称，分类名称，出版社名称，图书价格，图书描述，作者}
 
-四种范围对象（小-&gt;大）
-pageContext  JSP页面容器(page对象）    当前页面有效
-request        请求对象                 同一次请求有效
-session       会话对象                同一次会话有效
-appliation      全局对象                全局有效（整个项目有效）</code></pre><p><strong>以上4个对象共有的方法：</strong></p>
-<pre><code>Object getAttribute(String name):根据属性名，或者属性值
-void setAttribute(String name,Object obj) :设置属性值（新增，修改）
-setAttribute(&quot;a&quot;,&quot;b&quot;) ;//如果a对象之前不存在，则新建一个a对象 ；如果a之前已经存在，则将a的值改为b
-void removeAttribute(String name)：根据属性名，删除对象
+由此可见，把所有信息都冗杂在一条数据库中会造成很多不必要的写入写出，也许一本书有很多的描述我仅仅想展示一个，这样我们就要设计新的数据库表格。
 
-a.pageContext 当前页面有效 (页面跳转后无效)
-b.request   同一次请求有效；其他请求无效 （请求转发后有效；重定向后无效）
-c.session  同一次会话有效  （无论怎么跳转，都有效；关闭/切换浏览器后无效 ； 从 登陆-&gt;退出 之间 全部有效）
-d.application    全局变量；整个项目运行期间 都有效 (切换浏览器 仍然有效)；关闭服务、其他项目 无效</code></pre>
+商品信息：{商品名称，出版社名称，图书价格，图书描述，作者}
+分类信息：{分类名称，分类描述}
+商品分类（对应关系表）：{商品名称，分类名称}</code></pre><p>其次我们还要设计在线销售功能：</p>
+<pre><code>在线销售：{订单编号，下点用户名，下单日期，订单金额，订单商品分类，订单商品名，订单商品单价，订单商品数量，支付金额，物流单号}
+
+可以看到
+    1.只有一个业务主键，符合第二范式
+    2.订单编号，订单商品单价，订单商品数量 存在着传递依赖关系，不符合第三范式，
+    3.数据冗余（订单商品信息和商品信息表中数据）
+
+所以要更改数据表：
+订单表：{订单编号，下点用户名，下单日期，支付金额，物流单号}
+订单商品关联表:{订单编号，订单商品分类，订单商品名，订单商品数量}</code></pre><p>供应商管理功能：</p>
+<pre><code>信息：{出版社名称，地址，电话，联系人，银行账户}</code></pre><p>同时还要编写符合规范的SQL语句，但是完全符合范式化的设计有时候并不能得到良好的SQL查询性能，因此我们还需要反范式化设计。</p>
+<p>例如下单用户就是商品的收货人，那么我们在发货之前一定要查询出每个订单的下单人信息，而这些信息全部记录在用户信息表中，显然我们要执行的读操作过多，从而减小了一定的效率。那么我们就来看看什么是反范式化设计：</p>
+<p>反范式化是针对范式化而言的，就是为了性能和读取效率的考虑而适当对数据库设计范式要求进行违反，而允许存在少量数据冗余，换句话说，就是牺牲空间换取时间。</p>
+<p>因此我们来探讨以下范式的优缺点：</p>
+<pre><code>优点：
+    1.可以尽量的减少数据的冗余（根本优点）
+    2.更新操作比反范式化更快。
+    3.表通常比反范式化更小。
+缺点：
+    1.对查询需要对多个表进行关联（这样简化了写但是读取更耗时，因为大多数都是读取操作）
+    2.这样更难进行索引优化</code></pre><p>那么反范式化的优缺点又是什么呢？</p>
+<pre><code>优点：
+    1.减少表的关联。
+    2.更好的进行索引优化。（其实就是优缺点互换）
+缺点：
+    1.数据冗余以及数据维护异常比较困难。
+    2.对数据修改需要更多的成本。</code></pre><p><strong>物理设计</strong></p>
+<p>根据所选择的关系型数据库的特点，对逻辑模型进行存储结构设计。</p>
+<pre><code>1.定义数据库、表、以及字段的命名规范。
+（因为有可能是多人协作完成，为了一致性）
+2.选择合适的存储引擎。
+3.为表中的字段选择合适的数据模型。
+4.建立数据库结构。
+当然了，合适额的数据库模型只当一个列可以选择多种数据库结构类型时候，应该有限考虑“数字”类型，其次是“日期”“二进制”，最后是“字符型”
+对于同级别的数据类型，应该有限占用用剑小的数据类型。</code></pre>
       
     </div>
 
@@ -597,7 +616,7 @@ d.application    全局变量；整个项目运行期间 都有效 (切换浏览
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="http://xiangzi1019.github.io/2019/08/03/Servlet-And-JSP学习（二）/" title="Servlet-And-JSP学习（二）">http://xiangzi1019.github.io/2019/08/03/Servlet-And-JSP学习（二）/</a>
+    <a href="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（二）/" title="MySQL高级部分（二）">http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（二）/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -613,9 +632,9 @@ d.application    全局变量；整个项目运行期间 都有效 (切换浏览
         
         <div class="post-tags">
           
-            <a href="/tags/JavaEE/" rel="tag"># JavaEE</a>
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
           
-            <a href="/tags/Session机制/" rel="tag"># Session机制</a>
+            <a href="/tags/DataBase/" rel="tag"># DataBase</a>
           
         </div>
       
@@ -628,8 +647,8 @@ d.application    全局变量；整个项目运行期间 都有效 (切换浏览
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/31/浅谈Cookie/" rel="next" title="浅谈Cookie">
-                <i class="fa fa-chevron-left"></i> 浅谈Cookie
+              <a href="/2019/09/14/MySQL高级部分（一）/" rel="next" title="MySQL高级部分（一）">
+                <i class="fa fa-chevron-left"></i> MySQL高级部分（一）
               </a>
             
           </div>
@@ -637,10 +656,6 @@ d.application    全局变量；整个项目运行期间 都有效 (切换浏览
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/08/05/MVC设计模式看Web编程/" rel="prev" title="MVC设计模式看Web编程">
-                MVC设计模式看Web编程 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="双十一的时候，交易量超千亿，那么这么多数据是怎么处理的呢？MySQL作为主流数据库，不仅要会简单的应用还要深入了解一些深层次的数据相关的知识，例如高可用高并发知识点。鉴于此我们就来看看其深层次的东西。">
+<meta name="keywords" content="MySQL,DataBase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL高级部分（一）">
+<meta property="og:url" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/index.html">
+<meta property="og:site_name" content="小骚鸡de博客">
+<meta property="og:description" content="双十一的时候，交易量超千亿，那么这么多数据是怎么处理的呢？MySQL作为主流数据库，不仅要会简单的应用还要深入了解一些深层次的数据相关的知识，例如高可用高并发知识点。鉴于此我们就来看看其深层次的东西。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/3.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/2.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/4.PNG">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/1.jpg">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/5.PNG">
+<meta property="og:updated_time" content="2019-09-14T10:54:24.781Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL高级部分（一）">
+<meta name="twitter:description" content="双十一的时候，交易量超千亿，那么这么多数据是怎么处理的呢？MySQL作为主流数据库，不仅要会简单的应用还要深入了解一些深层次的数据相关的知识，例如高可用高并发知识点。鉴于此我们就来看看其深层次的东西。">
+<meta name="twitter:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/3.PNG">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>MySQL高级部分（一） | 小骚鸡de博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小骚鸡de博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录点滴学习</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">7</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">28</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="张文祥">
+      <meta itemprop="description" content="talk is cheap,show me the code">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小骚鸡de博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQL高级部分（一）
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-14 18:34:45 / 修改时间：18:54:24" itemprop="dateCreated datePublished" datetime="2019-09-14T18:34:45+08:00">2019-09-14</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/DataBase/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">DataBase</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+                 阅读次数： 
+                <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+              </span>
+            </span>
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>双十一的时候，交易量超千亿，那么这么多数据是怎么处理的呢？MySQL作为主流数据库，不仅要会简单的应用还要深入了解一些深层次的数据相关的知识，例如高可用高并发知识点。鉴于此我们就来看看其深层次的东西。</p>
+<a id="more"></a>
+<p>#MySQL提高部分</p>
+<p>##影响数据库性能的因素<br><strong>超高的QPS和TPS</strong></p>
+<ul>
+<li>QPS：每秒钟处理的查询量</li>
+<li>TPS：每秒钟处理的事务数</li>
+</ul>
+<p><strong>大量的并发和超高的CPU占用率</strong></p>
+<pre><code>风险：
+    大量的并发：    
+        数据库使用连接方式被占满。
+    超高的CPU占用率：
+        因CPU资源耗尽而出现宕机现象。</code></pre><p><strong>磁盘IO</strong></p>
+<pre><code>风险：
+    磁盘IO性能突然下降
+    其他大量消耗磁盘性能计划任务的同时实施。</code></pre><p><strong>网卡和流量</strong></p>
+<pre><code>风险：
+    网卡IO被占满
+如何避免：
+    1.减少服务器的数量
+    2.进行分波缓存
+    3.避免使用 select*操作
+    4.分离业务网络和服务器网络</code></pre><p>还有什么会影响数据库的性能呢？</p>
+<p><strong>打标和大事务</strong></p>
+<pre><code>大表：记录数据巨大，超千万行；或者表数据文件巨大，超10G内容。当然这都是大致划分。
+影响：
+    查询慢，很难在一定时间内过滤所有数据
+    对DDL操作会有延迟
+    修改表结构需要长时间锁表，因此造成主从延迟。（对于锁和主从延迟接下来会细说，这里不做说明）
+如何处理大表：
+    1.分库分表，把一张数据库表分成多个小表。但是如果分的过于过也会造成外键查找的时延。
+    （存在的难点：分表主键的选择，分表后跨分区数据的查询和统计）
+    2.大表的历史数据归档问题
+    （存在的难点:归档时间点的选择，如何进行归档操作）
+大事务：
+    1.原子性：整个书屋中所有操作要么全部提交要么失败回滚。
+    （例如银行转钱，三个步骤A转钱B扣钱C接收D加钱，如果在B之后错误，那么对方没有收到钱而且扣钱一i经成功，所以整个ABCD称为原子性）
+    2.一致性:如同上面例子中转账金额总体不变。
+    3.隔离性：转账后钱未到达时候，收钱人不可见。
+    4.持久性：一旦事务提交，那么所做的修改就永久保存，非物理原因不破坏。
+那么什么时大事务呢：
+    运行时间较长，操作数据较多的事务。
+风险呢？
+    可能会锁定太多的数据，造成大量的组的和锁超时。
+    回滚时间长。
+    执行时间长，容易造成主从延迟。
+如何避免这些问题呢？
+    避免一次性处理太多数据。
+    移出不必要的在事务中的select操作。</code></pre><p>###影响性能的几个方面<br>    1.硬件<br>    2.操作系统<br>    3.数据库存储引擎的选择<br>    4.数据库参数的配置<br>    5.数据库结构设计个SQL语句</p>
+<p>CPU资源和可用内存</p>
+<pre><code>对于CPU密集型应用，运用更好的CPU而不是更多的CPU
+且当前MySQL不支持多CPU对同一SQL并发处理</code></pre><p>首先我们要了解MySQL是单线程应用，所以我们在选择时候就要去考虑系统的并发量是如何的。</p>
+<p>内存呢，内存的大小直接引用数据库的性能，然而并不是内存越多越好的，因为内存对性能的影响是有限的，并不是无限增长的。因为当你的内存足够大的时候，数据的容量需求满足了，影响就自然小了。</p>
+<p>我们还要了解，数据库可以在缓存池中将多次写入合并成一次，例如转发数据的增长，当转发数量达到一定数目，就会在缓存池中等待，等到数据足够大时候，一次性写入，这样就缓解了数据库的写入操作从而提高性能。</p>
+<p><strong>接下来介绍RAID来增加传统机器硬盘的性能</strong>：</p>
+<p>RAID 0最简单的实现方式就是把N块同样的硬盘用硬件的形式通过智能磁盘控制器或用操作系统中的磁盘驱动程序以软件的方式串联在一起创建一个大的卷集。在使用中电脑数据依次写入到各块硬盘中，它的最大优点就是可以整倍的提高硬盘的容量。如使用了三块80GB的硬盘组建成RAID 0模式，那么磁盘容量就会是240GB。其速度方面，各单独一块硬盘的速度完全相同。最大的缺点在于任何一块硬盘出现故障，整个系统将会受到破坏，可靠性仅为单独一块硬盘的1/N。</p>
+<p><img src="/2019/09/14/MySQL高级部分（一）/3.PNG" alt></p>
+<p>RAID 1称为磁盘镜像，原理是把一个磁盘的数据镜像到另一个磁盘上，也就是说数据在写入一块磁盘的同时，会在另一块闲置的磁盘上生成镜像文件，在不影响性能情况下最大限度的保证系统的可靠性和可修复性上，只要系统中任何一对镜像盘中至少有一块磁盘可以使用，甚至可以在一半数量的硬盘出现问题时系统都可以正常运行，当一块硬盘失效时，系统会忽略该硬盘，转而使用剩余的镜像盘读写数据，具备很好的磁盘冗余能力。虽然这样对数据来讲绝对安全，但是成本也会明显增加，磁盘利用率为50%，以四块80GB容量的硬盘来讲，可利用的磁盘空间仅为160GB。另外，出现硬盘故障的RAID系统不再可靠，应当及时的更换损坏的硬盘，否则剩余的镜像盘也出现问题，那么整个系统就会崩溃。更换新盘后原有数据会需要很长时间同步镜像，外界对数据的访问不会受到影响，只是这时整个系统的性能有所下降。因此，RAID 1多用在保存关键性的重要数据的场合。</p>
+<p><img src="/2019/09/14/MySQL高级部分（一）/2.PNG" alt></p>
+<p>RAID5（分布式奇偶校验的独立磁盘结构）。从它的示意图上可以看到，它的奇偶校验码存在于所有磁盘上，其中的p0代表第0带区的奇偶校验值，其它的意思也相同。RAID5的读出效率很高，写入效率一般，块式的集体访问效率不错。因为奇偶校验码在不同的磁盘上，所以提高了可靠性。但是它对数据传输的并行性解决不好，而且控制器的设计也相当困难。RAID 3 与RAID 5相比，重要的区别在于RAID 3每进行一次数据传输，需涉及到所有的阵列盘。而对于RAID 5来说，大部分数据传输只对一块磁盘操作，可进行并行操作。在RAID 5中有“写损失”，即每一次写操作，将产生四个实际的读/写操作，其中两次读旧的数据及奇偶信息，两次写新的数据及奇偶信息。</p>
+<p><img src="/2019/09/14/MySQL高级部分（一）/4.PNG" alt></p>
+<p>从RAID 0+1名称上我们便可以看出是RAID0与RAID1的结合体。在我们单独使用RAID 1也会出现类似单独使用RAID 0那样的问题，即在同一时间内只能向一块磁盘写入数据，不能充分利用所有的资源。为了解决这一问题，我们可以在磁盘镜像中建立带区集。因为这种配置方式综合了带区集和镜像的优势，所以被称为RAID 0+1。把RAID0和RAID1技术结合起来，数据除分布在多个盘上外，每个盘都有其物理镜像盘，提供全冗余能力，允许一个以下磁盘故障，而不影响数据可用性，并具有快速读/写能力。RAID0+1要在磁盘镜像中建立带区集至少4个硬盘。</p>
+<p><img src="/2019/09/14/MySQL高级部分（一）/1.jpg" alt></p>
+<p>接下来呢我们简要介绍一下存储在性能方面的影响。</p>
+<p>固态存储，简称内存：SSD和PCI-ESSD为原本介绍</p>
+<pre><code>特点：更好的随机读写性能以及更好的支持并发（当然这是相对于机械硬盘来说）
+SSD：
+    支持RAID技术，使用的也是RATA接口。
+PCI-ESSD：
+    无法使用SATA接口，需要独特的驱动和配置，但是性能要高于SSD。
+适用场景:
+    适用于存在大量随机IO的场景。
+    同时也适用于解决单线程负载的IO瓶颈。</code></pre><p>对于网络存储呢，主要由SAN和NAS</p>
+<pre><code>SAN：
+    SAN通过光纤访问服务器，再通过硬盘写入SAN中，服务器呢可以作为硬盘适用，同时适用于大量的读写操作
+NAS：
+    适用网络连接，基于文件的协议NFS、SMB，因此存在一定的延迟。
+适用场景：
+    不适用于MySQL的存放文件，因为多数的文件为顺序存储，而MySQL属于多随机文件存储。但是适用于数据库的备份。
+综合上述:
+    磁盘性能限制主要为：延迟和吞吐量；
+    网络性能限制主要为：延迟和带宽。</code></pre><p>##存储引擎<br>主要介绍两个引擎，分别为：</p>
+<pre><code>MyISAM：MySQL5.5版本之前默认引擎。
+适用场景：
+    非事务型应用，只读应用，空间类应用
+Innodb：5.5版本之后默认引擎，后续主要介绍对象。</code></pre><p>首先呢我们要了解一下什么是锁：</p>
+<pre><code>1.主要用于管理共享资源的并发访问
+2.实现事务的隔离性</code></pre><p>简单来说呢就是：</p>
+<p>在抢票回家过年时候，可能余票只有一张了，但是你很幸运的进入付款界面，虽然还没有付钱，这时候呢，余票还是显示一张，因为你没有确定付钱购买，我呢也看到了，点击进去发现提示有人正在抢票，等待余票放出。这个阶段就是“锁”出效果的时候，如果这个时候我也点击进去同样到达付款界面，我们都付款成功，那么票呢就是-1，座位也不够分对吧。当然了隔离性之前说过了，自己可以想一下为什么。</p>
+<p>接下来在说说所支持的锁：</p>
+<p><em>表级锁</em></p>
+<p>Mysql中粒度最大的一种锁定机制，该锁定机制最大的特点是实现逻辑非常简单，带来的系统负面影响最小。所以获取锁和释放锁的速度很快。由于表级锁一次会将整个表锁定，所以可以很好的避免困扰我们的死锁问题。<br>当然，锁定颗粒度大所带来最大的负面影响就是出现锁定资源争用的概率也会最高，致使并大度大打折扣。</p>
+<p>使用表级锁定的主要是MyISAM，MEMORY，CSV等一些非事务性存储引擎。</p>
+<p><em>行级锁</em></p>
+<p>行级锁的粒度很小，能够在并发处理上有较大的优势，但是行级锁定也因此带来了不少弊端。由于锁定资源的颗粒度很小，所以每次获取锁和释放锁需要做的事情也更多，带来的消耗自然也就更大了。此外，行级锁定也最容易发生死锁。</p>
+<p>使用行级锁定的主要是InnoDB存储引擎。</p>
+<p>那什么是死锁呢？介绍死锁之前要了解一下什么是阻塞。</p>
+<pre><code>阻塞：
+    一个事务中的锁要等待另一个事务中的锁释放被占用的资源，就好像之前的要等你确定不付钱我才能进入支付，要么都是等待状态。
+    阻塞呢保证数据的正确运行，但是大量阻塞就不好了，减小了数据库的利用率。
+    而且达赖u那个阻塞会使得数据库连接大量的堆积，占用大量的系统资源。
+死锁：
+    多个事务之间等待对方的资源出现的死循环状态（其实数据库会自动处理死锁状态），就好比小桥上要过两个人，两个人都希望对方先过，于是产生了死锁状态。</code></pre><p>MyISAM存储引擎：</p>
+<p>不支持事务、也不支持外键，优势是访问速度快，对事务完整性没有 要求或者以select，insert为主的应用基本上可以用这个引擎来创建表</p>
+<p>支持3种不同的存储格式，分别是：静态表；动态表；压缩表</p>
+<p>静态表：表中的字段都是非变长字段，这样每个记录都是固定长度的，优点存储非常迅速，容易缓存，出现故障容易恢复；缺点是占用的空间通常比动态表多（因为存储时会按照列的宽度定义补足空格）ps：在取数据的时候，默认会把字段后面的空格去掉，如果不注意会把数据本身带的空格也会忽略。</p>
+<p>动态表：记录不是固定长度的，这样存储的优点是占用的空间相对较少；缺点：频繁的更新、删除数据容易产生碎片，需要定期执行OPTIMIZE TABLE或者myisamchk-r命令来改善性能</p>
+<p>压缩表：因为每个记录是被单独压缩的，所以只有非常小的访问开支</p>
+<p><img src="/2019/09/14/MySQL高级部分（一）/5.PNG" alt></p>
+<p>InnoDB存储引擎</p>
+<p>该存储引擎提供了具有提交、回滚和崩溃恢复能力的事务安全。但是对比MyISAM引擎，写的处理效率会差一些，并且会占用更多的磁盘空间以保留数据和索引。 </p>
+<p>InnoDB存储引擎的特点：支持自动增长列，支持外键约束</p>
+<p>那么数据库引擎怎么选择呢？</p>
+<p> = . = 人家MySQL现在都站出来支持Innodb了，肯定首选啊。</p>
+<p>##基准测试</p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>感谢您的鼓励.如果喜欢可以送我一包辣条。</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.jpg" alt="张文祥 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/alipay.jpg" alt="张文祥 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>张文祥</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/" title="MySQL高级部分（一）">http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+            <a href="/tags/DataBase/" rel="tag"># DataBase</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/24/Creat-Maze-Algorithm/" rel="next" title="Creat_Maze_Algorithm">
+                <i class="fa fa-chevron-left"></i> Creat_Maze_Algorithm
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/14/MySQL高级部分（二）/" rel="prev" title="MySQL高级部分（二）">
+                MySQL高级部分（二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+
+
+<!--音乐连接-->
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1314334768&auto=1&height=66"></iframe>
+
+
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image" src="/images/author.jpg" alt="张文祥">
+  
+  <p class="site-author-name" itemprop="name">张文祥</p>
+  <div class="site-description motion-element" itemprop="description">talk is cheap,show me the code</div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/xiangzi1019" title="GitHub &rarr; https://github.com/xiangzi1019" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:2624619631@qq.com" title="E-Mail &rarr; mailto:2624619631@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+  <div class="cc-license motion-element" itemprop="license">
+  
+  
+    
+  
+  
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张文祥</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+    
+    
+  
+  <script color="0,0,0" opacity="0.5" zindex="-1" count="150" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;"></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+
+</body>
+</html>
