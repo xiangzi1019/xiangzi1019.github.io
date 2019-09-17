@@ -102,12 +102,12 @@
 <meta property="og:site_name" content="小骚鸡de博客">
 <meta property="og:description" content="鉴于数据库（一）的知识点，我们再补充一些关于数据库结构优化以及索引支持的相关知识点。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（二）/1.PNG">
-<meta property="og:updated_time" content="2019-09-17T14:39:44.546Z">
+<meta property="og:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（二）/1.png">
+<meta property="og:updated_time" content="2019-09-17T14:47:11.875Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySQL高级部分（二）">
 <meta name="twitter:description" content="鉴于数据库（一）的知识点，我们再补充一些关于数据库结构优化以及索引支持的相关知识点。">
-<meta name="twitter:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（二）/1.PNG">
+<meta name="twitter:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（二）/1.png">
 
 
 
@@ -263,7 +263,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">20</span></a>
 
   </li>
         
@@ -281,7 +281,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">7</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">8</span></a>
 
   </li>
         
@@ -299,7 +299,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">28</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">31</span></a>
 
   </li>
 
@@ -405,7 +405,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-17 22:39:44" itemprop="dateModified" datetime="2019-09-17T22:39:44+08:00">2019-09-17</time>
+                <time title="修改时间：2019-09-17 22:47:11" itemprop="dateModified" datetime="2019-09-17T22:47:11+08:00">2019-09-17</time>
               </span>
             
           
@@ -560,7 +560,7 @@
 对于同级别的数据类型，应该有限占用用剑小的数据类型。</code></pre><p>char和carchar的区别</p>
 <p>VARCHAR比CHAR节省空间，在效率上比CHAR会稍微差一些，即要想获得效率，就必须牺牲一定的空间，这也就是我们在数据库设计上常说的‘以空间换效率’。 </p>
 <p>VARCHAR2虽然比CHAR节省空间，但是如果一个VARCHAR列经常被修改，而且每次被修改的数据的长度不同，这会引起‘行迁移’(Row Migration)现象，而这造成多余的I/O，是数据库设计和调整中要尽力避免的，在这种情况下用CHAR代替VARCHAR会更好一些。 </p>
-<p><img src="/2019/09/14/MySQL高级部分（二）/1.PNG" alt></p>
+<p><img src="/2019/09/14/MySQL高级部分（二）/1.png" alt></p>
 <p><strong>MySQL复制功能</strong></p>
 <p>提供分担“读负载”的功能，主要是通过备库来分担此功能。为了高可用以及灾难恢复，备份提供了更多更好的选择。</p>
 <p>首先要了解以下复制解决了什么问题：</p>
@@ -714,6 +714,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/09/17/MySQL高级部分（三）/" rel="prev" title="MySQL高级部分（三）">
+                MySQL高级部分（三） <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -782,7 +786,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -813,7 +817,9 @@
         
           
         
-        <span class="site-state-item-count">7</span>
+          
+        
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -868,7 +874,9 @@
         
           
         
-        <span class="site-state-item-count">19</span>
+          
+        
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
