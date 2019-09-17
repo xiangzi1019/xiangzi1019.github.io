@@ -107,7 +107,7 @@
 <meta property="og:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/4.PNG">
 <meta property="og:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/1.jpg">
 <meta property="og:image" content="http://xiangzi1019.github.io/2019/09/14/MySQL高级部分（一）/5.PNG">
-<meta property="og:updated_time" content="2019-09-14T10:54:24.781Z">
+<meta property="og:updated_time" content="2019-09-17T14:02:37.808Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySQL高级部分（一）">
 <meta name="twitter:description" content="双十一的时候，交易量超千亿，那么这么多数据是怎么处理的呢？MySQL作为主流数据库，不仅要会简单的应用还要深入了解一些深层次的数据相关的知识，例如高可用高并发知识点。鉴于此我们就来看看其深层次的东西。">
@@ -394,13 +394,23 @@
                 
               
 
-              <time title="创建时间：2019-09-14 18:34:45 / 修改时间：18:54:24" itemprop="dateCreated datePublished" datetime="2019-09-14T18:34:45+08:00">2019-09-14</time>
+              <time title="创建时间：2019-09-14 18:34:45" itemprop="dateCreated datePublished" datetime="2019-09-14T18:34:45+08:00">2019-09-14</time>
             </span>
           
 
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-17 22:02:37" itemprop="dateModified" datetime="2019-09-17T22:02:37+08:00">2019-09-17</time>
+              </span>
             
           
 
@@ -577,7 +587,26 @@ Innodb：5.5版本之后默认引擎，后续主要介绍对象。</code></pre><
 <p>InnoDB存储引擎的特点：支持自动增长列，支持外键约束</p>
 <p>那么数据库引擎怎么选择呢？</p>
 <p> = . = 人家MySQL现在都站出来支持Innodb了，肯定首选啊。</p>
-<p>##基准测试</p>
+<p>##基准测试<br>定义：基准测试是指通过设计科学的测试方法、测试工具和测试系统，实现对一类测试对象的某项性能指标进行定量的和可对比的测试。</p>
+<p>例如评估系统的容量，在不同压力下的行为，系统如何处理不同的数据。</p>
+<pre><code>压力测试：
+    针对不同的主题，用真实的数据查询。
+基准测试：
+    不关心业务的逻辑性，查询业务的真实性和业务的环境无关。</code></pre><p>基准测试的目的：</p>
+<pre><code>1.建立MySQL服务器的性能基准线，来确定当前的MySQL服务器的运行情况。
+2.模拟当前系统的最高负载，以此找出系统的扩展瓶颈，增加数据的并发，观察OPS和TPS变化。确定并发量与性能最优的关系。
+3.测试不同硬件、软件和操作系统的量值。
+4.用于证明新的硬件设备是否配置正确。</code></pre><p>如何基准测试：</p>
+<pre><code>1.提出问题并明确目标；
+2.决定采用标准基准测试还是设计专用测试；
+3.如果要设计专用测试，获取生产数据集的快照，该快照要易于还4.原，以便后续的测试；选择一个时间段，记录生产系统上的查询（querylog），要记录查询所在的线程以进行回放；
+4.需要为每一轮测试创建一个目录，保存测试结果、配置文件、测试指标、脚本和相关说明；
+5.需要准备好系统状态收集的相关的脚本，可以自己编写也可以使用pt工具；
+3.确定基准测试的时长，基准测试运行的时间至少要等到系统达到稳定状态之后，这时候的稳定状态才是可以相信的；
+7.决定是否使用自动化测试，从而准备自动化基准测试脚本，或者使用相关工具；
+8.进行基准测试，通过逐步修改基准测试参数来进行迭代找出正确的参数值；
+9.使用工具将测试过程中的数据绘制成图形，可以使用gnuplot或者R或者python；
+10.通过图形将数字转化为结论。</code></pre><p>要注意的是MySQL的并发量为：同时处理查询请求的数量（正在工作中的并发的操作数）主要面向点是数据，而Java中的并发面向点多为线程和数据。</p>
 
       
     </div>
