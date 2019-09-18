@@ -94,14 +94,18 @@
   };
 </script>
 
-  <meta property="og:type" content="article">
+  <meta name="description" content="数据库学习阶段专门学习和了解了一下Redis的相关知识，也了解一下非关系型数据库的一些操作。主要通过Redis这款产品学习。通过视频和相关书籍整理了部分资料以供复习和查漏补缺。">
+<meta name="keywords" content="NoSQL,Redis,Database">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Redis初学（一）">
 <meta property="og:url" content="http://xiangzi1019.github.io/2019/09/17/Redis初学（一）/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
+<meta property="og:description" content="数据库学习阶段专门学习和了解了一下Redis的相关知识，也了解一下非关系型数据库的一些操作。主要通过Redis这款产品学习。通过视频和相关书籍整理了部分资料以供复习和查漏补缺。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-17T14:44:20.920Z">
+<meta property="og:updated_time" content="2019-09-18T08:43:15.869Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis初学（一）">
+<meta name="twitter:description" content="数据库学习阶段专门学习和了解了一下Redis的相关知识，也了解一下非关系型数据库的一些操作。主要通过Redis这款产品学习。通过视频和相关书籍整理了部分资料以供复习和查漏补缺。">
 
 
 
@@ -257,7 +261,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">20</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">23</span></a>
 
   </li>
         
@@ -275,7 +279,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">8</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">9</span></a>
 
   </li>
         
@@ -389,7 +393,37 @@
           
 
           
+            
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-18 16:43:15" itemprop="dateModified" datetime="2019-09-18T16:43:15+08:00">2019-09-18</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Database/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">Database</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -432,8 +466,114 @@
       
 
       
-        <a id="more"></a>
+        <p>数据库学习阶段专门学习和了解了一下Redis的相关知识，也了解一下非关系型数据库的一些操作。主要通过Redis这款产品学习。通过视频和相关书籍整理了部分资料以供复习和查漏补缺。</p>
+<a id="more"></a>
+<p>首先要了解一下Redis是什么？</p>
+<p>Redis是一款开源的基于键值对的存储服务系统。并且支持多种数据结构，拥有较高的性能和丰富的功能。</p>
+<p>Redis有什么特性呢？大致分为8点：</p>
+<pre><code>1.数据处理相对较快
+2.有持久化的特性
+3.操作多种数据库结构以满足各类需求
+4.同时支持多种编辑语言
+5.功能丰富且多样
+6.使用和操作相对简单
+7.满足主从复制的相关条件
+8.有高可用和分布式的特性</code></pre><p>要说的一点就是Redis处理数据相对较快。其中主要的原因就是它使用内存。但是响应的一旦关机操作，数据就会丢失。于是乎有了持久化这个功能。主要是对数据的更新异步地保存到磁盘上依次防止丢失。</p>
+<p>Redis提供了5种数据结构，包括了：字符串，hash，列表，集合和有序集合。新版本又推出了：位图这一概念。主要是超小内存的唯一值计数，亦或者是用于地理信息的定位。</p>
+<p>Redis功能丰富体现在：用于支持发布订阅，Lua脚本，事务的功能以及pipeline（提高并发效率）</p>
+<p>Redis简单不仅仅值它不依赖外部库和单线程模型（近期将转换为多线程？）。也体现在它刚发布的时候仅有23000行代码的容量上。（C语言）</p>
+<p>Redis的主从复制指：将主服务器的数据复制到从服务器上，为高可用和分布式提供基础。</p>
+<p>还要简单说一下的是Redis的典型应用场景，主要有以下几类，后期将会一一介绍原型：</p>
+<pre><code>1.缓存系统
+2.消息队列系统
+3.社交网络（点赞转发）
+4.计数器功能（点赞量转发量浏览量）
+5.排行榜功能
+6.实时系统（布隆过滤器）</code></pre><p>##了解部分API的使用<br>通用命令：<br>    keys：查找命令，如keys *（查找所有的值并打印）<br>    dbsize：算出key的总数<br>    exists：判断一个key是否存在<br>    del：删除指定的key-value<br>    expire：expire key second，指key在second后过期（被消除）<br>    persist：persist key 去掉key的过期时间（永久保存）<br>    type：type key，返回key的类型<br>    以上介绍的几个API中，除了keys时间复杂度为O(n)，其余哦都是O(1)</p>
+<p>单线程理解：</p>
+<pre><code>为什么单线程会快呢？
+    1.数据抓哟存放在内存中，所以会快。这个和单线程关系不大。
+    2.非阻塞IO
+    3.避免线程的切换消耗
+存在的其他问题：
+    1.一次性只能运行一条指令。
+    2.不能使用长命令这样会因为单线程浪费大量时间。
+    3.实际上并不是纯粹的单线程，并且现在要改为多线程。</code></pre><p>数据结构的类型和相关API介绍：</p>
+<pre><code>1.字符串的键值对结构：一个键对应一个相应的值，但是value的值大小上限为512M，太大会造成阻塞。
+    使用场景：
+        可以在缓存中使用，计数器，分布式锁等应用场景使用。
+    set： 设置键值对 set key value
+    get：得到相应键的值 get key
+    del：删除某个键值对 del key
+    incr： incr key  使某个键自增1
+    decr： decr key  使某个键自减1
+    incrby： incrby key k  使某个键增加k个单位
+    mget： 批量获取value的值
+    mset： 批量设置键值对
+    append： 追加操作 append key value  将心的value追加到旧的value上
+    strlen： 返回字符串长度  strlen key
+    当然其他还有很多，这里列举常用的一些。
 
+2.哈希结构：一个key对应一个field的名字，后接着value的值。可以做增删，也可也看作使表格的类型，但是field不能相同
+
+    hget： 获取hash key对应的field的value值
+    hset：主要是set不同，其余一样
+    hdel：主要是del，其余一样
+    hexists： 判断hash key是否有field属性
+    hlen： 获取hash key field的数量
+    hmget和hmset：都是批量获取hash key的field和value
+    hsetall： 返回所有的filed和value
+    hvals： 返回对应所有filed的value
+    hkeys： 返回hash key对应所有filed
+
+3.列表结构：特点为有序可从夫，亦可左右插入弹出
+
+    rpush：从列表右端插入
+    lpush：从列表左端插入
+    linsert： linsert key before|after value Newvalue，指从指定value的前后插入
+        如：（a-&gt;b-&gt;c）linsert list before b java (a-&gt;java-&gt;b-&gt;c)
+    lpop：lpop key 从左边弹出一个值
+    rpop: 与上面相反
+    lrem： lrem key count value 
+        当count &gt; 0 从左边删除count个指
+        当count  &lt; 0 从右边删除count个值
+        当count = 0 删除所有值
+    ltrim： ltrim key start end 按照索引范围修剪列表，只留start-end 范围
+    lrange： lrange key start end（含end） 获取列表指定范围索引的item
+    lindex： lindex key index 获取列表指定索引的item
+    llen： llen key 获取列表的长度
+    lset： lset key index Newvalue 设置泪飙指定索引为Newvalue
+    使用场景：
+        朋友圈的信息更新，基本都是随时间加入到列表
+
+4.集合的结构：无序的，无重复的，支持集合间的操作
+
+    sadd： sadd key elements 但是要注意，存在key会失败
+    srem： srem key element 删除key中的元素
+    scard： scard key 计算集合的大小
+    sismember： sismember key value 判断是否存在value（1 存在）
+    srandmember key count 从集合中随机跳出count个元素
+    spop： spop key 随机弹出一个元素
+    smembers： smembers key 获取集合所有元素（小心使用）
+    应用场景：
+        抽奖获得啊，添加标签tag，还有共同好友，共同关注等。
+    sdiff key1 key2： 找差集
+    sinter： 交集
+    sunion： 并集
+
+5.有序集合的结构：无重复元素，但是有序，一个key对应多个value，但是每个value前都有一个score代表大小顺序
+
+    zadd： 增加嘛 zadd key score value（分数可以重复且可以多对）
+    zrem： zrem key value  删除  也可也多个
+    zscore： zscore key value  返回value的分数
+    zincrby： zincrby key Score value 增加value的分数
+    zcard： zcard key 返回value的个数
+    zrange： zrange key start end 返回指定索引内的升序元素
+    zrangebyscore：看名字就知道相同啦，只不过使按分数喽
+    zcount： zcount key minScore maxScore 返回指定分数内的个数
+    zremrangebyrank和zremrangebyscor：XXX key start end删除指定区域的升序元素
+    应用场景：
+        排行榜</code></pre>
       
     </div>
 
@@ -514,6 +654,19 @@
     
 
     <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/NoSQL/" rel="tag"># NoSQL</a>
+          
+            <a href="/tags/Redis/" rel="tag"># Redis</a>
+          
+            <a href="/tags/Database/" rel="tag"># Database</a>
+          
+        </div>
       
 
       
@@ -639,7 +792,9 @@
         
           
         
-        <span class="site-state-item-count">8</span>
+          
+        
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -696,7 +851,13 @@
         
           
         
-        <span class="site-state-item-count">20</span>
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>

@@ -94,14 +94,18 @@
   };
 </script>
 
-  <meta property="og:type" content="article">
+  <meta name="description" content="在学习介绍了相关的结构设计以及故障相关的知识，这里主要再看看MySQL支持的索引类型。其中主要包括B-Tree索引相关知识以及Hash相关，以及索引的优化策略。详细的请点击查看全文。">
+<meta name="keywords" content="MySQL,DataBase">
+<meta property="og:type" content="article">
 <meta property="og:title" content="MySQL高级部分（三）">
 <meta property="og:url" content="http://xiangzi1019.github.io/2019/09/17/MySQL高级部分（三）/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
+<meta property="og:description" content="在学习介绍了相关的结构设计以及故障相关的知识，这里主要再看看MySQL支持的索引类型。其中主要包括B-Tree索引相关知识以及Hash相关，以及索引的优化策略。详细的请点击查看全文。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-17T14:42:34.913Z">
+<meta property="og:updated_time" content="2019-09-18T06:54:41.520Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySQL高级部分（三）">
+<meta name="twitter:description" content="在学习介绍了相关的结构设计以及故障相关的知识，这里主要再看看MySQL支持的索引类型。其中主要包括B-Tree索引相关知识以及Hash相关，以及索引的优化策略。详细的请点击查看全文。">
 
 
 
@@ -257,7 +261,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">20</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">23</span></a>
 
   </li>
         
@@ -275,7 +279,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">8</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">9</span></a>
 
   </li>
         
@@ -389,7 +393,37 @@
           
 
           
+            
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-18 14:54:41" itemprop="dateModified" datetime="2019-09-18T14:54:41+08:00">2019-09-18</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/DataBase/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">DataBase</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -432,8 +466,79 @@
       
 
       
-        <a id="more"></a>
-
+        <p>在学习介绍了相关的结构设计以及故障相关的知识，这里主要再看看MySQL支持的索引类型。其中主要包括B-Tree索引相关知识以及Hash相关，以及索引的优化策略。详细的请点击查看全文。</p>
+<a id="more"></a>
+<p>##MySQL支持的索引类型<br><strong>B-Tree索引</strong></p>
+<p>引用B+树的结构来存储数据，主要的目的为是加快数据的查询速度，因为这样更适合范围查找。</p>
+<p>哪什么情况下可以用到B—Tree索引呢？</p>
+<pre><code>1.全值匹配查询。
+2.匹配最左前缀的查询。
+3.匹配列前缀查询。
+4.匹配范围查询。
+5.精确匹配左前列并范围匹配查询。
+6.指访问索引的查询。</code></pre><p>那么说明是B-Tree以及B+树查找呢？</p>
+<p>可以查阅我其他数据结构的章节。</p>
+<p>那么B-Tree索引有什么限制条件呢？</p>
+<pre><code>1.如果不是按照索引最左列开始查找，则无法使用索引。
+    如：（学号，姓名，年纪）如果查询开始为姓名，则没有办法查询。    
+2.使用所以时，不能跳过索引的列。
+3.Not in和&lt;&gt;，！=操作无法使用索引。
+4.如果查询中有某个列的范围查找，则其右边所有列都无法使用索引。</code></pre><p><strong>Hash索引的特点</strong></p>
+<pre><code>1.只有查询条件精确匹配hash索引中的所有列时，才能够使用hash索引。
+2.对于hash索引中的所有列，存储引擎都会为每一行计算一个hash code，hashCode索引中存储的就是hashCode。</code></pre><p>哪hash的限制是说明呢？</p>
+<pre><code>1.必须进行二次查找
+2.无法使用排序
+3.不支持部分索引查找也不支持范围查找
+4.hashCode的计算可能存在hash冲突。</code></pre><p>相同的，如果对hash算法不知道的，也可也查阅我的其他博客或者相关知识。</p>
+<p>那么为什么要使用索引呢？归结为三点：</p>
+<pre><code>1.大大减少了存储引擎需要扫描的数据量
+2.可以帮助我们进行排序一面使用临时表
+3.可以把随机IO转变为顺序IO</code></pre><p>但是索引过多也会有响应的麻烦：</p>
+<pre><code>1.增加写操作的成本。
+2.索引会增加查询优化器的选择时间，进而影响效率。</code></pre><p>索引我们就要了解一下索引优化的策略：</p>
+<pre><code>1.索引列上不能使用表达式或函数。
+2.前缀索引和索引列的选择（不重复的所有和表的记录数的比值）
+3.联合索引（当然之前也说了，太多了也同样印象效率）
+    a.经常会被用到，列优先
+    b.选择性高的列优先
+    c.宽度小的列优先
+4.覆盖索引
+    优点：
+        1.可以优化缓存，减少磁盘IO操作
+        2.可以减少随机IO，变为顺序IO操作
+        3.可以避免对Innodb主键索引的二次查询
+        4.可以避免MyISAM表进行系统调用
+    缺点：
+        1.并不是所有存储引擎都支持覆盖索引
+        2.列太多而导致速度变慢
+        3.不能使用双%号的like查询</code></pre><p>我们呢还可以使用索引来优化查询，例如通过排序操作，按照索引顺序扫描数据。</p>
+<p>还可以利用索引优化锁机制，依次减少锁的行数，加快处理速度，同时也加快锁的释放。</p>
+<p>索引呢还支持维护和优化策略，可以删除重复和冗余的索引。查找未被使用过的索引，以及更新索引统计信息减少索引碎片。</p>
+<p>##接下来介绍性能SQL的问题<br>首先要了解的是如何获取有性能问题的SQL呢？</p>
+<pre><code>1.通过用户反馈获取存在性能问题的SQL。
+    注：这个比较被动同时因为产品上线后再修改资源花费较大
+2.通过慢查询日志获取存在性能问题的SQL。（有一定的延迟）
+3.实施获取存在的性能问题的SQL</code></pre><p>什么是慢查询日志获取性能问题的SQL呢？</p>
+<p>主要性能为“磁盘IO和存储日志所需要的磁盘空间”。因为需要记录日志，这样操作便会需要大量的磁盘空间，最好把日志存储和数据存储分开。当然这还要记录所有符合条件的SQL，包括了查询语句，数据修改语句，以及回滚的SQL。</p>
+<p>如何实时获得有性能问题的SQl么？</p>
+<p>查询请求的过程是什么样的呢？</p>
+<pre><code>1.客户端发送SQl请求给服务器。
+2.服务器检查是否可以在缓存中命中该SQL。
+3.服务器端进行SQL解析和预处理工作，再由优化器生成对应的执行计划。
+4.根据执行计划，调用存储引擎API来查询数据。
+5.将结果返回给客户端。</code></pre><p>##再来简要了解一下什么是分库分表<br>    1.把一个实例中的多个数据库拆分到不同的实例中去。<br>    2.把一个库中的表分离到不同的数据库中。</p>
+<p>数据库分片处理（由于分表后写压力仍旧很大而采用的办法），对一个库中的相关表进行水平拆分到不同的实例数据库中，但是要注意的是这样难以维护，所以不到万不得已不要使用。</p>
+<p>如何处理分区键呢？</p>
+<pre><code>1.分区键要尽量避免跨分片查询的发生。
+2.分区键要尽可能的使各个分片中的数据平均。</code></pre><p>如何存储没有需要的分片表</p>
+<pre><code>1.每个分片存储一份相同的数据。
+2.使用额外的节点统一存储。</code></pre><p>如何在节点上部署分片呢？</p>
+<pre><code>1.每个分片使用单一数据库，并且数据库各不相同。
+2.将多个分片表存储在一个数据库中，并在表名上加入分片后缀。
+3.在一个节点上部署多个数据库，每个数据库包含一个分片。</code></pre><p>如何分配分片中的数据呢？</p>
+<pre><code>1.按分区键的hash值取模来分配分片数据。
+2.按分区键的范围来分配分片数据。
+3.利用分区键和分片的映射表来分配分片的数据。</code></pre>
       
     </div>
 
@@ -514,6 +619,17 @@
     
 
     <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+            <a href="/tags/DataBase/" rel="tag"># DataBase</a>
+          
+        </div>
       
 
       
@@ -639,7 +755,9 @@
         
           
         
-        <span class="site-state-item-count">8</span>
+          
+        
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -696,7 +814,13 @@
         
           
         
-        <span class="site-state-item-count">20</span>
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
