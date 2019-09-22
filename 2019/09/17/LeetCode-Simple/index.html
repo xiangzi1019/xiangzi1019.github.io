@@ -95,16 +95,16 @@
 </script>
 
   <meta name="description" content="主要记录一些简单的算法和数据结构的题目，一方面是自己在准备的积累一方面适合复习使用。代码不一定最优，但是思考过程基本会给。 算法给生活加点料。">
-<meta name="keywords" content="Algorithm,DataStructure,面试">
+<meta name="keywords" content="DataStructure,Algorithm,面试">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LeetCode_Simple">
+<meta property="og:title" content="LeetCode_Simple(第一周)">
 <meta property="og:url" content="http://xiangzi1019.github.io/2019/09/17/LeetCode-Simple/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
 <meta property="og:description" content="主要记录一些简单的算法和数据结构的题目，一方面是自己在准备的积累一方面适合复习使用。代码不一定最优，但是思考过程基本会给。 算法给生活加点料。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-17T15:03:55.467Z">
+<meta property="og:updated_time" content="2019-09-22T03:17:31.880Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="LeetCode_Simple">
+<meta name="twitter:title" content="LeetCode_Simple(第一周)">
 <meta name="twitter:description" content="主要记录一些简单的算法和数据结构的题目，一方面是自己在准备的积累一方面适合复习使用。代码不一定最优，但是思考过程基本会给。 算法给生活加点料。">
 
 
@@ -124,7 +124,7 @@
 </script>
 
   
-  <title>LeetCode_Simple | 小骚鸡de博客</title>
+  <title>LeetCode_Simple(第一周) | 小骚鸡de博客</title>
   
 
 
@@ -297,7 +297,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">31</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">32</span></a>
 
   </li>
 
@@ -362,7 +362,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">LeetCode_Simple
+          <h1 class="post-title" itemprop="name headline">LeetCode_Simple(第一周)
 
               
             
@@ -388,13 +388,23 @@
                 
               
 
-              <time title="创建时间：2019-09-17 22:49:50 / 修改时间：23:03:55" itemprop="dateCreated datePublished" datetime="2019-09-17T22:49:50+08:00">2019-09-17</time>
+              <time title="创建时间：2019-09-17 22:49:50" itemprop="dateCreated datePublished" datetime="2019-09-17T22:49:50+08:00">2019-09-17</time>
             </span>
           
 
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-22 11:17:31" itemprop="dateModified" datetime="2019-09-22T11:17:31+08:00">2019-09-22</time>
+              </span>
             
           
 
@@ -459,11 +469,227 @@
         <p>主要记录一些简单的算法和数据结构的题目，一方面是自己在准备的积累一方面适合复习使用。代码不一定最优，但是思考过程基本会给。</p>
 <p>算法给生活加点料。</p>
 <a id="more"></a>
-<p>1.在单链表中删除倒数第K个节点 p42</p>
-<p>2.反转单链表以及双链表 p47</p>
-<p>3.反转部分单链表 p48</p>
-<p>4.两个单链表生成相加链表 p66</p>
+<p><strong>1.在单链表中删除倒数第K个节点</strong></p>
+<p>要求：如果链表长度为N，时间复杂度为O(N)，额外空间为O(1)</p>
+<p>想法：首先呢，单链表只能够从头开始遍历。现在要做呢就是如何在遍历了一次后能够准确找到倒数K节点的位置，例如我们可以计算到总体长度在用总体长度减去K的大小来判断。刚好就是总体长度减去K等于要删除的位置。那么就可以来实现代码了</p>
+<pre><code>public class Demo01 {
+    public class Node{
+        public int value;
+        public Node next;
 
+        public Node(int data) {
+            this.value = data;
+        }
+    }
+    public Node RemoveLastKNode(Node head, int lastK){
+        int Number = 0;
+        //首先判断是否为空且K值有效
+        if(head == null || lastK &lt; 1){
+            return head;
+        }
+        Node cur = head;
+        while(cur != null){
+            cur = cur.next;
+            Number++;
+        }
+        //如果当前节点数与K相同那么就删除头结点
+        if(Number-lastK == 0){
+            head = head.next;
+        }
+        //如果当前节点数小于K数就返回
+        else if(Number-lastK &lt; 0){
+            return head;
+        }
+        //如果当前节点数大于K就遍历删除第Number-lastK个节点
+        else{
+            cur = head;
+            for(int i =0; i &lt; Number-lastK; i++){
+                cur = cur.next;
+            }
+            cur.next = cur.next.next;
+        }
+        return head;
+    }
+
+}</code></pre><p>*<em>2.反转单链表以及双链表 *</em></p>
+<p>要求：如果链表长度为N，时间复杂度为O(N)，额外空间为O(1)</p>
+<p>想法：首先想到的使如何交换A和B两个的值，方法就在此。我们呢每次遍历原先链表，然后把其next指针指向新的链表。如同a-&gt;b-&gt;c-&gt;d-&gt;null,首先拿出a，再拿出b，并且使得b的next指向a就有了b-&gt;a，一次类推就变成了反转链表。但是由于空间的限制，所以我们呢只能实现在当前链表的转移，也就是每次拿出下一个节点用其next指针只想头结点即可。</p>
+<pre><code>public class Demo02 {
+    public class Node{
+        public int value;
+        public Node next;
+
+        public Node(int data) {
+            this.value = data;
+        }
+    }
+    public Node reverseList(Node head){
+        Node pre = null;
+        Node cur = null;
+        while(head != null){
+            //当前节点指向head的next
+            cur = head.next;
+            //然后把下一个节点指向当前新链表
+            head.next = pre;
+            //pre继承当前链表
+            pre = head;
+            //转换后head变为最新的链表
+            head = cur;
+        }
+        return head;
+    }
+}
+
+实际上看就是pre一直在记录新生成的反转列表，cur一直在记录没有转换的列表</code></pre><p>至于双向链表原理一致</p>
+<p>*<em>3.反转部分单链表 *</em></p>
+<p>给定两个整数from和to表示反转的开始位置和结束位置</p>
+<p>要求：</p>
+<ul>
+<li>如果链表长度为N，时间复杂度为O(N)，额外空间为O(1)</li>
+<li>如果不满足1&lt;= from&lt;=to&lt;=N，则不用调整</li>
+</ul>
+<p>想法：首先就是要判断给定的要求。然后再是根据反转的位置专门实现两个位置间的反转操作。反转的操作上一题中给出。是否可以实现把范围内的数据摘取出来，然后单独反转再放回去呢。卧槽？？？忘记额外空间了。看来是不行 = = 那就原样子来吧</p>
+<pre><code>public class Demo03 {
+    public class Node{
+        public int value;
+        public Node next;
+
+        public Node(int data) {
+            this.value = data;
+        }
+    }
+    public Node reversePart(Node head,int from,int to){
+        //用于计算总长度
+        int len = 0;
+        Node cur = head;
+        //用于记录from的前一个节点，以至于后面好搭接
+        Node pre = null;
+        //同理记录to的后一个节点
+        Node pos = null;
+        while(cur != null){
+            len++;
+            //记录两个节点的位置
+            if(len == from-1)
+                pre = cur;
+            if(len == to+1)
+                pos = cur;
+        }
+        //判断第二个条件是否成立
+        if(from &gt; to || from &lt; 1 || to &gt; len){
+            return head;
+        }
+        //截取反转位置
+        cur = pre == null ? head:pre.next;
+        //这一步开始就是上一题的模型
+        Node cur2 = cur.next;
+        cur.next = pos;
+        Node next = null;
+        while(cur2 != null){
+            next = cur2.next;
+            cur2.next = cur;
+            cur = cur2;
+            cur2 = next;
+        }
+        //拼接
+        if(pre != null){
+            pre.next = cur;
+            return head;
+        }
+        return cur;
+    }
+}</code></pre><p>*<em>4.两个单链表生成相加链表 *</em></p>
+<p>假设每一个节点的值都在0-9之间，那么链表整体就可以代表一个整数，然后实现两个链表的相加。</p>
+<p>要求：没啥要求，实现就好了。</p>
+<p>想法：我们之前尝试了反转的效果，那么这一题也可也这样做，反转后就是从低位加起来，再一个进位器就够了。最后结果逆序输出就行。或者说呢尝试以下栈这个结构。后进后出嘛。</p>
+<pre><code>import java.util.Stack;
+
+public class Demo04 {
+    public class Node{
+        public int value;
+        public Node next;
+
+        public Node(int data) {
+            this.value = data;
+        }
+    }
+    public Node addListNode(Node head1,Node head2){
+        //创建两个栈，用于操作两个线性表
+        Stack&lt;Integer&gt; s1 = new Stack&lt;&gt;();
+        Stack&lt;Integer&gt; s2 = new Stack&lt;&gt;();
+        //将他们分别放入栈中
+        while(head1 != null){
+            s1.push(head1.value);
+            head1 = head1.next;
+        }
+        while(head2 != null){
+            s1.push(head2.value);
+            head2 = head2.next;
+        }
+        //用于保存结果的栈
+        Stack&lt;Integer&gt; ans = new Stack&lt;&gt;();
+        //ac为进位器
+        int ac = 0;
+        int n1,n2,n = 0;
+        Node node = null;
+        Node pre = null;
+        while(!s1.isEmpty() || !s2.isEmpty()){
+            n1 = s1.isEmpty()? 0 : s1.pop();
+            n2 = s2.isEmpty()? 0 : s2.pop();
+            n = n1 + n2 + ac;
+            pre = node;
+            node = new Node(n % 10);
+            node.next = pre;
+            ac = n /10;
+        }
+        //最后判断以下ac是否还有数据
+        if(ac == 1){
+            pre = node;
+            node = new Node(1);
+            node.next = pre；
+        }
+        return node;
+    }
+}</code></pre><p>*<em>5.删除无序链表中重复出现的值 *</em></p>
+<p>要求：</p>
+<ul>
+<li>实现一个长度为N时间复杂度为O(N)的程序</li>
+<li>实现一个空间复杂度为O(1)的程序</li>
+</ul>
+<p>想法：时间复杂度为O(N)那么就要用到哈希算法，如果要空间复杂度呢，就是先排序喽，排序时间大致为O(N²)，空间为1.</p>
+<pre><code>import java.util.HashSet;
+
+public class Demo05 {
+    public class Node{
+        public int value;
+        public Node next;
+
+        public Node(int data) {
+            this.value = data;
+        }
+    }
+    public void remove(Node head){
+        if(head == null){
+            return;
+        }
+        //创建hashSet
+        HashSet&lt;Integer&gt; set = new HashSet&lt;&gt;();
+        Node pre = head;
+        Node cur = head.next;
+        //首先加入第一个值，然后开始判断
+        set.add(head.value);
+        while(cur != null){
+            //如果set中有这个值
+            if(set.contains(cur.value)){
+                pre.next = cur.next;
+            }else{
+                //如果没有就从新加入这个新值
+                set.add(cur.value);
+                pre = cur;
+            }
+            cur = cur.next;
+        }
+    }
+}</code></pre>
       
     </div>
 
@@ -534,7 +760,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="http://xiangzi1019.github.io/2019/09/17/LeetCode-Simple/" title="LeetCode_Simple">http://xiangzi1019.github.io/2019/09/17/LeetCode-Simple/</a>
+    <a href="http://xiangzi1019.github.io/2019/09/17/LeetCode-Simple/" title="LeetCode_Simple(第一周)">http://xiangzi1019.github.io/2019/09/17/LeetCode-Simple/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -550,9 +776,9 @@
         
         <div class="post-tags">
           
-            <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
-          
             <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
+          
+            <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
           
             <a href="/tags/面试/" rel="tag"># 面试</a>
           
@@ -576,6 +802,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/22/Redis初学-二/" rel="prev" title="Redis初学(二)">
+                Redis初学(二) <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -645,7 +875,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-count">32</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
