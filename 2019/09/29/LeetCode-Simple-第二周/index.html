@@ -94,15 +94,18 @@
   };
 </script>
 
-  <meta name="keywords" content="DataStructure">
+  <meta name="description" content="主要记录一些简单的算法和数据结构的题目，一方面是自己在准备的积累一方面适合复习使用。代码不一定最优，但是思考过程基本会给。 第二周，算法给生活加点料。">
+<meta name="keywords" content="DataStructure,Algorithm,面试">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Set_And_Map_of_DataStructures">
-<meta property="og:url" content="http://xiangzi1019.github.io/2019/08/17/Set-And-Map-of-DataStructures/index.html">
+<meta property="og:title" content="LeetCode_Simple(第二周)">
+<meta property="og:url" content="http://xiangzi1019.github.io/2019/09/29/LeetCode-Simple-第二周/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
+<meta property="og:description" content="主要记录一些简单的算法和数据结构的题目，一方面是自己在准备的积累一方面适合复习使用。代码不一定最优，但是思考过程基本会给。 第二周，算法给生活加点料。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-19T14:00:40.708Z">
+<meta property="og:updated_time" content="2019-09-29T11:54:32.383Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Set_And_Map_of_DataStructures">
+<meta name="twitter:title" content="LeetCode_Simple(第二周)">
+<meta name="twitter:description" content="主要记录一些简单的算法和数据结构的题目，一方面是自己在准备的积累一方面适合复习使用。代码不一定最优，但是思考过程基本会给。 第二周，算法给生活加点料。">
 
 
 
@@ -110,7 +113,7 @@
 
   
   
-  <link rel="canonical" href="http://xiangzi1019.github.io/2019/08/17/Set-And-Map-of-DataStructures/">
+  <link rel="canonical" href="http://xiangzi1019.github.io/2019/09/29/LeetCode-Simple-第二周/">
 
 
 
@@ -121,7 +124,7 @@
 </script>
 
   
-  <title>Set_And_Map_of_DataStructures | 小骚鸡de博客</title>
+  <title>LeetCode_Simple(第二周) | 小骚鸡de博客</title>
   
 
 
@@ -342,7 +345,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/08/17/Set-And-Map-of-DataStructures/">
+    <link itemprop="mainEntityOfPage" href="http://xiangzi1019.github.io/2019/09/29/LeetCode-Simple-第二周/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="张文祥">
@@ -359,7 +362,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Set_And_Map_of_DataStructures
+          <h1 class="post-title" itemprop="name headline">LeetCode_Simple(第二周)
 
               
             
@@ -385,23 +388,13 @@
                 
               
 
-              <time title="创建时间：2019-08-17 10:59:17" itemprop="dateCreated datePublished" datetime="2019-08-17T10:59:17+08:00">2019-08-17</time>
+              <time title="创建时间：2019-09-29 18:32:39 / 修改时间：19:54:32" itemprop="dateCreated datePublished" datetime="2019-09-29T18:32:39+08:00">2019-09-29</time>
             </span>
           
 
           
             
 
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-08-19 22:00:40" itemprop="dateModified" datetime="2019-08-19T22:00:40+08:00">2019-08-19</time>
-              </span>
             
           
 
@@ -414,8 +407,8 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/DataStructure/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
-                  #}<span itemprop="name">DataStructure</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法与数据结构面试/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">算法与数据结构面试</span></a></span>
 
                 
                 
@@ -463,8 +456,172 @@
       
 
       
-        <a id="more"></a>
+        <p>主要记录一些简单的算法和数据结构的题目，一方面是自己在准备的积累一方面适合复习使用。代码不一定最优，但是思考过程基本会给。</p>
+<p>第二周，算法给生活加点料。</p>
+<a id="more"></a>
+<p><strong>1.按照左一个右一个方式重新组合单链表</strong></p>
+<p>要求：例如：1-&gt;2-&gt;3-&gt;4-&gt;5-&gt;6,转变后为1-&gt;4-&gt;2-&gt;5-&gt;3-&gt;6</p>
+<p>想法：首先想到的是可以先遍历一遍，得到长度len，然后知道了哪里是中点。然后呢就可以一个从头开始，一个从中间开始一次遍历然后插入后半部分的数据。这样的时间复杂度大致上为N，空间呢也只用了一个暂存用的额外空间。</p>
+<pre><code>public class Demo06 {
+    public class Node{
+        public int value;
+        public Node next;
+        public Node(int value){
+            this.value = value;
+        }
+    }
+    public void relocal(Node head){
+        //判空
+        if(head == null || head.next == null)
+            return;
+        Node mid = head;
+        Node right = head.next;
+        //要先找打中点的位置，所以令right行进步骤是mid的两倍
+        while(right.next != null &amp;&amp; right.next.next != null){
+            mid = mid.next;
+            right = right.next.next;
+        }
+        right = mid.next;
+        mid.next = null;
+        margeLR(head,right);
+    }
+    //现在开始写合并寒素
+    public void margeLR(Node left,Node right){
+        Node next = null;
+        //交换算法
+        while(left.next != null){
+            next = right.next;
+            right.next = left.next;
+            left.next = right;
+            left = right.next;
+            right = next;
+        }
+        left.next = right;
+    }
+}</code></pre><p><strong>2.合并两个有序的单链表</strong></p>
+<p>要求：合并后的单链表依旧有序。</p>
+<p>想法：既然已经有序了，哪我们一次遍历两个然后比较大小即可。但是呢我们再思考，是放入一个新的链表呢还是旧链表呢？答案肯定是不额外申请啦。然后呢我们就可以做了。一个为主链，一个为辅链。</p>
+<pre><code>public class Demo07 {
+    public class Node{
+        public int value;
+        public Node next;
+        public Node(int value){
+            this.value = value;
+        }
+    }
+    public Node merge(Node head1, Node head2){
+        //先判断是否为空,当其中一个为空时，直接返回另一个即可
+        if(head1 == null || head2 == null){
+            return head1 != head2 ? head1 : head2;
+        }
+        //选择一个主链表
+        Node head = head1.value &lt; head2.value ? head1 : head2;
+        Node cur1 = head == head1 ? head1 : head2;
+        Node cur2 = head == head2 ? head2 : head1;
+        Node pre = null;
+        Node next = null;
+        while(cur1 != null &amp;&amp; cur2 != null){
+            if(cur1.value &lt;= cur2.value){
+                pre = cur1;
+                cur1 = cur1.next;
+            }else{
+                next = cur2.next;
+                pre.next = cur2;
+                cur2.next = cur1;
+                pre = cur2;
+                cur2 = next;
+            }
+        }
+        //最后判断以下那个时主链即可
+        pre.next = cur1 == null ? cur2 : cur1;
+        return head;
+    }
+}</code></pre><p><strong>3.向有序的环形链表中插入新节点</strong></p>
+<p>要求：时间复杂度为N，额外空间为1。</p>
+<p>想法：对于有序的环形链表。我们要考虑插入的节点值对应的位置，如果说插入值小于头结点，那么要遍历一遍后找到了最大节点后插入，这个就类似于最大节点的插入。普通节点类似。</p>
+<pre><code>public class Demo08 {
+    public class Node{
+        public int value;
+        public Node next;
+        public Node(int value){
+            this.value = value;
+        }
+    }
+    public Node insertNewNode(Node head, int num){
+        Node node = new Node(num);
+        if(head == null){
+            //自己成环
+            node.next = node;
+            return node;
+        }
+        Node pre = head;
+        Node cur = head.next;
+        //查找对应的元素位置
+        while(cur != head){
+            if(pre.value &lt;= num &amp;&amp; cur.value &gt;= num){
+                break;
+            }
+            pre = cur;
+            cur = cur.next;
+        }
+        //插入
+        pre.next = node;
+        node.next = cur;
+        return head.value &lt; num ? head : node;
+    }
+}</code></pre><p><strong>4.单链表的选择排序</strong></p>
+<p>要求：没啥要求，额外空间为1即可。</p>
+<p>想法：emmm没啥想法，那就按照选择排序做呗。每次遍历找到最小的放在该放的位置就行了。</p>
+<pre><code>public class Demo09 {
+    public class Node {
+        public int value;
+        public Node next;
 
+        public Node(int value) {
+            this.value = value;
+        }
+    }
+    public  Node selectionSort(Node head){
+        Node tail = null;
+        Node cur = head;   // 未排序部分
+        Node samllPre = null;
+        Node samll = null;
+        while(cur != null){
+            samll = cur;
+            samllPre = getSamllPre(cur);
+            //取出对应当前最小的值
+            if(samllPre != null){
+                samll = samllPre.next;
+                samllPre.next = samll.next;
+            }
+            cur = cur == samll ? cur.next : cur;
+            //给尾部增加找到的最小的值
+            if(tail == null){
+                head = samll;
+            }else{
+                tail.next = samll;
+            }
+            tail = samll;
+        }
+        return head;
+    }
+    //遍历找出相对于的节点的前一个节点
+    public Node getSamllPre(Node head){
+        Node samllPre = null;
+        Node samll = head;
+        Node pre = head;
+        Node cur = head.next;
+        while(cur != null){
+            if(cur.value &lt; samll.value){
+                samllPre = pre;
+                samll = cur;
+            }
+            pre = cur;
+            cur = cur.next;
+        }
+        return samllPre;
+    }
+}</code></pre>
       
     </div>
 
@@ -535,7 +692,7 @@
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
     
-    <a href="http://xiangzi1019.github.io/2019/08/17/Set-And-Map-of-DataStructures/" title="Set_And_Map_of_DataStructures">http://xiangzi1019.github.io/2019/08/17/Set-And-Map-of-DataStructures/</a>
+    <a href="http://xiangzi1019.github.io/2019/09/29/LeetCode-Simple-第二周/" title="LeetCode_Simple(第二周)">http://xiangzi1019.github.io/2019/09/29/LeetCode-Simple-第二周/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -553,6 +710,10 @@
           
             <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
           
+            <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+          
+            <a href="/tags/面试/" rel="tag"># 面试</a>
+          
         </div>
       
 
@@ -564,8 +725,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/08/17/MergeSort-Algorithm-Demo/" rel="next" title="MergeSort_Algorithm_Demo">
-                <i class="fa fa-chevron-left"></i> MergeSort_Algorithm_Demo
+              <a href="/2019/09/22/Redis初学-二/" rel="next" title="Redis初学(二)">
+                <i class="fa fa-chevron-left"></i> Redis初学(二)
               </a>
             
           </div>
@@ -573,10 +734,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/08/18/SMTP-in-the-ApplicationLayer/" rel="prev" title="SMTP_in_ApplicationLayer">
-                SMTP_in_ApplicationLayer <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

@@ -94,14 +94,18 @@
   };
 </script>
 
-  <meta property="og:type" content="article">
+  <meta name="description" content="这里主要记录了Redis的一些功能以及运维的简答理解。由于是初学，所以知识难免不完全。详情可以点击查看。">
+<meta name="keywords" content="NoSQL,Redis,Database">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Redis初学(二)">
 <meta property="og:url" content="http://xiangzi1019.github.io/2019/09/22/Redis初学-二/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
+<meta property="og:description" content="这里主要记录了Redis的一些功能以及运维的简答理解。由于是初学，所以知识难免不完全。详情可以点击查看。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-22T00:53:16.151Z">
+<meta property="og:updated_time" content="2019-09-29T12:58:34.137Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis初学(二)">
+<meta name="twitter:description" content="这里主要记录了Redis的一些功能以及运维的简答理解。由于是初学，所以知识难免不完全。详情可以点击查看。">
 
 
 
@@ -293,7 +297,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">32</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">33</span></a>
 
   </li>
 
@@ -389,7 +393,37 @@
           
 
           
+            
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-29 20:58:34" itemprop="dateModified" datetime="2019-09-29T20:58:34+08:00">2019-09-29</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Database/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">Database</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -432,8 +466,38 @@
       
 
       
-        <a id="more"></a>
-
+        <p>这里主要记录了Redis的一些功能以及运维的简答理解。由于是初学，所以知识难免不完全。详情可以点击查看。</p>
+<a id="more"></a>
+<p>###慢查询<br>生命周期：</p>
+<p>客户端发送命令给Redis，然后依次执行命令。最后将结果传输给客户端。慢查询发生在执行命令阶段，要注意的就是，客户端超时不一定是慢查询的原因，但是慢查询是客户端超时一个可能因素。</p>
+<p>慢查询的命令：</p>
+<pre><code>1.slowlog get[n]   获取慢查询的队列信息
+2.slowlog len    获取慢查询队列的长度
+3.slowlog rest   清空慢查询的队列</code></pre><p>###pipeline 流水线<br>什么是流水线呢：将云游的一次传输命令和一次计算变为网络一次性传输多条命令再分次计算。就好像搬砖一样，你每次搬一块砖来来回回，费时费力。不如一次性搬10快。节省了来回的时间消耗。同样的流水线机制也节省了传输的时间。</p>
+<p>但是要注意：每次pipeline携带的数据量要控制，否则过多会压迫网络的传输能力（为啥是网络呢，因为实际开发中不可能主机和数据库放在一起）同时一次性传输数据量过大，也会造成查询的时延。并且每次只能作用在一个Redis的节点上。</p>
+<p>###发布订阅<br>角色：发布者   订阅者通过不同的频道接收信息。  但问题是就好像领导在开会，由于你进来晚了。所以之前的消息就不能接收到了。同样的，你可以收听多个频道。穿梭在各大会场。</p>
+<p>命令：</p>
+<pre><code>publish  发布命令  public channel message
+subscribe  订阅   shubscribe [channel] 频道可以有多个
+unsubscribe  取关   同上      （意思就是我不听了我走了）
+其他不做介绍了</code></pre><p>相对于消息队列，就是作为“抢”的功能，这个是谁都可以收到。</p>
+<p>###Bitmap 位图<br>在某些场景下存储是有好处的  相对来说节省空间。但对于某些操作例如setbit的偏移量可能比较耗时。</p>
+<p>命令：</p>
+<pre><code>setbit：  setbit key offset value  给位图指定索引值
+getbit：  getbit key offset 获得
+bitcount：  bitcount key [start end] 获取指定范围的值为1的个数
+bitop： bitmap opdestkey key··· 做多个bitmap的and，or，not操作并将结果保存在destkey中</code></pre><p>###HyperLoglog<br>一种数据结构，用极小的空间完成独立数量的统计，实质上就是字符串</p>
+<p>命令：</p>
+<pre><code>pfadd： pfadd key element···  向其中添加元素
+pfcount： pfcount key···  计算其中独立总数
+pfmerga：pfmerga destkey sourcekey··· 合并多个hyperloglog</code></pre><p>要注意的就是，计实hyperloglog很好用且占用空间小，但是他有一定的错误率。</p>
+<p>###GEO<br>用于存储经纬度，计算两地之间的距离</p>
+<p>应用也广泛，例如查询一定范围的酒店帮助推送之类。</p>
+<p>命令：</p>
+<pre><code>geoadd：geoadd key longitude latitude member  增加地理位置信息
+geopos：geopos key member··· 获取地理位置信息
+geodist：geodist member1 member2  用于计算两地的距离
+其余的不做介绍 </code></pre>
       
     </div>
 
@@ -515,6 +579,19 @@
 
     <footer class="post-footer">
       
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/NoSQL/" rel="tag"># NoSQL</a>
+          
+            <a href="/tags/Redis/" rel="tag"># Redis</a>
+          
+            <a href="/tags/Database/" rel="tag"># Database</a>
+          
+        </div>
+      
 
       
       
@@ -533,6 +610,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/29/LeetCode-Simple-第二周/" rel="prev" title="LeetCode_Simple(第二周)">
+                LeetCode_Simple(第二周) <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -602,7 +683,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
