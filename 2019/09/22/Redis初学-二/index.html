@@ -102,7 +102,7 @@
 <meta property="og:site_name" content="小骚鸡de博客">
 <meta property="og:description" content="这里主要记录了Redis的一些功能以及运维的简答理解。由于是初学，所以知识难免不完全。详情可以点击查看。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-29T12:58:34.137Z">
+<meta property="og:updated_time" content="2019-10-07T03:17:37.625Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis初学(二)">
 <meta name="twitter:description" content="这里主要记录了Redis的一些功能以及运维的简答理解。由于是初学，所以知识难免不完全。详情可以点击查看。">
@@ -261,7 +261,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">23</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">24</span></a>
 
   </li>
         
@@ -279,7 +279,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">9</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">10</span></a>
 
   </li>
         
@@ -297,7 +297,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">34</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">36</span></a>
 
   </li>
 
@@ -403,7 +403,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-29 20:58:34" itemprop="dateModified" datetime="2019-09-29T20:58:34+08:00">2019-09-29</time>
+                <time title="修改时间：2019-10-07 11:17:37" itemprop="dateModified" datetime="2019-10-07T11:17:37+08:00">2019-10-07</time>
               </span>
             
           
@@ -497,7 +497,69 @@ pfmerga：pfmerga destkey sourcekey··· 合并多个hyperloglog</code></pre><p
 <pre><code>geoadd：geoadd key longitude latitude member  增加地理位置信息
 geopos：geopos key member··· 获取地理位置信息
 geodist：geodist member1 member2  用于计算两地的距离
-其余的不做介绍 </code></pre>
+其余的不做介绍 </code></pre><p>##Redis持久化的取舍和选择<br>什么是持久化呢：Redis所有数据保存在内存中，对数据的更新将异步地保存到磁盘上。这样呢可以在关闭Redis的时候仍存储对于数据。</p>
+<p>持久化的操作：</p>
+<pre><code>快照：Redis的RDB功能，类比于MySQL就是Dumpgongn
+写日志：Redis的AOF功能，类比于MySQL就是BinLog</code></pre><p>###什么是RDB<br>①.Redis创建对应的RDB文件（二进制）格式，把偶才能在硬盘上。（以快照的形式保存）</p>
+<p>②.当你需要的时候呢，重启RDB，Redis就从硬盘上启动载入相对于的二进制文件到内存。</p>
+<p>命令介绍：</p>
+<pre><code>save命令：
+    Client-&gt;（save）启动①，成功就返回OK，但是相对应的当数据特别大时，因为Redis时单线程操作所有有可能会产生阻塞。
+    同时要注意就是RDB模式下存储为整体存储，就是一次性的替换和存储进入磁盘。不会说只更新操作的部分。
+bgsave命令：
+    Client-&gt;（bgsave）Redis。【redis会在后台执行fork操作，因此不会阻塞Redis的操作】使用的是子进程。</code></pre><p>自动生成RDB，就是在一定时间内，数据量达到了要求目标就会自动生成文件。其触发的方式为1.全量复制，如果在主从复制的情况下自动生成。2.不清空重启机制。</p>
+<p>同时RDB存在一些问题：例如保存的耗时性以及阻塞的消耗性能。并且呢操作时不可控的。当宕机的时候会造成数据的丢失。</p>
+<p>###什么时AOF<br>AOF运行的原理：在客户端执行一条命令，在就日志中记录一条。所以呢如果在Redis宕机后，因为AOF的这种功能，所有的信息基本都会恢复。</p>
+<p>命令介绍：</p>
+<pre><code>alway：
+    Redis-&gt;写命令到缓冲区-&gt;每条命令fsync到硬盘上-&gt;生成AOF文件。（注意这样的坏处时IO开销比较大）
+everysec：
+    Redis-&gt;写命令到缓冲区-&gt;每条命令fsync到硬盘上-&gt;生成AOF文件。(有可能在宕机的那一秒数据丢失)
+no：
+    操作系统自己决定是否刷新更新操作。（不可控）</code></pre><p>随着时间的变化，AOF文件也会越来越大，并且在恢复的时候也会越来越长。因此有了重写的功能。例如在更新数据的时候只存储最后的一部分。亦或者是过期的数据不进行存储来保证数据不会过大。</p>
+<p>建议：</p>
+<pre><code>关闭RDB，但是在执行第一次主从复制的时候肯定要用到RDB。
+建议开启AOF，用缓冲和存储。并且选用每秒刷盘方式存储数据。</code></pre><p>##运维的常见操作<br><strong>fork操作</strong></p>
+<pre><code>1.同步操作（主要是对内存的一些简要操作）
+2.与内存信息量有关:内存越大，耗时越长，当然也与你选择的机器模型有关</code></pre><p>改善操作：</p>
+<pre><code>1.优化使用物理机或者高效支持fork操作的虚拟化技术
+2.控制Redis实例最大化的内存：maxmemory
+3.合理配置Linux内存分配策略，如：vm.overcommit_memory = 1
+4.降低fork频率：例如放宽AOF重写主动出发机制，或者不必要的全量复制</code></pre><p><strong>子进程开销和和优化</strong></p>
+<pre><code>1.CPU
+    开销：RDB和AOF文件生成，都属于CPU密集型操作
+    优化：不做任何CPU绑定，不和CPU密集型部署
+2.内存
+    开销：fork内存的开销，copy_on_write
+    优化：不允许单击多部署时的大量重写
+3.硬盘
+    开销：AOF和RDB文件写入，可以结合iostart，iotop分析
+    优化：
+        1.不要和高硬盘负载部署到一起：存储服务器，消息队列等
+        2.根据写入量决定磁盘的类型：ssd之类
+        3.单机多实例持久文件目录操作可以考虑分盘</code></pre><p><strong>AOF追加阻塞</strong></p>
+<p>##Redis的复制原理以及优化<br>主从复制的作业：达到备份的效果，当主机宕机后可以提供类似的资源，且支持一主多从。</p>
+<p>一主多从呢可以实现读写分离以及高可用的实现。</p>
+<p>命令实现：</p>
+<pre><code>slaveof再写入目的主机端口，当返回OK就成功</code></pre><p>除了命令，还有启动之前的配置操作。这里不做介绍</p>
+<p><strong>全量复制和部分复制</strong></p>
+<p>全量复制的开销:</p>
+<pre><code>1.bgsave时间：fork操作，生成一个子进程，因此对CPU和硬盘都有一定的开销
+2.RDB文件因为时网络传输，因此要占用传输时延
+3.从节点清空数据的时间
+4.从节点加载RDB的时间
+5.可能的AOF重写时间</code></pre><p>存在的问题：</p>
+<pre><code>1.读写分离：读流量分摊到从节点上
+    问题：复制数据的延迟，以及可能读到过期数据，或者从节点故障
+2.配置的不一致
+    内存配置不一致导致的数据丢失，
+3.规避全量复制
+    要注意就是第一次的全量复制不可避免
+    节点运用后ID不匹配，主节点重启后run_id的改变，或者故障你的转移
+    复制积压缓冲区不足，网络中断或者部分复制无法满足
+4.复制风暴
+    1.节点对应多的重节点，主节点重启后，多个从节点复制的CPU和网络消耗过大。
+    2.单机挂在多个master节点时候造成的积压。后果可想而知。</code></pre>
       
     </div>
 
@@ -683,7 +745,7 @@ geodist：geodist member1 member2  用于计算两地的距离
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">36</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -718,7 +780,9 @@ geodist：geodist member1 member2  用于计算两地的距离
         
           
         
-        <span class="site-state-item-count">9</span>
+          
+        
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -781,7 +845,9 @@ geodist：geodist member1 member2  用于计算两地的距离
         
           
         
-        <span class="site-state-item-count">23</span>
+          
+        
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -815,7 +881,7 @@ geodist：geodist member1 member2  用于计算两地的距离
       
         
       
-        <a href="mailto:2624619631@qq.com" title="E-Mail &rarr; mailto:2624619631@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+        <a href="mailto:xiangzi1019@163.com" title="E-Mail &rarr; mailto:xiangzi1019@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
       </span>
     
   </div>
