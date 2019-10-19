@@ -1,0 +1,4951 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>LeetCode_Simple_第四周</title>
+    <url>/2019/10/13/LeetCode-Simple-%E7%AC%AC%E5%9B%9B%E5%91%A8/</url>
+    <content><![CDATA[<a id="more"></a>
+]]></content>
+  </entry>
+  <entry>
+    <title>数据结构之设计的考虑</title>
+    <url>/2019/10/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E8%AE%BE%E8%AE%A1%E7%9A%84%E8%80%83%E8%99%91/</url>
+    <content><![CDATA[<p>对于数据结构和算法，来来回回啃了小半年了，算是有一些收获也有一些为难。可能就是训练不够导致很多时候没有头绪，也没有真正实践过具体的操作。现在开始跟着项目开始慢慢着手联系。也为了明年的春招所以再学一遍对应的知识。有兴趣可以查阅详情。</p>
+<a id="more"></a>
+<p>首先引出来一个问题：设计一个加法，实现输入两个数，并且打印对应加法的答案。</p>
+<p>我仍记得刚开始学C++的时候就遇到过这个问题，大不了就是int一个a，b。然后再定义一个c=a+b，最后cout即可。那时候大学更接触编程，输出的结果正确也能让我沾沾自喜。不过随着后续的学习，尤其是到了学习《数据结构》这门课的时候，再去回想这一题，发现真的大有学问。</p>
+<p>问题存在：</p>
+<pre><code>如果我输入了一个浮点数，例如1.1和一个1.2，那么程序肯定输出错误，因为浮点数会清空小数点后面而输出2。
+其次，如果我输入了一个a1和2，程序肯定报错了，因为对于a来说不能用int类型表示。
+亦或者是，我输入一个极大的数据，也许你会说用long类型。但是大于long类型之后呢？
+更有问题为1.1.1和2，那么如何报错呢？
+种种问题接踵而至。</code></pre><p>现在再来开始我们的介绍吧。</p>
+<p><strong>时间复杂度</strong></p>
+<p>百度中给出的定义：</p>
+<p><em>在计算机科学中，时间复杂性，又称时间复杂度，算法的时间复杂度是一个函数，它定性描述该算法的运行时间。这是一个代表算法输入值的字符串的长度的函数。时间复杂度常用大O符号表述，不包括这个函数的低阶项和首项系数。使用这种方式时，时间复杂度可被称为是渐近的，亦即考察输入值大小趋近无穷时的情况。</em></p>
+<p>实际上就是我们大致估算程序在执行完我们的程序所需要的步数的估计值。因为我们在面对一个程序时候，不可能准确描述时间而只能估计其时间性能，然后根据估计值寻求优化的策略。时间复杂度浅层次的我们分为：O（N），O（log2 N），O（N²），O（2^N）,O（N^M）。</p>
+<p><strong>空间复杂度</strong></p>
+<p>百度中给出的定义：</p>
+<p><em>空间复杂度(Space Complexity)是对一个算法在运行过程中临时占用存储空间大小的量度，记做S(n)=O(f(n))。比如直接插入排序的时间复杂度是O(n^2),空间复杂度是O(1) 。而一般的递归算法就要有O(n)的空间复杂度了，因为每次递归都要存储返回信息。一个算法的优劣主要从算法的执行时间和所需要占用的存储空间两个方面衡量。</em></p>
+<p>对于一个算法，其时间复杂度和空间复杂度往往是相互影响的。当追求一个较好的时间复杂度时，可能会使空间复杂度的性能变差，即可能导致占用较多的存储空间；反之，当追求一个较好的空间复杂度时，可能会使时间复杂度的性能变差，即可能导致占用较长的运行时间。另外，算法的所有性能之间都存在着或多或少的相互影响。因此，当设计一个算法(特别是大型算法)时，要综合考虑算法的各项性能，算法的使用频率，算法处理的数据量的大小，算法描述语言的特性，算法运行的机器系统环境等各方面因素，才能够设计出比较好的算法。算法的时间复杂度和空间复杂度合称为算法的复杂度。</p>
+<p><strong>斐波那契数列的深入思考</strong></p>
+<p>首先要知道什么市斐波那契数列：形如list[1, 1, 2, 3, 5, 8, 13, 21 …]的数据，从第三项开始每一项都是前两项的和。例如list[5]=list[3]+list[4]。那么问题来了，就是如果我要得到第38项的值，该如何计算呢？</p>
+<p>首先呢我们可以想到的就是递归嘛，来看看代码如何实现：</p>
+<pre><code>public long Fib(int number) {
+    if(number == 1 || number == 2) {
+        return 1;
+    }
+    return Fib(number - 1) + Fib(number -2);
+}</code></pre><p><img src="/2019/10/10/数据结构之设计的考虑/01.png" alt></p>
+<p>显然这是一个正确的答案，即：我们要得到第38项，就去找第37和36嘛。那么任务就分给了下面的数，现在就是我们不知道37和36的值，那么就继续像领导一样分给下面吧！然后任务给了36 和35，以及35和34。层层递归之后，终于到了基层有人懂了也就是1和2的时候就会告诉上层，我知道等于1，好了你去告诉你的上一级吧。我的天，想一下多可怕，每一个人都去找对于的下级，只有1和2才能给定答案，那么中间会有多少节点在调用下面呢！我们仅以8作为一个例子画图试一下好了，然后看看多少是“混吃等死”的吧</p>
+<p>再来看看另一个方法然后对比一下吧:</p>
+<pre><code>public long Fib(int number) {
+    int A = 1;
+    int B = 0;
+    while(number-- &gt; 0) {
+        B += A;
+        A = B - A;
+    }
+    return B;
+}</code></pre><p>如果以上代码没有一次性理解的话可以这样理解一下：</p>
+<pre><code>A = A + B；
+B = A + B；</code></pre><p>实质上就是互相赋值然后依次得到对应的答案。不过第二种的方法需要 /2 来求相对应的取值。</p>
+<p>那么这个方法和第一种方法有上面区别呢？首先我们来考虑一下时间的对比吧。第一个来说虽然好懂且结果显而易见，但是时间复杂度根据图片来看也是O(2^n)量级的，那么所用到的内存虽然不是同时间一样的量级，不过依照图片看也是很消耗资源。那么第二个呢？我们只循环了依次编次，且遍历时候执行程序时间复杂度为O(n)，然后空间消耗呢？无非就定义了一个整型的A和B。</p>
+<p>现在到我们选择的时候了。算了别选了，就第二个吧。</p>
+<p><strong>位运算的引入</strong></p>
+<p>再者我们来一个问题，给定一个数，求其二进制数中1的个数。</p>
+<p>这个问题似乎有些意思，我们要了解二进制的内容我们知道 按位运算符&gt;&gt;和&lt;&lt; ,分别表示右移一位（/2），和左移一位（*2）也就是说如果校验8为1000，那么我们右移的时候就会变成100显然与1做按位与的时候不为1就不操作，然后继续操作，直到为1是才发现正确，然后记为1。</p>
+<p>那么代码为：</p>
+<pre><code>public int CountOne(int n) {
+    int sum = 0;
+    while(n &gt; 0) {
+        sum += n &amp; 1;
+        n &gt;&gt;= 1;
+    }
+    return sum;
+}</code></pre><p>我们可以看到，循环的次数就是字节的长度，如果二进制代码太大所以执行时间就更久。能否优化呢？</p>
+<pre><code>public int CountOne(int n) {
+    int sum = 0;
+    while(n &gt; 0) {
+        sum++;
+        n &amp;= (n - 1);
+    }
+    return sum;
+}</code></pre><p>为什么这样会优化呢？首先我们要理解一下n &amp;= (n - 1)是什么意思。我们给定这样一个数n = 111110000 ,那么n-1 = 111101111,试想一下，当我们执行只一句话的时候，会有什么效果呢？显然我们的n = 111100000，我们虽然只执行了一步，但是却找到了最右边的一个1，那么这一题的问题就变为了执行的效率为1的个数，那么他就是一个上限为上一个程序的效率（最差情况），或者是只执行一步完成结果（最优情况）。这样看是否算是优化呢程序呢？</p>
+<p><strong>学习与思考</strong></p>
+<p>接触数据结构的同时优化自己的代码，并且想着全方位的去构思自己程序的优良，不仅仅是提高自己的代码能力，同时也提高自己面对一个问题时候的各方考虑是否严谨与可行。</p>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git的简单使用</title>
+    <url>/2019/10/05/Git%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>在使用github的时候学习了Git的一些简单使用，因此记录下来供自己参考。包括了一些简单操作和部署步骤。</p>
+<a id="more"></a>
+<p>命令：</p>
+<pre><code>git add:将本地文件 增加到暂存区
+git commit:将暂存区的内容 提交到 本地仓库（本地分支，默认master分支）
+git push：将本地仓库的内容 推送到  远程仓库（远程分支）
+
+git pull:将远程仓库（远程分支）的内容 拉取到  本地仓库（本地分支）</code></pre><p><strong>安装git：</strong></p>
+<p>安装时：  Use git from git bash only..,其他默认下一步</p>
+<p>*<em>配置path: *</em></p>
+<p>配置git：用户名和邮箱</p>
+<p>右键-git bash</p>
+<pre><code>git config --global user.name &quot;xxx&quot;
+git config --global user.email &quot;xxxxxx@qq.com&quot;</code></pre><p>查看C:\Users\xxxx.gitconfig</p>
+<p>搭建git服务器（远程仓库） ：统一的托管网站（<a href="https://github.com/）" target="_blank" rel="noopener">https://github.com/）</a></p>
+<p>为了在本地和远程仓库之间进行免密钥登录，可以配置ssh </p>
+<pre><code>ssh:本地-远程
+配置ssh：先在本地配置，发送给远程</code></pre><p><strong>现在本地生成ssh：</strong></p>
+<p>ssh-keygen -t rsa -C <a href="mailto:xxxxx@qq.com" target="_blank" rel="noopener">xxxxx@qq.com</a> </p>
+<p><strong>发送给远程：</strong></p>
+<p>github - settings - SSH and … - New SSH  - title任意、key中输入 刚才在本地生成的ssh：</p>
+<p>将本地刚才生成的id_rsa.pub内容复制到远程的Key中</p>
+<p><strong>测试连通性：</strong></p>
+<p>ssh -T <a href="mailto:git@github.com" target="_blank" rel="noopener">git@github.com</a></p>
+<p>如果本地和远程成功通信，则可以在 /.ssh目录中 发现known_hosts文件</p>
+<p>如果失败：多尝试几次 、检查回车符</p>
+<p>在本地新建git项目</p>
+<p>在项目根目录  右键 - git bash - git init</p>
+<p>在远程建立git项目</p>
+<p>new-建立项目- 生成  <a href="https://github.com/xxxx/mygitremote.git" target="_blank" rel="noopener">https://github.com/xxxx/mygitremote.git</a></p>
+<p>本地项目-远程项目关联</p>
+<p>git remote add origin <a href="mailto:git@github.com" target="_blank" rel="noopener">git@github.com</a>:xxx/mygitremote.git</p>
+<p>第一次发布项目 （本地-远程）</p>
+<pre><code>git add .      //文件-暂存区
+git commit -m &quot;注释内容&quot;  //暂存区-本地分支（默认master）
+git push -u origin master</code></pre><p>第一次下载项目（远程-本地）</p>
+<p>git clone <a href="mailto:git@github.com" target="_blank" rel="noopener">git@github.com</a>:xxx/mygitremote.git</p>
+<pre><code>提交(本地-远程)
+(在当前工作目录 右键-git bash)
+git add.
+git commit -m &quot;提交到分支&quot;
+git push  origin master</code></pre><p>更新(远程-本地)</p>
+<p>git pull</p>
+]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode_Simple_第三周</title>
+    <url>/2019/10/03/LeetCode-Simple-%E7%AC%AC%E4%B8%89%E5%91%A8/</url>
+    <content><![CDATA[<p>国庆在忙着学习框架的东西，所以没怎么看相关的算法和数据结构的东西，现在有时间所以又做了点题目上传，警醒一下自己。</p>
+<p>第三周，算法给生活加点料。</p>
+<a id="more"></a>
+<p><strong>1.二叉树的序列化与反序列化</strong></p>
+<p>首先呢明确说明是序列化说明是反序列化：</p>
+<p>二叉树-&gt;文件，称之为序列化；文件-&gt;二叉树，称之为反序列化</p>
+<p>想法：针对序列化呢，我们要明确如何区别数字，比如一课二叉树的数组表示为：1，2，33 如果序列化后没有其他操作，就会变成1233，那么我们就没有办法对其进行还原操作。我们呢选择在每一个数后面添加一个“！”表示区别。当我们的数据存完后会有一个null值，我们呢就加一个“#”表示这个节点为空。</p>
+<p>首先实现的是先序遍历的代码：</p>
+<pre><code>public class Demo10 {
+    public class Node{
+        public int value;
+        public Node left;
+        public Node right;
+    }
+    public String searchByPre(Node head){
+        if(head == null)
+            return &quot;#!&quot;;
+        //首先就是每一个值后面加一个 ！
+        String res = head.value + &quot;!&quot;;
+        //由于是先序遍历，所以根节点之后就是遍历做孩子之后再右孩子。实现的方法为递归查询遍历
+        res += searchByPre(head.left);
+        res += searchByPre(head.right);
+        return res;
+    }
+}</code></pre><p>接着呢我们再把上面代码生成的文件返回成一棵树的模样。也就是当我们遍历的时候如果遇到了！就证明之前这个数为一个值，然后去掉！后再紧接着遍历，如果碰到#就证明这个数的一个子节点为null，然后再转向另一个子节点继续刚才操作即可。</p>
+<pre><code>import java.util.LinkedList;
+import java.util.Queue;
+
+public class Demo10_2 {
+    public class Node{
+        public int value;
+        public Node left;
+        public Node right;
+        //作用就是方便转换时候调用
+        public Node(Integer valueOf) {
+        }
+        public Node() {
+        }
+    }
+    public Node reconByPreString(String preStr){
+        //实现根据！的分离切片操作
+        String[] values = preStr.split(&quot;!&quot;);
+        //创建一个队列用于暂时保存数据
+        Queue&lt;String&gt; queue = new LinkedList&lt;&gt;();
+        for (int i = 0; i != values.length; i++) {
+            queue.offer(values[i]);
+
+        }
+        return reconPreOrder(queue);
+    }
+    public Node reconPreOrder(Queue&lt;String&gt; queue){
+        //获取首位元素并删除
+        String value = queue.poll();
+        if(value.equals(&quot;#&quot;)){
+            return null;
+        }
+        //递归的还原整棵树
+        Node head = new Node(Integer.valueOf(value));
+        head.left = reconPreOrder(queue);
+        head.right = reconPreOrder(queue);
+        return head;
+    }
+}</code></pre><p>注：其实序列化和反序列化都可以使用先中后序的遍历方法或者是层次遍历，我们这里只取了先序。</p>
+<p><strong>2.判断t1树是否包含t2树的全部拓扑结构</strong></p>
+<p>说白了就是判断t2树是否是t1的子树嘛。</p>
+<p>想法：首先确定t2的根节点值是否在t1中存在，如果存在就开始对照遍历。并且当t2遍历完全后（t1刚好结束或者仍有余且没有因为不相同的数据中断）就返回true。否则返回false。如果中断，就在开始遍历的节点下继续遍历t1寻找之前动作。时间复杂度大致为O(N*M)</p>
+<pre><code>public class Demo11 {
+    public class Node{
+        public int value;
+        public Node left;
+        public Node right;
+        //生成代参和无参构造函数
+        public Node(int data){
+            this.value = data;
+        }
+        public Node(){
+        }
+    }
+    public boolean contains(Node t1,Node t2){
+        //当t1为空肯定不包含，或者t2为空肯定包含
+        if(t2 == null)
+            return true;
+        if(t1 == null)
+            return false;
+        //判断当前节点以及其左右孩子是否相同，不同就去遍历左孩子，再不行就遍历右孩子
+        return check(t1,t2) || contains(t1.left,t2) || contains(t1.right,t2);
+    }
+    public boolean check(Node h,Node t2){
+        if(t2 == null)
+            return true;
+        if(h == null || h.value != t2.value)
+            return false;
+        //判断当前节点的左右孩子是否相同
+        return check(h.left,t2.right) &amp;&amp; check(h.right,t2.right);
+    }
+}</code></pre><p>注：由于嵌套关系太紧密，所以会大量的消耗资源，但是相对于的这个代码容易理解且好写。</p>
+<p><strong>3.根据后续数组重建搜索二叉树</strong></p>
+<p>首页呢要了解什么是搜索二叉树，说白了就是二叉排序树。就是树的左子树小于右子树的树的总称。</p>
+<p>给定的是一个没有重复值的数组。</p>
+<p>想法：因为是后续遍历的，所以根节点一定最后一个遍历到，那么它肯定在数组的最后。同理可以得到小于它的树肯定在前一半，而大于它的肯定在后一半。那么就递归的来吧。</p>
+<pre><code>public class Demo12 {
+    public boolean isPostArray(int[] arr){
+        if(arr == null || arr.length == 0)
+            return false;
+        return isPost(arr,0,arr.length-1);
+    }
+    public boolean isPost(int[] arr, int start,int end){
+        //长度为零时，返回
+        if(start == end)
+            return true;
+        //分别记录位置以及最后对比的元素
+        int less = -1;
+        int more = end;
+        for (int i = start; i &lt; end; i++) {
+            //先找到左边的值
+            if(arr[end] &gt; arr[i]){
+                less = i;
+            }else{
+                more = more == end?i:more;
+            }
+        }
+        //如果界限刚好在最后一位
+        if(less == -1 || more == end){
+            return isPost(arr, start ,end - 1);
+        }
+        //如果界限值不匹配
+        if(less != more -1){
+            return false;
+        }
+        //左右子树依次递归
+        return isPost(arr,start,less) &amp;&amp; isPost(arr,more,end -1);
+    }
+}</code></pre><p>进一步加强一下:能否把这个数组还原成二叉树?</p>
+<pre><code>public class Demo12_2 {
+    public class Node{
+        public int value;
+        public Node left;
+        public Node right;
+
+        public Node(int value){
+            this.value = value;
+        }
+        public Node posArrayToBST(int[] posArr){
+            if(posArr == null)
+                return null;
+            return posToBST(posArr,0,posArr.length-1);
+        }
+        public Node posToBST(int[] posArr,int start,int end){
+            if(start &gt; end)
+                return null;
+            //先找到根节点，然后依次寻找左右节点
+            Node head = new Node(posArr[end]);
+            //记录位置
+            int less = -1;
+            int more = end;
+            for (int i = start ; i &lt; end; i++) {
+                //先找到界限
+                if(posArr[end] &gt; posArr[i]){
+                    less = i;
+                }else{
+                    //more给定界限后一个值
+                    more = more == end ? i : more;
+                }
+            }
+            //递归的构建树
+            head.left = posToBST(posArr,start,less);
+            head.right = posToBST(posArr,more,end-1);
+            return head;
+        }
+    }
+}</code></pre><p><strong>4.判断一棵树是否时完全二叉树</strong></p>
+<p>很简单嘛，只要层次遍历，除了叶子节点外其他节点都有左右孩子即为完全二叉树。一说到层次遍历肯定会用到queue结构嘛。</p>
+<pre><code>import java.util.LinkedList;
+import java.util.Queue;
+
+public class Demo13 {
+    public class Node{
+        public int value;
+        public Node left;
+        public Node right;
+
+        public Node(int value){
+            this.value = value;
+        }
+    }
+    public boolean isBST(Node head){
+        if(head == null)
+            return true;
+        //队列用于保存节点的值
+        Queue&lt;Node&gt; queue = new LinkedList&lt;&gt;();
+        //定义一个叶子节点以及左右节点
+        boolean leaf = false;
+        Node lt = null;
+        Node rt = null;
+        //先放入根节点
+        queue.offer(head);
+        while (!queue.isEmpty()){
+            head = queue.poll();
+            lt = head.left;
+            rt = head.right;
+            if((leaf &amp;&amp; (lt != null || rt != null)) || (lt == null &amp;&amp; rt != null)){
+                return false;
+            }
+            //左边不为空就放入
+            if(lt != null)
+                queue.offer(lt);
+            //右边不为空也放入
+            if(rt != null) {
+                queue.offer(rt);
+            }else{
+                //如果右边为空就时叶子节点
+                leaf = true;
+            }
+        }
+        return true;
+    }
+}</code></pre>]]></content>
+      <categories>
+        <category>算法与数据结构面试</category>
+      </categories>
+      <tags>
+        <tag>DataStructure</tag>
+        <tag>Algorithm</tag>
+        <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode_Simple(第二周)</title>
+    <url>/2019/09/29/LeetCode-Simple-%E7%AC%AC%E4%BA%8C%E5%91%A8/</url>
+    <content><![CDATA[<p>主要记录一些简单的算法和数据结构的题目，一方面是自己在准备的积累一方面适合复习使用。代码不一定最优，但是思考过程基本会给。</p>
+<p>第二周，算法给生活加点料。</p>
+<a id="more"></a>
+<p><strong>1.按照左一个右一个方式重新组合单链表</strong></p>
+<p>要求：例如：1-&gt;2-&gt;3-&gt;4-&gt;5-&gt;6,转变后为1-&gt;4-&gt;2-&gt;5-&gt;3-&gt;6</p>
+<p>想法：首先想到的是可以先遍历一遍，得到长度len，然后知道了哪里是中点。然后呢就可以一个从头开始，一个从中间开始一次遍历然后插入后半部分的数据。这样的时间复杂度大致上为N，空间呢也只用了一个暂存用的额外空间。</p>
+<pre><code>public class Demo06 {
+    public class Node{
+        public int value;
+        public Node next;
+        public Node(int value){
+            this.value = value;
+        }
+    }
+    public void relocal(Node head){
+        //判空
+        if(head == null || head.next == null)
+            return;
+        Node mid = head;
+        Node right = head.next;
+        //要先找打中点的位置，所以令right行进步骤是mid的两倍
+        while(right.next != null &amp;&amp; right.next.next != null){
+            mid = mid.next;
+            right = right.next.next;
+        }
+        right = mid.next;
+        mid.next = null;
+        margeLR(head,right);
+    }
+    //现在开始写合并寒素
+    public void margeLR(Node left,Node right){
+        Node next = null;
+        //交换算法
+        while(left.next != null){
+            next = right.next;
+            right.next = left.next;
+            left.next = right;
+            left = right.next;
+            right = next;
+        }
+        left.next = right;
+    }
+}</code></pre><p><strong>2.合并两个有序的单链表</strong></p>
+<p>要求：合并后的单链表依旧有序。</p>
+<p>想法：既然已经有序了，哪我们一次遍历两个然后比较大小即可。但是呢我们再思考，是放入一个新的链表呢还是旧链表呢？答案肯定是不额外申请啦。然后呢我们就可以做了。一个为主链，一个为辅链。</p>
+<pre><code>public class Demo07 {
+    public class Node{
+        public int value;
+        public Node next;
+        public Node(int value){
+            this.value = value;
+        }
+    }
+    public Node merge(Node head1, Node head2){
+        //先判断是否为空,当其中一个为空时，直接返回另一个即可
+        if(head1 == null || head2 == null){
+            return head1 != head2 ? head1 : head2;
+        }
+        //选择一个主链表
+        Node head = head1.value &lt; head2.value ? head1 : head2;
+        Node cur1 = head == head1 ? head1 : head2;
+        Node cur2 = head == head2 ? head2 : head1;
+        Node pre = null;
+        Node next = null;
+        while(cur1 != null &amp;&amp; cur2 != null){
+            if(cur1.value &lt;= cur2.value){
+                pre = cur1;
+                cur1 = cur1.next;
+            }else{
+                next = cur2.next;
+                pre.next = cur2;
+                cur2.next = cur1;
+                pre = cur2;
+                cur2 = next;
+            }
+        }
+        //最后判断以下那个时主链即可
+        pre.next = cur1 == null ? cur2 : cur1;
+        return head;
+    }
+}</code></pre><p><strong>3.向有序的环形链表中插入新节点</strong></p>
+<p>要求：时间复杂度为N，额外空间为1。</p>
+<p>想法：对于有序的环形链表。我们要考虑插入的节点值对应的位置，如果说插入值小于头结点，那么要遍历一遍后找到了最大节点后插入，这个就类似于最大节点的插入。普通节点类似。</p>
+<pre><code>public class Demo08 {
+    public class Node{
+        public int value;
+        public Node next;
+        public Node(int value){
+            this.value = value;
+        }
+    }
+    public Node insertNewNode(Node head, int num){
+        Node node = new Node(num);
+        if(head == null){
+            //自己成环
+            node.next = node;
+            return node;
+        }
+        Node pre = head;
+        Node cur = head.next;
+        //查找对应的元素位置
+        while(cur != head){
+            if(pre.value &lt;= num &amp;&amp; cur.value &gt;= num){
+                break;
+            }
+            pre = cur;
+            cur = cur.next;
+        }
+        //插入
+        pre.next = node;
+        node.next = cur;
+        return head.value &lt; num ? head : node;
+    }
+}</code></pre><p><strong>4.单链表的选择排序</strong></p>
+<p>要求：没啥要求，额外空间为1即可。</p>
+<p>想法：emmm没啥想法，那就按照选择排序做呗。每次遍历找到最小的放在该放的位置就行了。</p>
+<pre><code>public class Demo09 {
+    public class Node {
+        public int value;
+        public Node next;
+
+        public Node(int value) {
+            this.value = value;
+        }
+    }
+    public  Node selectionSort(Node head){
+        Node tail = null;
+        Node cur = head;   // 未排序部分
+        Node samllPre = null;
+        Node samll = null;
+        while(cur != null){
+            samll = cur;
+            samllPre = getSamllPre(cur);
+            //取出对应当前最小的值
+            if(samllPre != null){
+                samll = samllPre.next;
+                samllPre.next = samll.next;
+            }
+            cur = cur == samll ? cur.next : cur;
+            //给尾部增加找到的最小的值
+            if(tail == null){
+                head = samll;
+            }else{
+                tail.next = samll;
+            }
+            tail = samll;
+        }
+        return head;
+    }
+    //遍历找出相对于的节点的前一个节点
+    public Node getSamllPre(Node head){
+        Node samllPre = null;
+        Node samll = head;
+        Node pre = head;
+        Node cur = head.next;
+        while(cur != null){
+            if(cur.value &lt; samll.value){
+                samllPre = pre;
+                samll = cur;
+            }
+            pre = cur;
+            cur = cur.next;
+        }
+        return samllPre;
+    }
+}</code></pre>]]></content>
+      <categories>
+        <category>算法与数据结构面试</category>
+      </categories>
+      <tags>
+        <tag>DataStructure</tag>
+        <tag>Algorithm</tag>
+        <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis初学(二)</title>
+    <url>/2019/09/22/Redis%E5%88%9D%E5%AD%A6-%E4%BA%8C/</url>
+    <content><![CDATA[<p>这里主要记录了Redis的一些功能以及运维的简答理解。由于是初学，所以知识难免不完全。详情可以点击查看。</p>
+<a id="more"></a>
+<p>###慢查询<br>生命周期：</p>
+<p>客户端发送命令给Redis，然后依次执行命令。最后将结果传输给客户端。慢查询发生在执行命令阶段，要注意的就是，客户端超时不一定是慢查询的原因，但是慢查询是客户端超时一个可能因素。</p>
+<p>慢查询的命令：</p>
+<pre><code>1.slowlog get[n]   获取慢查询的队列信息
+2.slowlog len    获取慢查询队列的长度
+3.slowlog rest   清空慢查询的队列</code></pre><p>###pipeline 流水线<br>什么是流水线呢：将云游的一次传输命令和一次计算变为网络一次性传输多条命令再分次计算。就好像搬砖一样，你每次搬一块砖来来回回，费时费力。不如一次性搬10快。节省了来回的时间消耗。同样的流水线机制也节省了传输的时间。</p>
+<p>但是要注意：每次pipeline携带的数据量要控制，否则过多会压迫网络的传输能力（为啥是网络呢，因为实际开发中不可能主机和数据库放在一起）同时一次性传输数据量过大，也会造成查询的时延。并且每次只能作用在一个Redis的节点上。</p>
+<p>###发布订阅<br>角色：发布者   订阅者通过不同的频道接收信息。  但问题是就好像领导在开会，由于你进来晚了。所以之前的消息就不能接收到了。同样的，你可以收听多个频道。穿梭在各大会场。</p>
+<p>命令：</p>
+<pre><code>publish  发布命令  public channel message
+subscribe  订阅   shubscribe [channel] 频道可以有多个
+unsubscribe  取关   同上      （意思就是我不听了我走了）
+其他不做介绍了</code></pre><p>相对于消息队列，就是作为“抢”的功能，这个是谁都可以收到。</p>
+<p>###Bitmap 位图<br>在某些场景下存储是有好处的  相对来说节省空间。但对于某些操作例如setbit的偏移量可能比较耗时。</p>
+<p>命令：</p>
+<pre><code>setbit：  setbit key offset value  给位图指定索引值
+getbit：  getbit key offset 获得
+bitcount：  bitcount key [start end] 获取指定范围的值为1的个数
+bitop： bitmap opdestkey key··· 做多个bitmap的and，or，not操作并将结果保存在destkey中</code></pre><p>###HyperLoglog<br>一种数据结构，用极小的空间完成独立数量的统计，实质上就是字符串</p>
+<p>命令：</p>
+<pre><code>pfadd： pfadd key element···  向其中添加元素
+pfcount： pfcount key···  计算其中独立总数
+pfmerga：pfmerga destkey sourcekey··· 合并多个hyperloglog</code></pre><p>要注意的就是，计实hyperloglog很好用且占用空间小，但是他有一定的错误率。</p>
+<p>###GEO<br>用于存储经纬度，计算两地之间的距离</p>
+<p>应用也广泛，例如查询一定范围的酒店帮助推送之类。</p>
+<p>命令：</p>
+<pre><code>geoadd：geoadd key longitude latitude member  增加地理位置信息
+geopos：geopos key member··· 获取地理位置信息
+geodist：geodist member1 member2  用于计算两地的距离
+其余的不做介绍 </code></pre><p>##Redis持久化的取舍和选择<br>什么是持久化呢：Redis所有数据保存在内存中，对数据的更新将异步地保存到磁盘上。这样呢可以在关闭Redis的时候仍存储对于数据。</p>
+<p>持久化的操作：</p>
+<pre><code>快照：Redis的RDB功能，类比于MySQL就是Dumpgongn
+写日志：Redis的AOF功能，类比于MySQL就是BinLog</code></pre><p>###什么是RDB<br>①.Redis创建对应的RDB文件（二进制）格式，把偶才能在硬盘上。（以快照的形式保存）</p>
+<p>②.当你需要的时候呢，重启RDB，Redis就从硬盘上启动载入相对于的二进制文件到内存。</p>
+<p>命令介绍：</p>
+<pre><code>save命令：
+    Client-&gt;（save）启动①，成功就返回OK，但是相对应的当数据特别大时，因为Redis时单线程操作所有有可能会产生阻塞。
+    同时要注意就是RDB模式下存储为整体存储，就是一次性的替换和存储进入磁盘。不会说只更新操作的部分。
+bgsave命令：
+    Client-&gt;（bgsave）Redis。【redis会在后台执行fork操作，因此不会阻塞Redis的操作】使用的是子进程。</code></pre><p>自动生成RDB，就是在一定时间内，数据量达到了要求目标就会自动生成文件。其触发的方式为1.全量复制，如果在主从复制的情况下自动生成。2.不清空重启机制。</p>
+<p>同时RDB存在一些问题：例如保存的耗时性以及阻塞的消耗性能。并且呢操作时不可控的。当宕机的时候会造成数据的丢失。</p>
+<p>###什么时AOF<br>AOF运行的原理：在客户端执行一条命令，在就日志中记录一条。所以呢如果在Redis宕机后，因为AOF的这种功能，所有的信息基本都会恢复。</p>
+<p>命令介绍：</p>
+<pre><code>alway：
+    Redis-&gt;写命令到缓冲区-&gt;每条命令fsync到硬盘上-&gt;生成AOF文件。（注意这样的坏处时IO开销比较大）
+everysec：
+    Redis-&gt;写命令到缓冲区-&gt;每条命令fsync到硬盘上-&gt;生成AOF文件。(有可能在宕机的那一秒数据丢失)
+no：
+    操作系统自己决定是否刷新更新操作。（不可控）</code></pre><p>随着时间的变化，AOF文件也会越来越大，并且在恢复的时候也会越来越长。因此有了重写的功能。例如在更新数据的时候只存储最后的一部分。亦或者是过期的数据不进行存储来保证数据不会过大。</p>
+<p>建议：</p>
+<pre><code>关闭RDB，但是在执行第一次主从复制的时候肯定要用到RDB。
+建议开启AOF，用缓冲和存储。并且选用每秒刷盘方式存储数据。</code></pre><p>##运维的常见操作<br><strong>fork操作</strong></p>
+<pre><code>1.同步操作（主要是对内存的一些简要操作）
+2.与内存信息量有关:内存越大，耗时越长，当然也与你选择的机器模型有关</code></pre><p>改善操作：</p>
+<pre><code>1.优化使用物理机或者高效支持fork操作的虚拟化技术
+2.控制Redis实例最大化的内存：maxmemory
+3.合理配置Linux内存分配策略，如：vm.overcommit_memory = 1
+4.降低fork频率：例如放宽AOF重写主动出发机制，或者不必要的全量复制</code></pre><p><strong>子进程开销和和优化</strong></p>
+<pre><code>1.CPU
+    开销：RDB和AOF文件生成，都属于CPU密集型操作
+    优化：不做任何CPU绑定，不和CPU密集型部署
+2.内存
+    开销：fork内存的开销，copy_on_write
+    优化：不允许单击多部署时的大量重写
+3.硬盘
+    开销：AOF和RDB文件写入，可以结合iostart，iotop分析
+    优化：
+        1.不要和高硬盘负载部署到一起：存储服务器，消息队列等
+        2.根据写入量决定磁盘的类型：ssd之类
+        3.单机多实例持久文件目录操作可以考虑分盘</code></pre><p><strong>AOF追加阻塞</strong></p>
+<p>##Redis的复制原理以及优化<br>主从复制的作业：达到备份的效果，当主机宕机后可以提供类似的资源，且支持一主多从。</p>
+<p>一主多从呢可以实现读写分离以及高可用的实现。</p>
+<p>命令实现：</p>
+<pre><code>slaveof再写入目的主机端口，当返回OK就成功</code></pre><p>除了命令，还有启动之前的配置操作。这里不做介绍</p>
+<p><strong>全量复制和部分复制</strong></p>
+<p>全量复制的开销:</p>
+<pre><code>1.bgsave时间：fork操作，生成一个子进程，因此对CPU和硬盘都有一定的开销
+2.RDB文件因为时网络传输，因此要占用传输时延
+3.从节点清空数据的时间
+4.从节点加载RDB的时间
+5.可能的AOF重写时间</code></pre><p>存在的问题：</p>
+<pre><code>1.读写分离：读流量分摊到从节点上
+    问题：复制数据的延迟，以及可能读到过期数据，或者从节点故障
+2.配置的不一致
+    内存配置不一致导致的数据丢失，
+3.规避全量复制
+    要注意就是第一次的全量复制不可避免
+    节点运用后ID不匹配，主节点重启后run_id的改变，或者故障你的转移
+    复制积压缓冲区不足，网络中断或者部分复制无法满足
+4.复制风暴
+    1.节点对应多的重节点，主节点重启后，多个从节点复制的CPU和网络消耗过大。
+    2.单机挂在多个master节点时候造成的积压。后果可想而知。</code></pre>]]></content>
+      <categories>
+        <category>Database</category>
+      </categories>
+      <tags>
+        <tag>NoSQL</tag>
+        <tag>Redis</tag>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode_Simple(第一周)</title>
+    <url>/2019/09/17/LeetCode-Simple/</url>
+    <content><![CDATA[<p>主要记录一些简单的算法和数据结构的题目，一方面是自己在准备的积累一方面适合复习使用。代码不一定最优，但是思考过程基本会给。</p>
+<p>第一周，算法给生活加点料。</p>
+<a id="more"></a>
+<p><strong>1.在单链表中删除倒数第K个节点</strong></p>
+<p>要求：如果链表长度为N，时间复杂度为O(N)，额外空间为O(1)</p>
+<p>想法：首先呢，单链表只能够从头开始遍历。现在要做呢就是如何在遍历了一次后能够准确找到倒数K节点的位置，例如我们可以计算到总体长度在用总体长度减去K的大小来判断。刚好就是总体长度减去K等于要删除的位置。那么就可以来实现代码了</p>
+<pre><code>public class Demo01 {
+    public class Node{
+        public int value;
+        public Node next;
+
+        public Node(int data) {
+            this.value = data;
+        }
+    }
+    public Node RemoveLastKNode(Node head, int lastK){
+        int Number = 0;
+        //首先判断是否为空且K值有效
+        if(head == null || lastK &lt; 1){
+            return head;
+        }
+        Node cur = head;
+        while(cur != null){
+            cur = cur.next;
+            Number++;
+        }
+        //如果当前节点数与K相同那么就删除头结点
+        if(Number-lastK == 0){
+            head = head.next;
+        }
+        //如果当前节点数小于K数就返回
+        else if(Number-lastK &lt; 0){
+            return head;
+        }
+        //如果当前节点数大于K就遍历删除第Number-lastK个节点
+        else{
+            cur = head;
+            for(int i =0; i &lt; Number-lastK; i++){
+                cur = cur.next;
+            }
+            cur.next = cur.next.next;
+        }
+        return head;
+    }
+
+}</code></pre><p>*<em>2.反转单链表以及双链表 *</em></p>
+<p>要求：如果链表长度为N，时间复杂度为O(N)，额外空间为O(1)</p>
+<p>想法：首先想到的使如何交换A和B两个的值，方法就在此。我们呢每次遍历原先链表，然后把其next指针指向新的链表。如同a-&gt;b-&gt;c-&gt;d-&gt;null,首先拿出a，再拿出b，并且使得b的next指向a就有了b-&gt;a，一次类推就变成了反转链表。但是由于空间的限制，所以我们呢只能实现在当前链表的转移，也就是每次拿出下一个节点用其next指针只想头结点即可。</p>
+<pre><code>public class Demo02 {
+    public class Node{
+        public int value;
+        public Node next;
+
+        public Node(int data) {
+            this.value = data;
+        }
+    }
+    public Node reverseList(Node head){
+        Node pre = null;
+        Node cur = null;
+        while(head != null){
+            //当前节点指向head的next
+            cur = head.next;
+            //然后把下一个节点指向当前新链表
+            head.next = pre;
+            //pre继承当前链表
+            pre = head;
+            //转换后head变为最新的链表
+            head = cur;
+        }
+        return head;
+    }
+}
+
+实际上看就是pre一直在记录新生成的反转列表，cur一直在记录没有转换的列表</code></pre><p>至于双向链表原理一致</p>
+<p>*<em>3.反转部分单链表 *</em></p>
+<p>给定两个整数from和to表示反转的开始位置和结束位置</p>
+<p>要求：</p>
+<ul>
+<li>如果链表长度为N，时间复杂度为O(N)，额外空间为O(1)</li>
+<li>如果不满足1&lt;= from&lt;=to&lt;=N，则不用调整</li>
+</ul>
+<p>想法：首先就是要判断给定的要求。然后再是根据反转的位置专门实现两个位置间的反转操作。反转的操作上一题中给出。是否可以实现把范围内的数据摘取出来，然后单独反转再放回去呢。卧槽？？？忘记额外空间了。看来是不行 = = 那就原样子来吧</p>
+<pre><code>public class Demo03 {
+    public class Node{
+        public int value;
+        public Node next;
+
+        public Node(int data) {
+            this.value = data;
+        }
+    }
+    public Node reversePart(Node head,int from,int to){
+        //用于计算总长度
+        int len = 0;
+        Node cur = head;
+        //用于记录from的前一个节点，以至于后面好搭接
+        Node pre = null;
+        //同理记录to的后一个节点
+        Node pos = null;
+        while(cur != null){
+            len++;
+            //记录两个节点的位置
+            if(len == from-1)
+                pre = cur;
+            if(len == to+1)
+                pos = cur;
+        }
+        //判断第二个条件是否成立
+        if(from &gt; to || from &lt; 1 || to &gt; len){
+            return head;
+        }
+        //截取反转位置
+        cur = pre == null ? head:pre.next;
+        //这一步开始就是上一题的模型
+        Node cur2 = cur.next;
+        cur.next = pos;
+        Node next = null;
+        while(cur2 != null){
+            next = cur2.next;
+            cur2.next = cur;
+            cur = cur2;
+            cur2 = next;
+        }
+        //拼接
+        if(pre != null){
+            pre.next = cur;
+            return head;
+        }
+        return cur;
+    }
+}</code></pre><p>*<em>4.两个单链表生成相加链表 *</em></p>
+<p>假设每一个节点的值都在0-9之间，那么链表整体就可以代表一个整数，然后实现两个链表的相加。</p>
+<p>要求：没啥要求，实现就好了。</p>
+<p>想法：我们之前尝试了反转的效果，那么这一题也可也这样做，反转后就是从低位加起来，再一个进位器就够了。最后结果逆序输出就行。或者说呢尝试以下栈这个结构。后进后出嘛。</p>
+<pre><code>import java.util.Stack;
+
+public class Demo04 {
+    public class Node{
+        public int value;
+        public Node next;
+
+        public Node(int data) {
+            this.value = data;
+        }
+    }
+    public Node addListNode(Node head1,Node head2){
+        //创建两个栈，用于操作两个线性表
+        Stack&lt;Integer&gt; s1 = new Stack&lt;&gt;();
+        Stack&lt;Integer&gt; s2 = new Stack&lt;&gt;();
+        //将他们分别放入栈中
+        while(head1 != null){
+            s1.push(head1.value);
+            head1 = head1.next;
+        }
+        while(head2 != null){
+            s1.push(head2.value);
+            head2 = head2.next;
+        }
+        //用于保存结果的栈
+        Stack&lt;Integer&gt; ans = new Stack&lt;&gt;();
+        //ac为进位器
+        int ac = 0;
+        int n1,n2,n = 0;
+        Node node = null;
+        Node pre = null;
+        while(!s1.isEmpty() || !s2.isEmpty()){
+            n1 = s1.isEmpty()? 0 : s1.pop();
+            n2 = s2.isEmpty()? 0 : s2.pop();
+            n = n1 + n2 + ac;
+            pre = node;
+            node = new Node(n % 10);
+            node.next = pre;
+            ac = n /10;
+        }
+        //最后判断以下ac是否还有数据
+        if(ac == 1){
+            pre = node;
+            node = new Node(1);
+            node.next = pre；
+        }
+        return node;
+    }
+}</code></pre><p>*<em>5.删除无序链表中重复出现的值 *</em></p>
+<p>要求：</p>
+<ul>
+<li>实现一个长度为N时间复杂度为O(N)的程序</li>
+<li>实现一个空间复杂度为O(1)的程序</li>
+</ul>
+<p>想法：时间复杂度为O(N)那么就要用到哈希算法，如果要空间复杂度呢，就是先排序喽，排序时间大致为O(N²)，空间为1.</p>
+<pre><code>import java.util.HashSet;
+
+public class Demo05 {
+    public class Node{
+        public int value;
+        public Node next;
+
+        public Node(int data) {
+            this.value = data;
+        }
+    }
+    public void remove(Node head){
+        if(head == null){
+            return;
+        }
+        //创建hashSet
+        HashSet&lt;Integer&gt; set = new HashSet&lt;&gt;();
+        Node pre = head;
+        Node cur = head.next;
+        //首先加入第一个值，然后开始判断
+        set.add(head.value);
+        while(cur != null){
+            //如果set中有这个值
+            if(set.contains(cur.value)){
+                pre.next = cur.next;
+            }else{
+                //如果没有就从新加入这个新值
+                set.add(cur.value);
+                pre = cur;
+            }
+            cur = cur.next;
+        }
+    }
+}</code></pre>]]></content>
+      <categories>
+        <category>算法与数据结构面试</category>
+      </categories>
+      <tags>
+        <tag>DataStructure</tag>
+        <tag>Algorithm</tag>
+        <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis初学（一）</title>
+    <url>/2019/09/17/Redis%E5%88%9D%E5%AD%A6%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+    <content><![CDATA[<p>数据库学习阶段专门学习和了解了一下Redis的相关知识，也了解一下非关系型数据库的一些操作。主要通过Redis这款产品学习。通过视频和相关书籍整理了部分资料以供复习和查漏补缺。</p>
+<a id="more"></a>
+<p>首先要了解一下Redis是什么？</p>
+<p>Redis是一款开源的基于键值对的存储服务系统。并且支持多种数据结构，拥有较高的性能和丰富的功能。</p>
+<p>Redis有什么特性呢？大致分为8点：</p>
+<pre><code>1.数据处理相对较快
+2.有持久化的特性
+3.操作多种数据库结构以满足各类需求
+4.同时支持多种编辑语言
+5.功能丰富且多样
+6.使用和操作相对简单
+7.满足主从复制的相关条件
+8.有高可用和分布式的特性</code></pre><p>要说的一点就是Redis处理数据相对较快。其中主要的原因就是它使用内存。但是响应的一旦关机操作，数据就会丢失。于是乎有了持久化这个功能。主要是对数据的更新异步地保存到磁盘上依次防止丢失。</p>
+<p>Redis提供了5种数据结构，包括了：字符串，hash，列表，集合和有序集合。新版本又推出了：位图这一概念。主要是超小内存的唯一值计数，亦或者是用于地理信息的定位。</p>
+<p>Redis功能丰富体现在：用于支持发布订阅，Lua脚本，事务的功能以及pipeline（提高并发效率）</p>
+<p>Redis简单不仅仅值它不依赖外部库和单线程模型（近期将转换为多线程？）。也体现在它刚发布的时候仅有23000行代码的容量上。（C语言）</p>
+<p>Redis的主从复制指：将主服务器的数据复制到从服务器上，为高可用和分布式提供基础。</p>
+<p>还要简单说一下的是Redis的典型应用场景，主要有以下几类，后期将会一一介绍原型：</p>
+<pre><code>1.缓存系统
+2.消息队列系统
+3.社交网络（点赞转发）
+4.计数器功能（点赞量转发量浏览量）
+5.排行榜功能
+6.实时系统（布隆过滤器）</code></pre><p>##了解部分API的使用<br>通用命令：<br>    keys：查找命令，如keys *（查找所有的值并打印）<br>    dbsize：算出key的总数<br>    exists：判断一个key是否存在<br>    del：删除指定的key-value<br>    expire：expire key second，指key在second后过期（被消除）<br>    persist：persist key 去掉key的过期时间（永久保存）<br>    type：type key，返回key的类型<br>    以上介绍的几个API中，除了keys时间复杂度为O(n)，其余哦都是O(1)</p>
+<p>单线程理解：</p>
+<pre><code>为什么单线程会快呢？
+    1.数据抓哟存放在内存中，所以会快。这个和单线程关系不大。
+    2.非阻塞IO
+    3.避免线程的切换消耗
+存在的其他问题：
+    1.一次性只能运行一条指令。
+    2.不能使用长命令这样会因为单线程浪费大量时间。
+    3.实际上并不是纯粹的单线程，并且现在要改为多线程。</code></pre><p>数据结构的类型和相关API介绍：</p>
+<pre><code>1.字符串的键值对结构：一个键对应一个相应的值，但是value的值大小上限为512M，太大会造成阻塞。
+    使用场景：
+        可以在缓存中使用，计数器，分布式锁等应用场景使用。
+    set： 设置键值对 set key value
+    get：得到相应键的值 get key
+    del：删除某个键值对 del key
+    incr： incr key  使某个键自增1
+    decr： decr key  使某个键自减1
+    incrby： incrby key k  使某个键增加k个单位
+    mget： 批量获取value的值
+    mset： 批量设置键值对
+    append： 追加操作 append key value  将心的value追加到旧的value上
+    strlen： 返回字符串长度  strlen key
+    当然其他还有很多，这里列举常用的一些。
+
+2.哈希结构：一个key对应一个field的名字，后接着value的值。可以做增删，也可也看作使表格的类型，但是field不能相同
+
+    hget： 获取hash key对应的field的value值
+    hset：主要是set不同，其余一样
+    hdel：主要是del，其余一样
+    hexists： 判断hash key是否有field属性
+    hlen： 获取hash key field的数量
+    hmget和hmset：都是批量获取hash key的field和value
+    hsetall： 返回所有的filed和value
+    hvals： 返回对应所有filed的value
+    hkeys： 返回hash key对应所有filed
+
+3.列表结构：特点为有序可从夫，亦可左右插入弹出
+
+    rpush：从列表右端插入
+    lpush：从列表左端插入
+    linsert： linsert key before|after value Newvalue，指从指定value的前后插入
+        如：（a-&gt;b-&gt;c）linsert list before b java (a-&gt;java-&gt;b-&gt;c)
+    lpop：lpop key 从左边弹出一个值
+    rpop: 与上面相反
+    lrem： lrem key count value 
+        当count &gt; 0 从左边删除count个指
+        当count  &lt; 0 从右边删除count个值
+        当count = 0 删除所有值
+    ltrim： ltrim key start end 按照索引范围修剪列表，只留start-end 范围
+    lrange： lrange key start end（含end） 获取列表指定范围索引的item
+    lindex： lindex key index 获取列表指定索引的item
+    llen： llen key 获取列表的长度
+    lset： lset key index Newvalue 设置泪飙指定索引为Newvalue
+    使用场景：
+        朋友圈的信息更新，基本都是随时间加入到列表
+
+4.集合的结构：无序的，无重复的，支持集合间的操作
+
+    sadd： sadd key elements 但是要注意，存在key会失败
+    srem： srem key element 删除key中的元素
+    scard： scard key 计算集合的大小
+    sismember： sismember key value 判断是否存在value（1 存在）
+    srandmember key count 从集合中随机跳出count个元素
+    spop： spop key 随机弹出一个元素
+    smembers： smembers key 获取集合所有元素（小心使用）
+    应用场景：
+        抽奖获得啊，添加标签tag，还有共同好友，共同关注等。
+    sdiff key1 key2： 找差集
+    sinter： 交集
+    sunion： 并集
+
+5.有序集合的结构：无重复元素，但是有序，一个key对应多个value，但是每个value前都有一个score代表大小顺序
+
+    zadd： 增加嘛 zadd key score value（分数可以重复且可以多对）
+    zrem： zrem key value  删除  也可也多个
+    zscore： zscore key value  返回value的分数
+    zincrby： zincrby key Score value 增加value的分数
+    zcard： zcard key 返回value的个数
+    zrange： zrange key start end 返回指定索引内的升序元素
+    zrangebyscore：看名字就知道相同啦，只不过使按分数喽
+    zcount： zcount key minScore maxScore 返回指定分数内的个数
+    zremrangebyrank和zremrangebyscor：XXX key start end删除指定区域的升序元素
+    应用场景：
+        排行榜</code></pre>]]></content>
+      <categories>
+        <category>Database</category>
+      </categories>
+      <tags>
+        <tag>NoSQL</tag>
+        <tag>Redis</tag>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL高级部分（三）</title>
+    <url>/2019/09/17/MySQL%E9%AB%98%E7%BA%A7%E9%83%A8%E5%88%86%EF%BC%88%E4%B8%89%EF%BC%89/</url>
+    <content><![CDATA[<p>在学习介绍了相关的结构设计以及故障相关的知识，这里主要再看看MySQL支持的索引类型。其中主要包括B-Tree索引相关知识以及Hash相关，以及索引的优化策略。详细的请点击查看全文。</p>
+<a id="more"></a>
+<p>##MySQL支持的索引类型<br><strong>B-Tree索引</strong></p>
+<p>引用B+树的结构来存储数据，主要的目的为是加快数据的查询速度，因为这样更适合范围查找。</p>
+<p>哪什么情况下可以用到B—Tree索引呢？</p>
+<pre><code>1.全值匹配查询。
+2.匹配最左前缀的查询。
+3.匹配列前缀查询。
+4.匹配范围查询。
+5.精确匹配左前列并范围匹配查询。
+6.指访问索引的查询。</code></pre><p>那么说明是B-Tree以及B+树查找呢？</p>
+<p>可以查阅我其他数据结构的章节。</p>
+<p>那么B-Tree索引有什么限制条件呢？</p>
+<pre><code>1.如果不是按照索引最左列开始查找，则无法使用索引。
+    如：（学号，姓名，年纪）如果查询开始为姓名，则没有办法查询。    
+2.使用所以时，不能跳过索引的列。
+3.Not in和&lt;&gt;，！=操作无法使用索引。
+4.如果查询中有某个列的范围查找，则其右边所有列都无法使用索引。</code></pre><p><strong>Hash索引的特点</strong></p>
+<pre><code>1.只有查询条件精确匹配hash索引中的所有列时，才能够使用hash索引。
+2.对于hash索引中的所有列，存储引擎都会为每一行计算一个hash code，hashCode索引中存储的就是hashCode。</code></pre><p>哪hash的限制是说明呢？</p>
+<pre><code>1.必须进行二次查找
+2.无法使用排序
+3.不支持部分索引查找也不支持范围查找
+4.hashCode的计算可能存在hash冲突。</code></pre><p>相同的，如果对hash算法不知道的，也可也查阅我的其他博客或者相关知识。</p>
+<p>那么为什么要使用索引呢？归结为三点：</p>
+<pre><code>1.大大减少了存储引擎需要扫描的数据量
+2.可以帮助我们进行排序一面使用临时表
+3.可以把随机IO转变为顺序IO</code></pre><p>但是索引过多也会有响应的麻烦：</p>
+<pre><code>1.增加写操作的成本。
+2.索引会增加查询优化器的选择时间，进而影响效率。</code></pre><p>索引我们就要了解一下索引优化的策略：</p>
+<pre><code>1.索引列上不能使用表达式或函数。
+2.前缀索引和索引列的选择（不重复的所有和表的记录数的比值）
+3.联合索引（当然之前也说了，太多了也同样印象效率）
+    a.经常会被用到，列优先
+    b.选择性高的列优先
+    c.宽度小的列优先
+4.覆盖索引
+    优点：
+        1.可以优化缓存，减少磁盘IO操作
+        2.可以减少随机IO，变为顺序IO操作
+        3.可以避免对Innodb主键索引的二次查询
+        4.可以避免MyISAM表进行系统调用
+    缺点：
+        1.并不是所有存储引擎都支持覆盖索引
+        2.列太多而导致速度变慢
+        3.不能使用双%号的like查询</code></pre><p>我们呢还可以使用索引来优化查询，例如通过排序操作，按照索引顺序扫描数据。</p>
+<p>还可以利用索引优化锁机制，依次减少锁的行数，加快处理速度，同时也加快锁的释放。</p>
+<p>索引呢还支持维护和优化策略，可以删除重复和冗余的索引。查找未被使用过的索引，以及更新索引统计信息减少索引碎片。</p>
+<p>##接下来介绍性能SQL的问题<br>首先要了解的是如何获取有性能问题的SQL呢？</p>
+<pre><code>1.通过用户反馈获取存在性能问题的SQL。
+    注：这个比较被动同时因为产品上线后再修改资源花费较大
+2.通过慢查询日志获取存在性能问题的SQL。（有一定的延迟）
+3.实施获取存在的性能问题的SQL</code></pre><p>什么是慢查询日志获取性能问题的SQL呢？</p>
+<p>主要性能为“磁盘IO和存储日志所需要的磁盘空间”。因为需要记录日志，这样操作便会需要大量的磁盘空间，最好把日志存储和数据存储分开。当然这还要记录所有符合条件的SQL，包括了查询语句，数据修改语句，以及回滚的SQL。</p>
+<p>如何实时获得有性能问题的SQl么？</p>
+<p>查询请求的过程是什么样的呢？</p>
+<pre><code>1.客户端发送SQl请求给服务器。
+2.服务器检查是否可以在缓存中命中该SQL。
+3.服务器端进行SQL解析和预处理工作，再由优化器生成对应的执行计划。
+4.根据执行计划，调用存储引擎API来查询数据。
+5.将结果返回给客户端。</code></pre><p>##再来简要了解一下什么是分库分表<br>    1.把一个实例中的多个数据库拆分到不同的实例中去。<br>    2.把一个库中的表分离到不同的数据库中。</p>
+<p>数据库分片处理（由于分表后写压力仍旧很大而采用的办法），对一个库中的相关表进行水平拆分到不同的实例数据库中，但是要注意的是这样难以维护，所以不到万不得已不要使用。</p>
+<p>如何处理分区键呢？</p>
+<pre><code>1.分区键要尽量避免跨分片查询的发生。
+2.分区键要尽可能的使各个分片中的数据平均。</code></pre><p>如何存储没有需要的分片表</p>
+<pre><code>1.每个分片存储一份相同的数据。
+2.使用额外的节点统一存储。</code></pre><p>如何在节点上部署分片呢？</p>
+<pre><code>1.每个分片使用单一数据库，并且数据库各不相同。
+2.将多个分片表存储在一个数据库中，并在表名上加入分片后缀。
+3.在一个节点上部署多个数据库，每个数据库包含一个分片。</code></pre><p>如何分配分片中的数据呢？</p>
+<pre><code>1.按分区键的hash值取模来分配分片数据。
+2.按分区键的范围来分配分片数据。
+3.利用分区键和分片的映射表来分配分片的数据。</code></pre>]]></content>
+      <categories>
+        <category>DataBase</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>DataBase</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL高级部分（二）</title>
+    <url>/2019/09/14/MySQL%E9%AB%98%E7%BA%A7%E9%83%A8%E5%88%86%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<p>鉴于数据库（一）的知识点，我们再补充一些关于数据库结构优化以及索引支持的相关知识点。</p>
+<a id="more"></a>
+<p>##数据库结构优化介绍<br>首先要说为什么要结构优化呢？</p>
+<pre><code>1.减少数据的冗余。
+2.尽量避免数据库维护中出现的更新，插入和删除操作。
+    插入：如果表中的某个实体随另一个实体的存在而存在
+        （例如学生信息，如果你只给学生的姓名而没有学号就不能添加进学生管理系统）
+    更新：如果更改表中的某个实体的单独属性时，需要对多行同时更新。
+        （类似于选修课，如果课程时间变动，那么选课的同学都要变动）
+    删除：如果删除一个实体，则会导致其他实体的消失
+        （选课后课程被取消）
+3.节约数据库存储空间。
+4.提高查询效率。</code></pre><p><strong>数据库结构设计</strong>（步骤）</p>
+<pre><code>1.需求分析：全面了解产品设计的存储需求，数据库处理需求，安全性以及完整性的需求。
+2.逻辑设计：设计数据库的逻辑存储结构，数据实体间的逻辑关系，解决数据冗余问题和维护异常。
+3.物理设计：根据所适用的数据库特点进行表结构设计。
+4.维护优化：根据实际情况对索引、存储结构进行优化。</code></pre><p>数据库设计范式（遵循三范式）</p>
+<pre><code>* 概念：设计数据库时，需要遵循的一些规范。要遵循后边的范式要求，必须先遵循前边的所有范式要求
+
+    设计关系数据库时，遵从不同的规范要求，设计出合理的关系型数据库，这些不同的规范要求被称为不同的范式，各种范式呈递次规范，越高的范式数据库冗余越小。
+    目前关系数据库有六种范式：第一范式（1NF）、第二范式（2NF）、第三范式（3NF）、巴斯-科德范式（BCNF）、第四范式(4NF）和第五范式（5NF，又称完美范式）。
+
+* 分类：
+    1. 第一范式（1NF）：每一列都是不可分割的原子数据项，单一属性的列都是由基本数据类型构成，设计出来的表都是二维表
+    2. 第二范式（2NF）：在1NF的基础上，非码属性必须完全依赖于码（在1NF基础上消除非主属性对主码的部分函数依赖）
+        * 几个概念：
+            1. 函数依赖：A--&gt;B,如果通过A属性(属性组)的值，可以确定唯一B属性的值。则称B依赖于A
+                例如：学号--&gt;姓名。  （学号，课程名称） --&gt; 分数
+            2. 完全函数依赖：A--&gt;B， 如果A是一个属性组，则B属性值得确定需要依赖于A属性组中所有的属性值。
+                例如：（学号，课程名称） --&gt; 分数
+            3. 部分函数依赖：A--&gt;B， 如果A是一个属性组，则B属性值得确定只需要依赖于A属性组中某一些值即可。
+                例如：（学号，课程名称） -- &gt; 姓名
+            4. 传递函数依赖：A--&gt;B, B -- &gt;C . 如果通过A属性(属性组)的值，可以确定唯一B属性的值，在通过B属性（属性组）的值可以确定唯一C属性的值，则称 C 传递函数依赖于A
+                例如：学号--&gt;系名，系名--&gt;系主任
+            5. 码：如果在一张表中，一个属性或属性组，被其他所有属性所完全依赖，则称这个属性(属性组)为该表的码
+                例如：该表中码为：（学号，课程名称）
+                * 主属性：码属性组中的所有属性
+                * 非主属性：除过码属性组的属性
+
+    3. 第三范式（3NF）：在2NF基础上，任何非主属性不依赖于其它非主属性（在2NF基础上消除了非主属性对主键的传递依赖）</code></pre><p><strong>需求分析和逻辑设计</strong></p>
+<p>例如现在要按照以下要求设计一个电子商务网站的数据库结构：</p>
+<pre><code>1.本网站只销售图书类商品
+2.需要具有以下的功能：
+    用户登录----商品展示----供应商管理
+    用户管理----商品管理----在线销售</code></pre><p>用户登录功能：</p>
+<pre><code>1.用户必须注册并登录系统才能进行网上交易。（因此需要一个不同的账号作为主键）
+2.同一时间一个用户只能登录一个地方。
+3.用户信息:{用户名，密码，手机号，姓名，注册日期，在线状态，出生日期等}</code></pre><p>首先呢设计商品展示以及商品管理功能</p>
+<pre><code>商品信息：{商品名称，分类名称，出版社名称，图书价格，图书描述，作者}
+
+由此可见，把所有信息都冗杂在一条数据库中会造成很多不必要的写入写出，也许一本书有很多的描述我仅仅想展示一个，这样我们就要设计新的数据库表格。
+
+商品信息：{商品名称，出版社名称，图书价格，图书描述，作者}
+分类信息：{分类名称，分类描述}
+商品分类（对应关系表）：{商品名称，分类名称}</code></pre><p>其次我们还要设计在线销售功能：</p>
+<pre><code>在线销售：{订单编号，下点用户名，下单日期，订单金额，订单商品分类，订单商品名，订单商品单价，订单商品数量，支付金额，物流单号}
+
+可以看到
+    1.只有一个业务主键，符合第二范式
+    2.订单编号，订单商品单价，订单商品数量 存在着传递依赖关系，不符合第三范式，
+    3.数据冗余（订单商品信息和商品信息表中数据）
+
+所以要更改数据表：
+订单表：{订单编号，下点用户名，下单日期，支付金额，物流单号}
+订单商品关联表:{订单编号，订单商品分类，订单商品名，订单商品数量}</code></pre><p>供应商管理功能：</p>
+<pre><code>信息：{出版社名称，地址，电话，联系人，银行账户}</code></pre><p>同时还要编写符合规范的SQL语句，但是完全符合范式化的设计有时候并不能得到良好的SQL查询性能，因此我们还需要反范式化设计。</p>
+<p>例如下单用户就是商品的收货人，那么我们在发货之前一定要查询出每个订单的下单人信息，而这些信息全部记录在用户信息表中，显然我们要执行的读操作过多，从而减小了一定的效率。那么我们就来看看什么是反范式化设计：</p>
+<p>反范式化是针对范式化而言的，就是为了性能和读取效率的考虑而适当对数据库设计范式要求进行违反，而允许存在少量数据冗余，换句话说，就是牺牲空间换取时间。</p>
+<p>因此我们来探讨以下范式的优缺点：</p>
+<pre><code>优点：
+    1.可以尽量的减少数据的冗余（根本优点）
+    2.更新操作比反范式化更快。
+    3.表通常比反范式化更小。
+缺点：
+    1.对查询需要对多个表进行关联（这样简化了写但是读取更耗时，因为大多数都是读取操作）
+    2.这样更难进行索引优化</code></pre><p>那么反范式化的优缺点又是什么呢？</p>
+<pre><code>优点：
+    1.减少表的关联。
+    2.更好的进行索引优化。（其实就是优缺点互换）
+缺点：
+    1.数据冗余以及数据维护异常比较困难。
+    2.对数据修改需要更多的成本。</code></pre><p><strong>物理设计</strong></p>
+<p>根据所选择的关系型数据库的特点，对逻辑模型进行存储结构设计。</p>
+<pre><code>1.定义数据库、表、以及字段的命名规范。
+（因为有可能是多人协作完成，为了一致性）
+2.选择合适的存储引擎。
+3.为表中的字段选择合适的数据模型。
+4.建立数据库结构。
+当然了，合适额的数据库模型只当一个列可以选择多种数据库结构类型时候，应该有限考虑“数字”类型，其次是“日期”“二进制”，最后是“字符型”
+对于同级别的数据类型，应该有限占用用剑小的数据类型。</code></pre><p>char和carchar的区别</p>
+<p>VARCHAR比CHAR节省空间，在效率上比CHAR会稍微差一些，即要想获得效率，就必须牺牲一定的空间，这也就是我们在数据库设计上常说的‘以空间换效率’。 </p>
+<p>VARCHAR2虽然比CHAR节省空间，但是如果一个VARCHAR列经常被修改，而且每次被修改的数据的长度不同，这会引起‘行迁移’(Row Migration)现象，而这造成多余的I/O，是数据库设计和调整中要尽力避免的，在这种情况下用CHAR代替VARCHAR会更好一些。 </p>
+<p><img src="/2019/09/14/MySQL高级部分（二）/1.png" alt></p>
+<p><strong>MySQL复制功能</strong></p>
+<p>提供分担“读负载”的功能，主要是通过备库来分担此功能。为了高可用以及灾难恢复，备份提供了更多更好的选择。</p>
+<p>首先要了解以下复制解决了什么问题：</p>
+<pre><code>1.实现在不同的服务器上数据的分布。
+2.实现数据读取的负载均衡。
+3.增强数据读取的安全性
+4.实现数据库高可用和故障的切换保证服务器不会一时宕机。
+5.实现数据库在线升级操作。</code></pre><p>MySQL的二进制日志</p>
+<p>记录所有对MySQL数据库的修改时间，包括增删改查操作事件以及对表结构的修改。因为记录量相对较小，所以节约了磁盘和网络的IO。</p>
+<p>##高可用架构<br>如何实现高可用呢？</p>
+<p>避免系统用不可以的因素，减少系统不可用的时间。例如服务器的磁盘耗尽，或者是糟糕的SQL语句以及表结构和索引没有优化，亦或者是主从服务器的不一致等待。所以：</p>
+<pre><code>1.建立完善的监控和报警机制系统。
+2.对被扽数据库进行恢复测试。
+3.正确配置数据库环境，对于某些从数据库设置只读即可。
+4.对不需要的数据库进行归档和清理。</code></pre><p>哪究竟如何实现呢？</p>
+<pre><code>增加系统冗余，保证发生系统不可以时间尽快恢复。
+    1.避免单点故障
+    2.主从切换以及故障转移。</code></pre><p>哪怎么解决单点故障呢？</p>
+<p>首先我们还要了解一下什么是单点故障：指一个系统中提供相同功能的组件只有一个，如果这个组件失效了，就会影响整个系统功能的正常使用。解决方法：</p>
+<pre><code>1.利用SUN存储或者DRDB磁盘复制解决。
+2.利用多写集群或者NDB集群解决。
+3.利用MySQL的主从复制解决。</code></pre><p><strong>MMM架构</strong></p>
+<p>MMM（Master-Master replication manager for MySQL）是一套支持双主故障切换和双主日常管理的脚本程序。MMM使用Perl语言开发，主要用来监控和管理MySQL Master-Master（双主）复制，虽然叫做双主复制，但是业务上同一时刻只允许对一个主进行写入，另一台备选主上提供部分读服务，以加速在主主切换时刻备选主的预热，可以说MMM这套脚本程序一方面实现了故障切换的功能，另一方面其内部附加的工具脚本也可以实现多个slave的read负载均衡。</p>
+<p>MMM提供了自动和手动两种方式移除一组服务器中复制延迟较高的服务器的虚拟ip，同时它还可以备份数据，实现两节点之间的数据同步等。由于MMM无法完全的保证数据一致性，所以MMM适用于对数据的一致性要求不是很高，但是又想最大程度的保证业务可用性的场景。对于那些对数据的一致性要求很高的业务，非常不建议采用MMM这种高可用架构。</p>
+<p><strong>MHA架构</strong></p>
+<p>MHA（Master High Availability）目前在MySQL高可用方面是一个相对成熟的解决方案，它由日本DeNA公司youshimaton（现就职于Facebook公司）开发，是一套优秀的作为MySQL高可用性环境下故障切换和主从提升的高可用软件。在MySQL故障切换过程中，MHA能做到在0~30秒之内自动完成数据库的故障切换操作，并且在进行故障切换的过程中，MHA能在最大程度上保证数据的一致性，以达到真正意义上的高可用。</p>
+<p>该软件由两部分组成：MHA Manager（管理节点）和MHA Node（数据节点）。MHA Manager可以单独部署在一台独立的机器上管理多个master-slave集群，也可以部署在一台slave节点上。MHA Node运行在每台MySQL服务器上，MHA Manager会定时探测集群中的master节点，当master出现故障时，它可以自动将最新数据的slave提升为新的master，然后将所有其他的slave重新指向新的master。整个故障转移过程对应用程序完全透明。</p>
+<p>在MHA自动故障切换过程中，MHA试图从宕机的主服务器上保存二进制日志，最大程度的保证数据的不丢失，但这并不总是可行的。例如，如果主服务器硬件故障或无法通过ssh访问，MHA没法保存二进制日志，只进行故障转移而丢失了最新的数据。使用MySQL 5.5的半同步复制，可以大大降低数据丢失的风险。MHA可以与半同步复制结合起来。如果只有一个slave已经收到了最新的二进制日志，MHA可以将最新的二进制日志应用于其他所有的slave服务器上，因此可以保证所有节点的数据一致性。</p>
+<p>目前MHA主要支持一主多从的架构，要搭建MHA,要求一个复制集群中必须最少有三台数据库服务器，一主二从，即一台充当master，一台充当备用master，另外一台充当从库，因为至少需要三台服务器，出于机器成本的考虑，淘宝也在该基础上进行了改造，目前淘宝TMHA已经支持一主一从。（出自：《深入浅出MySQL(第二版)》）</p>
+<p><strong>读写分离和负载均衡</strong></p>
+<pre><code>1.程序实现负载均衡：
+    优点：
+        有开发人员自己控制，较为灵活，而且性能消耗比较小。
+    缺点：
+        增加开发人员的压力以及代码的复杂性，并且人为书写容易出错。
+2.使用中间件实现：
+    优点：
+        由中间件分析，自动完成读写分离，可以对已有程序不做调整。
+    缺点：
+        增加中间层对查询效率有一定损耗，对于延迟敏感的业务没办法自动在主库执行。</code></pre><p>什么是负载均衡呢？</p>
+<p>主要解决的是具有相同角色的数据库，如何共同分担相同的负载问题。</p>
+]]></content>
+      <categories>
+        <category>DataBase</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>DataBase</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL高级部分（一）</title>
+    <url>/2019/09/14/MySQL%E9%AB%98%E7%BA%A7%E9%83%A8%E5%88%86%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+    <content><![CDATA[<p>双十一的时候，交易量超千亿，那么这么多数据是怎么处理的呢？MySQL作为主流数据库，不仅要会简单的应用还要深入了解一些深层次的数据相关的知识，例如高可用高并发知识点。鉴于此我们就来看看其深层次的东西。</p>
+<a id="more"></a>
+<p>#MySQL提高部分</p>
+<p>##影响数据库性能的因素<br><strong>超高的QPS和TPS</strong></p>
+<ul>
+<li>QPS：每秒钟处理的查询量</li>
+<li>TPS：每秒钟处理的事务数</li>
+</ul>
+<p><strong>大量的并发和超高的CPU占用率</strong></p>
+<pre><code>风险：
+    大量的并发：    
+        数据库使用连接方式被占满。
+    超高的CPU占用率：
+        因CPU资源耗尽而出现宕机现象。</code></pre><p><strong>磁盘IO</strong></p>
+<pre><code>风险：
+    磁盘IO性能突然下降
+    其他大量消耗磁盘性能计划任务的同时实施。</code></pre><p><strong>网卡和流量</strong></p>
+<pre><code>风险：
+    网卡IO被占满
+如何避免：
+    1.减少服务器的数量
+    2.进行分波缓存
+    3.避免使用 select*操作
+    4.分离业务网络和服务器网络</code></pre><p>还有什么会影响数据库的性能呢？</p>
+<p><strong>打标和大事务</strong></p>
+<pre><code>大表：记录数据巨大，超千万行；或者表数据文件巨大，超10G内容。当然这都是大致划分。
+影响：
+    查询慢，很难在一定时间内过滤所有数据
+    对DDL操作会有延迟
+    修改表结构需要长时间锁表，因此造成主从延迟。（对于锁和主从延迟接下来会细说，这里不做说明）
+如何处理大表：
+    1.分库分表，把一张数据库表分成多个小表。但是如果分的过于过也会造成外键查找的时延。
+    （存在的难点：分表主键的选择，分表后跨分区数据的查询和统计）
+    2.大表的历史数据归档问题
+    （存在的难点:归档时间点的选择，如何进行归档操作）
+大事务：
+    1.原子性：整个书屋中所有操作要么全部提交要么失败回滚。
+    （例如银行转钱，三个步骤A转钱B扣钱C接收D加钱，如果在B之后错误，那么对方没有收到钱而且扣钱一i经成功，所以整个ABCD称为原子性）
+    2.一致性:如同上面例子中转账金额总体不变。
+    3.隔离性：转账后钱未到达时候，收钱人不可见。
+    4.持久性：一旦事务提交，那么所做的修改就永久保存，非物理原因不破坏。
+那么什么时大事务呢：
+    运行时间较长，操作数据较多的事务。
+风险呢？
+    可能会锁定太多的数据，造成大量的组的和锁超时。
+    回滚时间长。
+    执行时间长，容易造成主从延迟。
+如何避免这些问题呢？
+    避免一次性处理太多数据。
+    移出不必要的在事务中的select操作。</code></pre><p>###影响性能的几个方面<br>    1.硬件<br>    2.操作系统<br>    3.数据库存储引擎的选择<br>    4.数据库参数的配置<br>    5.数据库结构设计个SQL语句</p>
+<p>CPU资源和可用内存</p>
+<pre><code>对于CPU密集型应用，运用更好的CPU而不是更多的CPU
+且当前MySQL不支持多CPU对同一SQL并发处理</code></pre><p>首先我们要了解MySQL是单线程应用，所以我们在选择时候就要去考虑系统的并发量是如何的。</p>
+<p>内存呢，内存的大小直接引用数据库的性能，然而并不是内存越多越好的，因为内存对性能的影响是有限的，并不是无限增长的。因为当你的内存足够大的时候，数据的容量需求满足了，影响就自然小了。</p>
+<p>我们还要了解，数据库可以在缓存池中将多次写入合并成一次，例如转发数据的增长，当转发数量达到一定数目，就会在缓存池中等待，等到数据足够大时候，一次性写入，这样就缓解了数据库的写入操作从而提高性能。</p>
+<p><strong>接下来介绍RAID来增加传统机器硬盘的性能</strong>：</p>
+<p>RAID 0最简单的实现方式就是把N块同样的硬盘用硬件的形式通过智能磁盘控制器或用操作系统中的磁盘驱动程序以软件的方式串联在一起创建一个大的卷集。在使用中电脑数据依次写入到各块硬盘中，它的最大优点就是可以整倍的提高硬盘的容量。如使用了三块80GB的硬盘组建成RAID 0模式，那么磁盘容量就会是240GB。其速度方面，各单独一块硬盘的速度完全相同。最大的缺点在于任何一块硬盘出现故障，整个系统将会受到破坏，可靠性仅为单独一块硬盘的1/N。</p>
+<p><img src="/2019/09/14/MySQL高级部分（一）/3.PNG" alt></p>
+<p>RAID 1称为磁盘镜像，原理是把一个磁盘的数据镜像到另一个磁盘上，也就是说数据在写入一块磁盘的同时，会在另一块闲置的磁盘上生成镜像文件，在不影响性能情况下最大限度的保证系统的可靠性和可修复性上，只要系统中任何一对镜像盘中至少有一块磁盘可以使用，甚至可以在一半数量的硬盘出现问题时系统都可以正常运行，当一块硬盘失效时，系统会忽略该硬盘，转而使用剩余的镜像盘读写数据，具备很好的磁盘冗余能力。虽然这样对数据来讲绝对安全，但是成本也会明显增加，磁盘利用率为50%，以四块80GB容量的硬盘来讲，可利用的磁盘空间仅为160GB。另外，出现硬盘故障的RAID系统不再可靠，应当及时的更换损坏的硬盘，否则剩余的镜像盘也出现问题，那么整个系统就会崩溃。更换新盘后原有数据会需要很长时间同步镜像，外界对数据的访问不会受到影响，只是这时整个系统的性能有所下降。因此，RAID 1多用在保存关键性的重要数据的场合。</p>
+<p><img src="/2019/09/14/MySQL高级部分（一）/2.PNG" alt></p>
+<p>RAID5（分布式奇偶校验的独立磁盘结构）。从它的示意图上可以看到，它的奇偶校验码存在于所有磁盘上，其中的p0代表第0带区的奇偶校验值，其它的意思也相同。RAID5的读出效率很高，写入效率一般，块式的集体访问效率不错。因为奇偶校验码在不同的磁盘上，所以提高了可靠性。但是它对数据传输的并行性解决不好，而且控制器的设计也相当困难。RAID 3 与RAID 5相比，重要的区别在于RAID 3每进行一次数据传输，需涉及到所有的阵列盘。而对于RAID 5来说，大部分数据传输只对一块磁盘操作，可进行并行操作。在RAID 5中有“写损失”，即每一次写操作，将产生四个实际的读/写操作，其中两次读旧的数据及奇偶信息，两次写新的数据及奇偶信息。</p>
+<p><img src="/2019/09/14/MySQL高级部分（一）/4.PNG" alt></p>
+<p>从RAID 0+1名称上我们便可以看出是RAID0与RAID1的结合体。在我们单独使用RAID 1也会出现类似单独使用RAID 0那样的问题，即在同一时间内只能向一块磁盘写入数据，不能充分利用所有的资源。为了解决这一问题，我们可以在磁盘镜像中建立带区集。因为这种配置方式综合了带区集和镜像的优势，所以被称为RAID 0+1。把RAID0和RAID1技术结合起来，数据除分布在多个盘上外，每个盘都有其物理镜像盘，提供全冗余能力，允许一个以下磁盘故障，而不影响数据可用性，并具有快速读/写能力。RAID0+1要在磁盘镜像中建立带区集至少4个硬盘。</p>
+<p><img src="/2019/09/14/MySQL高级部分（一）/1.jpg" alt></p>
+<p>接下来呢我们简要介绍一下存储在性能方面的影响。</p>
+<p>固态存储，简称内存：SSD和PCI-ESSD为原本介绍</p>
+<pre><code>特点：更好的随机读写性能以及更好的支持并发（当然这是相对于机械硬盘来说）
+SSD：
+    支持RAID技术，使用的也是RATA接口。
+PCI-ESSD：
+    无法使用SATA接口，需要独特的驱动和配置，但是性能要高于SSD。
+适用场景:
+    适用于存在大量随机IO的场景。
+    同时也适用于解决单线程负载的IO瓶颈。</code></pre><p>对于网络存储呢，主要由SAN和NAS</p>
+<pre><code>SAN：
+    SAN通过光纤访问服务器，再通过硬盘写入SAN中，服务器呢可以作为硬盘适用，同时适用于大量的读写操作
+NAS：
+    适用网络连接，基于文件的协议NFS、SMB，因此存在一定的延迟。
+适用场景：
+    不适用于MySQL的存放文件，因为多数的文件为顺序存储，而MySQL属于多随机文件存储。但是适用于数据库的备份。
+综合上述:
+    磁盘性能限制主要为：延迟和吞吐量；
+    网络性能限制主要为：延迟和带宽。</code></pre><p>##存储引擎<br>主要介绍两个引擎，分别为：</p>
+<pre><code>MyISAM：MySQL5.5版本之前默认引擎。
+适用场景：
+    非事务型应用，只读应用，空间类应用
+Innodb：5.5版本之后默认引擎，后续主要介绍对象。</code></pre><p>首先呢我们要了解一下什么是锁：</p>
+<pre><code>1.主要用于管理共享资源的并发访问
+2.实现事务的隔离性</code></pre><p>简单来说呢就是：</p>
+<p>在抢票回家过年时候，可能余票只有一张了，但是你很幸运的进入付款界面，虽然还没有付钱，这时候呢，余票还是显示一张，因为你没有确定付钱购买，我呢也看到了，点击进去发现提示有人正在抢票，等待余票放出。这个阶段就是“锁”出效果的时候，如果这个时候我也点击进去同样到达付款界面，我们都付款成功，那么票呢就是-1，座位也不够分对吧。当然了隔离性之前说过了，自己可以想一下为什么。</p>
+<p>接下来在说说所支持的锁：</p>
+<p><em>表级锁</em></p>
+<p>Mysql中粒度最大的一种锁定机制，该锁定机制最大的特点是实现逻辑非常简单，带来的系统负面影响最小。所以获取锁和释放锁的速度很快。由于表级锁一次会将整个表锁定，所以可以很好的避免困扰我们的死锁问题。<br>当然，锁定颗粒度大所带来最大的负面影响就是出现锁定资源争用的概率也会最高，致使并大度大打折扣。</p>
+<p>使用表级锁定的主要是MyISAM，MEMORY，CSV等一些非事务性存储引擎。</p>
+<p><em>行级锁</em></p>
+<p>行级锁的粒度很小，能够在并发处理上有较大的优势，但是行级锁定也因此带来了不少弊端。由于锁定资源的颗粒度很小，所以每次获取锁和释放锁需要做的事情也更多，带来的消耗自然也就更大了。此外，行级锁定也最容易发生死锁。</p>
+<p>使用行级锁定的主要是InnoDB存储引擎。</p>
+<p>那什么是死锁呢？介绍死锁之前要了解一下什么是阻塞。</p>
+<pre><code>阻塞：
+    一个事务中的锁要等待另一个事务中的锁释放被占用的资源，就好像之前的要等你确定不付钱我才能进入支付，要么都是等待状态。
+    阻塞呢保证数据的正确运行，但是大量阻塞就不好了，减小了数据库的利用率。
+    而且达赖u那个阻塞会使得数据库连接大量的堆积，占用大量的系统资源。
+死锁：
+    多个事务之间等待对方的资源出现的死循环状态（其实数据库会自动处理死锁状态），就好比小桥上要过两个人，两个人都希望对方先过，于是产生了死锁状态。</code></pre><p>MyISAM存储引擎：</p>
+<p>不支持事务、也不支持外键，优势是访问速度快，对事务完整性没有 要求或者以select，insert为主的应用基本上可以用这个引擎来创建表</p>
+<p>支持3种不同的存储格式，分别是：静态表；动态表；压缩表</p>
+<p>静态表：表中的字段都是非变长字段，这样每个记录都是固定长度的，优点存储非常迅速，容易缓存，出现故障容易恢复；缺点是占用的空间通常比动态表多（因为存储时会按照列的宽度定义补足空格）ps：在取数据的时候，默认会把字段后面的空格去掉，如果不注意会把数据本身带的空格也会忽略。</p>
+<p>动态表：记录不是固定长度的，这样存储的优点是占用的空间相对较少；缺点：频繁的更新、删除数据容易产生碎片，需要定期执行OPTIMIZE TABLE或者myisamchk-r命令来改善性能</p>
+<p>压缩表：因为每个记录是被单独压缩的，所以只有非常小的访问开支</p>
+<p><img src="/2019/09/14/MySQL高级部分（一）/5.PNG" alt></p>
+<p>InnoDB存储引擎</p>
+<p>该存储引擎提供了具有提交、回滚和崩溃恢复能力的事务安全。但是对比MyISAM引擎，写的处理效率会差一些，并且会占用更多的磁盘空间以保留数据和索引。 </p>
+<p>InnoDB存储引擎的特点：支持自动增长列，支持外键约束</p>
+<p>那么数据库引擎怎么选择呢？</p>
+<p> = . = 人家MySQL现在都站出来支持Innodb了，肯定首选啊。</p>
+<p>##基准测试<br>定义：基准测试是指通过设计科学的测试方法、测试工具和测试系统，实现对一类测试对象的某项性能指标进行定量的和可对比的测试。</p>
+<p>例如评估系统的容量，在不同压力下的行为，系统如何处理不同的数据。</p>
+<pre><code>压力测试：
+    针对不同的主题，用真实的数据查询。
+基准测试：
+    不关心业务的逻辑性，查询业务的真实性和业务的环境无关。</code></pre><p>基准测试的目的：</p>
+<pre><code>1.建立MySQL服务器的性能基准线，来确定当前的MySQL服务器的运行情况。
+2.模拟当前系统的最高负载，以此找出系统的扩展瓶颈，增加数据的并发，观察OPS和TPS变化。确定并发量与性能最优的关系。
+3.测试不同硬件、软件和操作系统的量值。
+4.用于证明新的硬件设备是否配置正确。</code></pre><p>如何基准测试：</p>
+<pre><code>1.提出问题并明确目标；
+2.决定采用标准基准测试还是设计专用测试；
+3.如果要设计专用测试，获取生产数据集的快照，该快照要易于还4.原，以便后续的测试；选择一个时间段，记录生产系统上的查询（querylog），要记录查询所在的线程以进行回放；
+4.需要为每一轮测试创建一个目录，保存测试结果、配置文件、测试指标、脚本和相关说明；
+5.需要准备好系统状态收集的相关的脚本，可以自己编写也可以使用pt工具；
+3.确定基准测试的时长，基准测试运行的时间至少要等到系统达到稳定状态之后，这时候的稳定状态才是可以相信的；
+7.决定是否使用自动化测试，从而准备自动化基准测试脚本，或者使用相关工具；
+8.进行基准测试，通过逐步修改基准测试参数来进行迭代找出正确的参数值；
+9.使用工具将测试过程中的数据绘制成图形，可以使用gnuplot或者R或者python；
+10.通过图形将数字转化为结论。</code></pre><p>要注意的是MySQL的并发量为：同时处理查询请求的数量（正在工作中的并发的操作数）主要面向点是数据，而Java中的并发面向点多为线程和数据。</p>
+]]></content>
+      <categories>
+        <category>DataBase</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>DataBase</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Creat_Maze_Algorithm</title>
+    <url>/2019/08/24/Creat-Maze-Algorithm/</url>
+    <content><![CDATA[<a id="more"></a>
+]]></content>
+  </entry>
+  <entry>
+    <title>Heapsort_in_DataStructures</title>
+    <url>/2019/08/19/Heapsort-in-DataStructures/</url>
+    <content><![CDATA[<a id="more"></a>
+]]></content>
+      <categories>
+        <category>DataStructure</category>
+      </categories>
+      <tags>
+        <tag>DataStructure</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Maze_Algorithm_Demo</title>
+    <url>/2019/08/18/Maze-Algorithm/</url>
+    <content><![CDATA[<p>走迷宫是个很有趣的问题，包括了寻路的过程，路径的选择，还有最短路径问题的求解。其实就是离散数字中的动态规划问题。但是直接写代码的问题就是没有视图的冲击感和成就感，因此鉴于学习了相关的代码逻辑，来写一个基于视图的走迷宫问题。</p>
+<a id="more"></a>
+<p>迷宫算法呢包括了深度优先和广度优先遍历策略。其中涉及递归和非递归的遍历情况，那么跟着一起来实践一下吧。</p>
+<p>在此之间呢建议先学习有关“图”的操作，然后再来学习这里的内容。</p>
+<p><strong>环境介绍：</strong></p>
+<ul>
+<li>语言：Java</li>
+<li>使用JDK：java 1.8</li>
+<li>工具：eclipse或者IDEA都可。</li>
+<li>主要技术：Swing awt</li>
+</ul>
+<p>我们这里不介绍swing和awt的实现，而是直接借用模板来操作。模板中封装好了需要的一些简要实现。<br>需要的可以在这里下载模板源代码。</p>
+<p><a href="https://gitee.com/xiangzi1019/template_code/tree/master" target="_blank" rel="noopener">https://gitee.com/xiangzi1019/template_code/tree/master</a></p>
+<p>首先介绍一下模板：</p>
+<pre><code>1.主要包含了一个框架AlgoFrame，其中内容主要用于绘制内部信息，和双缓存的实现。
+2.AlgoVishelper看名称也可以知道，主要封装了一些帮助函数，例如绘制实体或者空心的圆、矩形、颜色等函数
+3.AlgoVisualizer主要就是视图可见的操作，例如你想事先声明功能都可以写在这里，然后调用数据和帮助类就可以实现。</code></pre><p>导入文档包之后呢，我们就先操作AlgoVisualizer类。我们根据我们的需求实现</p>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+        <tag>小Demo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>What_about_the_DNS</title>
+    <url>/2019/08/18/What-about-the-DNS/</url>
+    <content><![CDATA[<p>你可曾想过信息传输的时候网络是如何确定目标主机的？那么来类比一下我们人类，当你想要联系某个人的时候，你是如何做的呢？也许你会打开手机联系人，搜索某人手机号，然后拨通，亦或者是点击WeChat找到某人微信号语音通话。凡此种种，类比于计算机上，我们来看看是如何做到的。</p>
+<a id="more"></a>
+<p>其实网络上的主机和我们一样，也有很多的标识，例如你点击我的博客：xiangzi1019.github.io,这个名字呢就是一台服务器终端，当然你也赶紧很容易记忆，或者说众所周知的<a href="http://www.baidu.com，也是如此。当然还有一些类似于cn表示中国，edu表示和教育有关，其实都是我们给网络主机起的别名。当然主机也可以是IP地址表示，但是相比较难记一些。因为一个IP地址由四个字节组成，例如：127.1.255.255，其实IP地址具有层次结构，我们再辨识的时候就是从左至右，就会越来越精确主机对于的位置。就好像你的快递总是写着说明省到什么市/区/街道等等。关于IP地址，会在另外章节专门介绍。" target="_blank" rel="noopener">www.baidu.com，也是如此。当然还有一些类似于cn表示中国，edu表示和教育有关，其实都是我们给网络主机起的别名。当然主机也可以是IP地址表示，但是相比较难记一些。因为一个IP地址由四个字节组成，例如：127.1.255.255，其实IP地址具有层次结构，我们再辨识的时候就是从左至右，就会越来越精确主机对于的位置。就好像你的快递总是写着说明省到什么市/区/街道等等。关于IP地址，会在另外章节专门介绍。</a></p>
+<p>我们根据刚才的介绍知道，辨识主机有两种方式，主机名或者IP地址。然而我们的路由器更喜欢IP地址。就好像快递员更喜欢精确的位置。于是为了这种，出现了我们要介绍的主角：DNS域名系统（Domain Name System），它实现了分布式数据库，而且使得主机能够查询分布式数据库的应用层协议。且DNS协议运行在UDP上，使用53号端口。[注：分布式数据库类似于Redis]</p>
+<p>DNS是应用层的协议，因为使用的是客户-服务器模式运行在通信的端系统之间。而且在用i性能的端系统之间通过下面的端到端运输协议来传输DNS报文。实际上就是为因特网上的用户应用程序以及其他软件提供一种核心功能，把主机名转换成IP地址。更为简单的理解就好比是我们快递的编号。根据编号会出现我们的信息，包括了寄的地址还有收获地址。DNS的作用就好比是快递专业站的扫描器。</p>
+<p>DNS通常是由其他应用层协议使用的，包括之间的HTTP以及SMTP，用户呢将提供的主机名解析成IP地址。由此可见DNS的作用就是获得Web服务器的IP地址。方法大致类似于：</p>
+<ol>
+<li>同一台主机上运行着DNS应用客户端。</li>
+<li>浏览器从URL中抽取主机名，并将这台主机名传给DNS应用的客户端</li>
+<li>DNS客户向DNS服务器发送一个包含主机名的请求</li>
+<li>DNS客户最终收到一份回答报文，且包含了主机名的IP地址。</li>
+<li>一旦浏览器收到了来自DNS的该IP地址，他就能够向位于该IP地址的80端口思维HTTP服务器进程发送一个TCP连接。</li>
+</ol>
+<p>其实除了进行主机名到IP地址的转换，DNS还提供一些重要的服务例如：</p>
+<ul>
+<li>主机别名： 就好比叫我的大名不太好记，大家习惯性的叫我“祥子”，于是乎祥子成了我的别名。就好比你登陆一个网站“<a href="http://binhai.nankai.edu.cn/”还有一个就是“222.30.63.15”显然都是一个网站，不过哪个更好记忆呢，这个答案不言而喻啦。" target="_blank" rel="noopener">http://binhai.nankai.edu.cn/”还有一个就是“222.30.63.15”显然都是一个网站，不过哪个更好记忆呢，这个答案不言而喻啦。</a></li>
+<li>邮件服务器别名： 主要就是人们希望电子邮件地址也像人名一样好记忆而涉及出来。</li>
+<li>负载分配： DNS也用在冗余的服务器之间进行负载分配。这个呢就好比AVL伸展树的实现算法。好比你常用的输入法输入文字，然后经常用的字就会出现在靠前的位置。同理呢，客户通常向IP地址排在前面的服务器发送HTTP请求报文，依次达到冗余的Web服务器之间循环分配负载。</li>
+</ul>
+<p><img src="/2019/08/18/What-about-the-DNS/1.PNG" alt></p>
+<p>实际上DNS就是一个提供简单、直接的转换服务的黑盒子。客户直接把所有的查询发往单一的DNS服务器，同时该DNS服务器直接堆所有查询客户做出响应。但是因为现代因特网的主机庞大，因此不适合现代因特网。存在的问题也比较明显：</p>
+<ul>
+<li>单点故障：如果一个DNS故障，整个因特网都将瘫痪。</li>
+<li>通信容量大：单个DNS要处理所有的请求查询。</li>
+<li>远距离的集中式数据库：因为距离太远时延过大。</li>
+<li>维护麻烦</li>
+</ul>
+<p>因此我们就有了上图的分布式、层次数据库，它是由<em>根DNS服务器</em>引导<em>顶级域服务器</em>例如常见的com、org、cn、edu。再到<em>权威DNS服务器</em>。</p>
+<p>此外还有一种重要的DNS服务器称为<em>本地DNS服务器</em>。</p>
+<p><img src="/2019/08/18/What-about-the-DNS/2.PNG" alt></p>
+<p>主机的本地DNS服务器通常临近本主机。但是我们一共产生了8份DNS报文，其中4份查询4份回答。不过我们还是要了解DNS缓存的方法，因为这种方法减少了流量的使用。</p>
+<p><img src="/2019/08/18/What-about-the-DNS/3.PNG" alt></p>
+<p>DNS缓存：当某个DNS服务器再即受到一个DNS回答时，他能将映射缓存到本地存储器中，并且可以缓存包含该回答的任何问题。你好像你来去大学第一天，你家长肯定会问老师以及宿管或者其他人你将会住在哪里，但是知道后，下次再来可以直接找到你的位置不是吗。</p>
+<p>鉴于此呢我们就大致了解DNS的内容。学习就是多多益善，多而广，广而精。</p>
+]]></content>
+      <categories>
+        <category>Computer_Networking</category>
+      </categories>
+      <tags>
+        <tag>Computer_Networking</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SMTP_in_ApplicationLayer</title>
+    <url>/2019/08/18/SMTP-in-the-ApplicationLayer/</url>
+    <content><![CDATA[<p>电子邮件大家再熟悉不过，业务分发或者是节日祝贺大家都使用过电子邮件的业务，那么电子邮件的分发是基于什么可能关注的人并没这么多，亦或者思考它和实时通信的QQ或者WeChat有什么区别呢？鉴于此来介绍一下计算机网络中基于应用层的SMTP协议。</p>
+<a id="more"></a>
+<p>首先要说的是电子右键是一种“异步通信媒介”，就是说当你空闲时候可以收发邮件，而不需要与他人的计划协调。也就是说双方不需要指定相同实际才能通信。</p>
+<p>我们来看一下这张图：</p>
+<p><img src="/2019/08/18/SMTP-in-the-ApplicationLayer/1.PNG" alt></p>
+<p>它是由用户代理、邮件服务器、简单邮件传输（SMTP）组成。用户代理主要作用就是允许用户阅读、回复、转发和保存邮件。邮件服务器为电子邮件体系结构的核心。大致意思就是，当我给你发一封邮件的时候，我的邮件代理给你的邮件服务器发送邮件，邮件就放在外出队列中，如果你要看邮件了，你的用户代理只需要在你的邮件服务器获取即可。当然了，SMTP就是我们传输时候要遵循的协议。它是基于TCP可靠传输的。</p>
+<p>现在专门来介绍一下SMTP协议：</p>
+<p>SMTP是电子邮件的核心，它是一个相对简单的基于文本的协议。在其之上指定了一条消息的一个或多个接收者（在大多数情况下被确认是存在的），然后消息文本会被传输。它要传输数据主要把文件转变为ASCII码的二进制数据，不同于HTTP的传输，所以一般我们子啊使用邮件的时候很少会传输大型图片视频音频之类也是基于这个原因。传输的过程主要为：</p>
+<p><img src="/2019/08/18/SMTP-in-the-ApplicationLayer/2.PNG" alt></p>
+<p>这种传输协议即使两个邮件服务器在地球两端也不会使用中间邮件服务器停留，就好像我在美国你在中国，传输过程也是单一的从你位置到我位置，不会在任何地区停下缓存数据。而且SMTP是一个“推”的协议，它不允许根据需要从远程服务器上“拉”来消息。即只能发送不能要求获取。</p>
+<p>然而要说的就是SMTP的传输其实和我们人与人之间交流类似。客户SMTP在25端口建立一个到服务器SMTP的TCP连接，如果服务器没有开机，客户会等待一段时间，一旦连接建立了，服务器和客户执行类似于三次握手的机制，就好像说，你和我打电话你会先说“喂，听到了吗，我说XXX”。SMTP客户只是发送方的邮件地址和解说对方的邮件，都是在介绍的时候说明。（确认信息后）客户开始发送报文信息。同时，SMTP用的是持续连接，就是说邮件服务器如果携带几个报文，可以发往同一个邮件服务器而且是通过同一个TCP连接。</p>
+<p>我们之前也提过了，SMTP是一个推协议，而HTTP是一个拉协议。虽然我们都是从一台主机向另一台主机传文件，但是我们在使用HTTP的时候都是获取Web上的我们需要的内容，简称拉，而SMTP不同于此，它是将自己的信息给推送出去，推送到另一台需要的主机。而且HTTP把每个对象封装到自己的HTTP响应报文中，而SMTP则是把所有报文对象放在一个报文里。</p>
+<p><img src="/2019/08/18/SMTP-in-the-ApplicationLayer/3.PNG" alt></p>
+<p>我们根据这张图可以看到，在客户发送给邮箱服务器是基于SMTP的，并且邮箱服务器之间的传输也是基于SMTP的，不同的是接收方在获取的时候可以基于三种方式POP3、IMAP或者是HTTP。我们这里只说一下基于HTTP的，因为现在web浏览器发展迅速，用户代理就是普通的浏览器，所以用户和他远程邮箱之间都是基于HTTP的了，这样的好处也有很多，快速以及发方便，同时基于HTTPs的发展，安全性有了更进一步的提升。不过之前的两步仍是基于SMTP的传输。</p>
+<p>鉴于此，我们大致介绍了SMTP的一些概念。如有深入学习则会再加入其中。</p>
+]]></content>
+      <categories>
+        <category>Computer_Networking</category>
+      </categories>
+      <tags>
+        <tag>Computer_Networking</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Set_And_Map_of_DataStructures</title>
+    <url>/2019/08/17/Set-And-Map-of-DataStructures/</url>
+    <content><![CDATA[<a id="more"></a>
+]]></content>
+      <categories>
+        <category>DataStructure</category>
+      </categories>
+      <tags>
+        <tag>DataStructure</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MergeSort_Algorithm_Demo</title>
+    <url>/2019/08/17/MergeSort-Algorithm-Demo/</url>
+    <content><![CDATA[<a id="more"></a>
+<p>首先呢我们要介绍一下什么是归并排序：</p>
+<p>百度百科：</p>
+<p>归并排序（MERGE-SORT）是建立在归并操作上的一种有效的排序算法,该算法是采用分治法（Divide and Conquer）的一个非常典型的应用。将已有序的子序列合并，得到完全有序的序列；即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序表，称为二路归并。</p>
+<p>归并操作的工作原理如下：</p>
+<pre><code>第一步：申请空间，使其大小为两个已经排序序列之和，该空间用来存放合并后的序列
+第二步：设定两个指针，最初位置分别为两个已经排序序列的起始位置
+第三步：比较两个指针所指向的元素，选择相对小的元素放入到合并空间，并移动指针到下一位置
+重复步骤3直到某一指针超出序列尾
+将另一序列剩下的所有元素直接复制到合并序列尾</code></pre><p><strong>环境介绍：</strong></p>
+<ul>
+<li>语言：Java</li>
+<li>使用JDK：java 1.8</li>
+<li>工具：eclipse或者IDEA都可。</li>
+<li>主要技术：Swing awt</li>
+</ul>
+<p>我们这里不介绍swing和awt的实现，而是直接借用模板来操作。模板中封装好了需要的一些简要实现。<br>需要的可以在这里下载模板源代码。</p>
+<p><a href="https://gitee.com/xiangzi1019/template_code/tree/master" target="_blank" rel="noopener">https://gitee.com/xiangzi1019/template_code/tree/master</a></p>
+<p>首先介绍一下模板：</p>
+<pre><code>1.主要包含了一个框架AlgoFrame，其中内容主要用于绘制内部信息，和双缓存的实现。
+2.AlgoVishelper看名称也可以知道，主要封装了一些帮助函数，例如绘制实体或者空心的圆、矩形、颜色等函数
+3.AlgoVisualizer主要就是视图可见的操作，例如你想事先声明功能都可以写在这里，然后调用数据和帮助类就可以实现。</code></pre><p>导入文档包之后呢，我们就先操作AlgoVisualizer类。我们根据我们的需求实现</p>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+        <tag>小Demo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>QuickSort_Algorithm_Demo</title>
+    <url>/2019/08/17/QuickSort-Algorithm-Demo/</url>
+    <content><![CDATA[<p>快速排序因为实践操作的可行性被作为最好用的排序算法之一。比如Java的JDK中包含的排序算法就是基于快排的，只是有些不同。既然快速排序作用这么大，我们就实现其可视化的过程来更好的学习一下，如果想要观看过程请点击详情。</p>
+<a id="more"></a>
+<p>首先呢我们要介绍一下什么是快速排序：</p>
+<p>百度百科：</p>
+<p>快速排序（Quicksort）是对冒泡排序的一种改进。 </p>
+<p>快速排序由C. A. R. Hoare在1960年提出。它的基本思想是：通过一趟排序将要排序的数据分割成独立的两部分，其中一部分的所有数据都比另外一部分的所有数据都要小，然后再按此方法对这两部分数据分别进行快速排序，整个排序过程可以递归进行，以此达到整个数据变成有序序列。 </p>
+<p>快速排序算法通过多次比较和交换来实现排序，其排序流程如下：</p>
+<pre><code>(1)首先设定一个分界值，通过该分界值将数组分成左右两部分。 
+(2)将大于或等于分界值的数据集中到数组右边，小于分界值的数据集中到数组的左边。此时，左边部分中各元素都小于或等于分界值，而右边部分中各元素都大于或等于分界值。
+(3)然后，左边和右边的数据可以独立排序。对于左侧的数组数据，又可以取一个分界值，将该部分数据分成左右两部分，同样在左边放置较小值，右边放置较大值。右侧的数组数据也可以做类似处理。
+(4)重复上述过程，可以看出，这是一个递归定义。通过递归将左侧部分排好序后，再递归排好右侧部分的顺序。当左、右两个部分各数据排序完成后，整个数组的排序也就完成了。 </code></pre><p><strong>环境介绍：</strong></p>
+<ul>
+<li>语言：Java</li>
+<li>使用JDK：java 1.8</li>
+<li>工具：eclipse或者IDEA都可。</li>
+<li>主要技术：Swing awt</li>
+</ul>
+<p>我们这里不介绍swing和awt的实现，而是直接借用模板来操作。模板中封装好了需要的一些简要实现。<br>需要的可以在这里下载模板源代码。</p>
+<p><a href="https://gitee.com/xiangzi1019/template_code/tree/master" target="_blank" rel="noopener">https://gitee.com/xiangzi1019/template_code/tree/master</a></p>
+<p>首先介绍一下模板：</p>
+<pre><code>1.主要包含了一个框架AlgoFrame，其中内容主要用于绘制内部信息，和双缓存的实现。
+2.AlgoVishelper看名称也可以知道，主要封装了一些帮助函数，例如绘制实体或者空心的圆、矩形、颜色等函数
+3.AlgoVisualizer主要就是视图可见的操作，例如你想事先声明功能都可以写在这里，然后调用数据和帮助类就可以实现。</code></pre><p>导入文档包之后呢，我们就先操作AlgoVisualizer类。我们根据我们的需求实现</p>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+        <tag>小Demo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HeapSort_Algorithm_Demo</title>
+    <url>/2019/08/16/HeapSort-Algorithm-Demo/</url>
+    <content><![CDATA[<p>堆排序的是排序算法的一种实现，主要借助二叉树实现，我们实现了可视化的堆排序过程，如果你想较为深入的理解一下或者学习堆排序，可以点击查阅详情。当然也有专门的一章内容介绍堆排序，需要可以查阅。</p>
+<a id="more"></a>
+<p>首先呢我们要介绍一下什么是堆排序：</p>
+<p>来源百度百科：</p>
+<p>堆排序(Heapsort)是指利用堆积树（堆）这种数据结构所设计的一种排序算法，它是选择排序的一种。可以利用数组的特点快速定位指定索引的元素。堆分为大根堆和小根堆，是完全二叉树。</p>
+<p>简单来说：堆排序是将数据看成是完全二叉树、根据完全二叉树的特性来进行排序的一种算法</p>
+<p>最大堆要求节点的元素都要不小于其孩子，最小堆要求节点元素都不大于其左右孩子<br>那么处于最大堆的根节点的元素一定是这个堆中的最大值，相反最小堆也是相反理解</p>
+<p>需要的可以去查阅介绍的堆排序算法。</p>
+<p><strong>环境介绍：</strong></p>
+<ul>
+<li>语言：Java</li>
+<li>使用JDK：java 1.8</li>
+<li>工具：eclipse或者IDEA都可。</li>
+<li>主要技术：Swing awt</li>
+</ul>
+<p>我们这里不介绍swing和awt的实现，而是直接借用模板来操作。模板中封装好了需要的一些简要实现。<br>需要的可以在这里下载模板源代码。</p>
+<p><a href="https://gitee.com/xiangzi1019/template_code/tree/master" target="_blank" rel="noopener">https://gitee.com/xiangzi1019/template_code/tree/master</a></p>
+<p>首先介绍一下模板：</p>
+<pre><code>1.主要包含了一个框架AlgoFrame，其中内容主要用于绘制内部信息，和双缓存的实现。
+2.AlgoVishelper看名称也可以知道，主要封装了一些帮助函数，例如绘制实体或者空心的圆、矩形、颜色等函数
+3.AlgoVisualizer主要就是视图可见的操作，例如你想事先声明功能都可以写在这里，然后调用数据和帮助类就可以实现。</code></pre><p>导入文档包之后呢，我们就先操作AlgoVisualizer类。我们根据我们的需求实现</p>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+        <tag>小Demo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>InsertionSort_Algorithm_Demo</title>
+    <url>/2019/08/16/InsertionSort-Algorithm-Demo/</url>
+    <content><![CDATA[<p>插入排序和选择排序以及冒泡排序是最基础的排序算法，大家最熟悉不过，作为基础排序的学习，我们实现了可视化的版本，借助可视化模型我们可以更加深入的理解排序的内在。如果您有兴趣可以点击查阅详情。</p>
+<a id="more"></a>
+<p>首先呢我们要介绍一下什么是插入排序：</p>
+<p>百度百科：</p>
+<p>插入排序（Insertion sort）是一种简单直观且稳定的排序算法。如果有一个已经有序的数据序列，要求在这个已经排好的数据序列中插入一个数，但要求插入后此数据序列仍然有序，这个时候就要用到一种新的排序方法——插入排序法,插入排序的基本操作就是将一个数据插入到已经排好序的有序数据中，从而得到一个新的、个数加一的有序数据，算法适用于少量数据的排序，时间复杂度为O(n^2)。是稳定的排序方法。</p>
+<p><strong>环境介绍：</strong></p>
+<ul>
+<li>语言：Java</li>
+<li>使用JDK：java 1.8</li>
+<li>工具：eclipse或者IDEA都可。</li>
+<li>主要技术：Swing awt</li>
+</ul>
+<p>我们这里不介绍swing和awt的实现，而是直接借用模板来操作。模板中封装好了需要的一些简要实现。<br>需要的可以在这里下载模板源代码。</p>
+<p><a href="https://gitee.com/xiangzi1019/template_code/tree/master" target="_blank" rel="noopener">https://gitee.com/xiangzi1019/template_code/tree/master</a></p>
+<p>首先介绍一下模板：</p>
+<pre><code>1.主要包含了一个框架AlgoFrame，其中内容主要用于绘制内部信息，和双缓存的实现。
+2.AlgoVishelper看名称也可以知道，主要封装了一些帮助函数，例如绘制实体或者空心的圆、矩形、颜色等函数
+3.AlgoVisualizer主要就是视图可见的操作，例如你想事先声明功能都可以写在这里，然后调用数据和帮助类就可以实现。</code></pre><p>导入文档包之后呢，我们就先操作AlgoVisualizer类。我们根据我们的需求实现</p>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+        <tag>小Demo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SelectionSort_Algorithm_Demo</title>
+    <url>/2019/08/16/SelectionSort-Algorithm-Demo/</url>
+    <content><![CDATA[<p>对于选择排序我们并不陌生，作为基础的排序算法，很多人都是接触编程时候就学习了的，如同语言界的一大“Hello_World”，今天我们就来尝试实现一个小Demo把选择排序进行可视化输出，如有兴趣点击详情查阅。</p>
+<a id="more"></a>
+<p>首先呢我们要介绍一下什么是选择排序：</p>
+<p>百度百科：</p>
+<p>选择排序（Selection sort）是一种简单直观的排序算法。它的工作原理是：第一次从待排序的数据元素中选出最小（或最大）的一个元素，存放在序列的起始位置，然后再从剩余的未排序元素中寻找到最小（大）元素，然后放到已排序的序列的末尾。以此类推，直到全部待排序的数据元素的个数为零。选择排序是不稳定的排序方法。</p>
+<p><strong>环境介绍：</strong></p>
+<ul>
+<li>语言：Java</li>
+<li>使用JDK：java 1.8</li>
+<li>工具：eclipse或者IDEA都可。</li>
+<li>主要技术：Swing awt</li>
+</ul>
+<p>我们这里不介绍swing和awt的实现，而是直接借用模板来操作。模板中封装好了需要的一些简要实现。<br>需要的可以在这里下载模板源代码。</p>
+<p><a href="https://gitee.com/xiangzi1019/template_code/tree/master" target="_blank" rel="noopener">https://gitee.com/xiangzi1019/template_code/tree/master</a></p>
+<p>首先介绍一下模板：</p>
+<pre><code>1.主要包含了一个框架AlgoFrame，其中内容主要用于绘制内部信息，和双缓存的实现。
+2.AlgoVishelper看名称也可以知道，主要封装了一些帮助函数，例如绘制实体或者空心的圆、矩形、颜色等函数
+3.AlgoVisualizer主要就是视图可见的操作，例如你想事先声明功能都可以写在这里，然后调用数据和帮助类就可以实现。</code></pre><p>导入文档包之后呢，我们就先操作AlgoVisualizer类。我们根据我们的需求实现</p>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+        <tag>小Demo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数据结构之二叉树</title>
+    <url>/2019/08/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/</url>
+    <content><![CDATA[<p>树，作为一种数据结构有着庞大的家族而且在程序设计中有着特殊的含义，学习树结构是学习数据结构基础中的基础，只有学好树这种结构才能深入的去学习相关的高级算法，例如简单的BST树，AVL树，伸展树，红黑书。这次介绍简单的树这种实现。</p>
+<a id="more"></a>
+
+<p>例如一场球赛，我们先从32强开始，意味着有32个队伍进行比赛胜出的队伍进入16强，依次类推再是8强，4强以及决胜出冠军。我们可以看到的是，每一个队伍的胜出都是由它和之前的一个队伍比赛，我们称其为左右节点。这样由冠军出发，每一个节点都有两个左右节点，这样我们可以称之为“满二叉树”，但是很不巧可能在某一场比赛的时候，一个队伍错过了自己的比赛，那么另一个队伍直接晋级，所以晋级的队伍下面就只有自己一个节点，所以我们是允许存在某一节点为空的情况。当然了，有的队伍实力强劲，可能是上一届的金牌，然后他被允许在16强才参加比赛。那么它的比赛就从16强开始，自然的，在32强比赛中，它没有左右节点。</p>
+<p><img src="/2019/08/15/数据结构之二叉树/1.jpg" alt="二叉树"></p>
+<p>鉴于此我们可以在Java中创建节点来保存这种数据结构：</p>
+<pre><code>/**
+ * 定义接口以及构造函数，分别是无参构造函数以及全参和传入值构造函数
+ * @param &lt;AnyType&gt;
+ */
+public class BinaryNode&lt;AnyType&gt;{
+    AnyType element;   //包含的值
+    //左右节点
+    BinaryNode&lt;AnyType&gt; left; 
+    BinaryNode&lt;AnyType&gt; right;
+    //构造函数
+    public BinaryNode(AnyType element) {
+        this(element,null,null);
+    }
+
+    public BinaryNode() {
+    }
+
+    public BinaryNode(AnyType element, BinaryNode&lt;AnyType&gt; left, BinaryNode&lt;AnyType&gt; right) {
+        this.element = element;
+        this.left = left;
+        this.right = right;
+    }
+}</code></pre><p>首先我们来查找一下是否包含某个节点，做法很简单，由于二叉树的生成我们给定了要求，左节点小于右节点。如同二分查找一样，我们只需要比较根节点root，就可以判断出来我们是向左还是向右。当然在那之前，我们要看看树是否为空。，然后就可以递归的遍历查找了。</p>
+<p><img src="https://img-blog.csdn.net/20180419222035657?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p4enh6eDAxMTk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<pre><code>//是否包含某个节点
+    private boolean contains(AnyType x, BinaryNode&lt;AnyType&gt; t){
+        if(t == null){
+            return false;
+        }
+        int compareResult = x.compareTo(t.element);
+        if(compareResult &lt; 0){
+            return contains(x,t.left);
+        }else if(compareResult &gt; 0){
+            return contains(x,t.right);
+        }else{
+            return true;
+        }
+    }</code></pre><p>这里我们实现了查找最大最小值的操作，思想很简单，如果你要找最小值呢，我们知道左边用于小于右边，所以我们只需要向左持续的遍历就能够找到最小的值，同理最大的就是向右。我们呢实现了递归和非递归的两种方式。非递归的方式就是找到下一个值赋给当前值，递归则是持续找下一个阶层的数据。</p>
+<pre><code>/**
+ * 使用非递归的方式
+ * @param t
+ * @return
+ */
+private BinaryNode&lt;AnyType&gt; findMax(BinaryNode&lt;AnyType&gt; t){
+    if(t != null){
+        while(t.right != null){
+            t = t.right;
+        }
+    }
+    return t;
+}
+
+/**
+ * 使用递归的方式
+ * @param t
+ * @return
+ */
+private BinaryNode&lt;AnyType&gt; findMin(BinaryNode&lt;AnyType&gt; t){
+    if(t == null){
+        return null;
+    }else if(t.left == null){
+        return t;
+    }else{
+        return findMin(t.left);
+    }
+}</code></pre><p>增加某个节点呢，我们要先找到他应该存在的父亲节点，然后判断应该放入左还是右。加入即可。</p>
+<p><img src="https://img-blog.csdn.net/20180419223559883?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p4enh6eDAxMTk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<pre><code>//增加某个节点
+private BinaryNode&lt;AnyType&gt; insert(AnyType x,BinaryNode&lt;AnyType&gt; t){
+    if(t == null){
+        return new BinaryNode&lt;&gt;(x,null,null);
+    }
+    int compareResult = x.compareTo(t.element);
+    if(compareResult &lt; 0){
+        t.left = insert(x,t.left);
+    }else if(compareResult &gt; 0){
+        t.right = insert(x,t.right);
+    }else{
+        ;// do nothing
+    }
+    return t;
+}</code></pre><p>删除同理。不过区别就是我们要判断它是否有孩子节点，当有一个节点的时候，我们直接吧节点上提，当有两个节点的时候再去找到右节点的最小值（或者左节点的最大值）加入即可。</p>
+<pre><code>//删除某个节点
+private BinaryNode&lt;AnyType&gt; remove(AnyType x,BinaryNode&lt;AnyType&gt; t){
+    if(t == null){
+        return t;
+    }
+    int compareResult = x.compareTo(t.element);
+    if(compareResult &lt; 0){
+        t.left = remove(x,t.left);
+    }else if(compareResult &gt; 0){
+        t.right = remove(x,t.right);
+    }else if(t.left != null &amp;&amp; t.right != null){   //两个孩子的时候
+        t.element = findMin(t.right).element;
+        t.right = remove(t.element,t.right);
+    }else{  //一个孩子的时候
+        t = (t.left != null)?t.left:t.right;
+    }
+    return t;
+}</code></pre><p>打印树的操作分别有三个，我们这里使用了中序的递归打印，还有先序，后序两种方式，当然也有非递归的方式。任选其一即可。</p>
+<pre><code>//递归的中序打印整棵树
+private void printTree(BinaryNode&lt;AnyType&gt; t){
+    if(t != null){
+        printTree(t.left);
+        System.out.println(t.element);
+        printTree(t.right);
+    }
+}</code></pre><p>这样我们就实现了二叉树的创建以及基本的操作接口。</p>
+<p>为了使用方便，我们呢把其中私有的方法创建共有的接口，这样就实现了调用而又保证了内部信息的安全。方法如下：</p>
+<pre><code>public BinarySearchTree(){
+        root = null;
+    }
+
+    public void makeEmpty(){
+        root = null;
+    }
+
+    public boolean isEmpty(){
+        return root == null;
+    }
+
+    public boolean contains(AnyType x) {
+        return contains(x,root);
+    }
+
+    public AnyType findMax(){
+        if(isEmpty()) return null;
+        return findMax(root).element;
+    }
+
+    public AnyType findMin(){
+        if(isEmpty()) return null;
+        return findMin(root).element;
+    }
+
+    public void insert(AnyType x){
+        root = insert(x,root);
+    }
+
+    public void remove(AnyType x){
+        root = remove(x,root);
+    }
+
+    public void printTree(){
+        if(isEmpty())
+            System.out.println(&quot;空树&quot;);
+        else
+            printTree(root);
+    }</code></pre><hr>
+<p>另外，再额外增加一些其他的操作，可以自行加入。</p>
+<p><strong>统计树中结点的个数</strong></p>
+<p>树中结点的个数等于根节点(1) + 左子树结点个数 + 右子树的个数，递归求解即可。</p>
+<pre><code>//统计结点个数
+private int count(AnyType T) {
+    if (T == null)
+        return 0;
+    else
+        return count(T.left) + count(T.right) + 1;
+}</code></pre><p><strong>计算树的高度</strong></p>
+<p>也是递归求解，左右子树的高度中的比较高的加上根节点就是树的高度。</p>
+<pre><code>//计算二叉树的深度
+private int depth(AnyType T) {
+    if (T == null)
+        return 0;
+    return Math.max(depth(T.left), depth(T.right)) + 1;
+}</code></pre><p><strong>层次遍历</strong></p>
+<p>很简单。利用队列BFS即可，每次访问完<code>p</code>，若左右节点存在，则入队，直至队空。因为队列是先进先出，当我们根节点有左右节点，在把根节点出队时候左右节点压就紧跟着压入队列，这样就形成了层遍历效果。</p>
+<pre><code>public void levelOrder(AnyType root) {
+    if (root == null)
+        return;
+    Queue&lt;AnyType&gt; queue = new LinkedList&lt;&gt;();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+        AnyType now = queue.poll();
+        System.out.print(now.val + &quot; &quot;);
+        if (now.left != null) queue.add(now.left);
+        if (now.right != null) queue.add(now.right);
+    }
+}</code></pre><p><strong>非递归前序</strong></p>
+<p>由于之前我们实现的是递归的中序输出，这里我们实现前序的非递归方法。<br>前序遍历顺序为: <em>根结点-&gt;左子树-&gt;右子树</em>，所以对于正在访问的根结点，可以直接访问，访问完之后，按照相同的方式访问左子树，再访问右子树，过程如下 : </p>
+<ul>
+<li>如果当前节点<code>p</code>不为空，访问结点<code>p</code>，并将结点<code>p</code>入栈，并继续访问左子树(直到左子树为空)；</li>
+<li>否则将栈顶元素出栈，并访问栈顶的元素的右子树；</li>
+<li>直到栈为空且<code>p</code>为空，循环结束。</li>
+</ul>
+<p>-</p>
+<pre><code>public void iterativePre(AnyType root) {
+    Stack&lt;AnyType&gt; s = new Stack&lt;&gt;();
+    AnyType p = root;
+    while (!s.empty() || p != null) {
+        while (p != null) { // while循环，直到左子树为空
+            s.push(p);
+            System.out.print(p.val + &quot; &quot;);
+            p = p.left;
+        }
+        p = s.pop();
+        p = p.right;
+    }
+}</code></pre>]]></content>
+      <categories>
+        <category>DataStructure</category>
+      </categories>
+      <tags>
+        <tag>DataStructure</tag>
+        <tag>Tree</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>算法之蒙特卡洛Demo求PI值</title>
+    <url>/2019/08/14/%E7%AE%97%E6%B3%95%E4%B9%8B%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9BDemo%E6%B1%82PI%E5%80%BC/</url>
+    <content><![CDATA[<p>PI的值大家小学就接触过，那么这个值怎么得到的呢？我们今天来尝试一下从计算机的角度利用蒙特卡罗算法求解PI的近似值。如有兴趣可以查阅详情。</p>
+<a id="more"></a>
+<p>我们呢先不说结果，来跟着这个小Demo尝试一下自己探索吧。</p>
+<p>首先还是介绍一下蒙特卡罗思想：</p>
+<p>蒙特卡罗方法于20世纪40年代美国在第二次世界大战中研制原子弹的“曼哈顿计划”计划的成员S.M.乌拉姆和J.冯·诺伊曼首先提出。是指使用随机数（或更常见的伪随机数）来解决很多计算问题的方法。数学家冯·诺伊曼用驰名世界的赌城—摩纳哥的Monte Carlo—来命名这种方法，为它蒙上了一层神秘色彩。在这之前，蒙特卡罗方法就已经存在。1777年，法国数学家布丰（Georges Louis Leclere de Buffon，1707—1788）提出用投针实验的方法求圆周率π。这被认为是蒙特卡罗方法的起源。</p>
+<p>在解决实际问题的时候应用蒙特·卡罗方法主要有两部分工作：</p>
+<ul>
+<li><p>用蒙特·卡罗方法模拟某一过程时，需要产生某一概率分布的随机变量。</p>
+</li>
+<li><p>用统计方法把模型的数字特征估计出来，从而得到实际问题的数值解。</p>
+</li>
+</ul>
+<p><strong>环境介绍：</strong></p>
+<ul>
+<li>语言：Java</li>
+<li>使用JDK：java 1.8</li>
+<li>工具：eclipse或者IDEA都可。</li>
+<li>主要技术：Swing awt</li>
+</ul>
+<p>我们这里不介绍swing和awt的实现，而是直接借用模板来操作。模板中封装好了需要的一些简要实现。<br>需要的可以在这里下载模板源代码。</p>
+<p><a href="https://gitee.com/xiangzi1019/template_code/tree/master" target="_blank" rel="noopener">https://gitee.com/xiangzi1019/template_code/tree/master</a></p>
+<p>再介绍一下模板：</p>
+<pre><code>1.主要包含了一个框架AlgoFrame，其中内容主要用于绘制内部信息，和双缓存的实现。
+2.AlgoVishelper看名称也可以知道，主要封装了一些帮助函数，例如绘制实体或者空心的圆、矩形、颜色等函数
+3.AlgoVisualizer主要就是视图可见的操作，例如你想事先声明功能都可以写在这里，然后调用数据和帮助类就可以实现。</code></pre><p>导入文档包之后呢，我们就先操作AlgoVisualizer类。</p>
+<p>首先呢我们要创建一个Circle类，用来生成正方形中的内切圆。</p>
+<pre><code>import java.awt.*;
+import javax.swing.*;
+public class Circle {
+
+    private int x, y, r;
+
+    public Circle(int x, int y, int r){
+        this.x = x;
+        this.y = y;
+        this.r = r;
+    }
+
+    public int getX(){ return x; }
+    public int getY(){ return y; }
+    public int getR(){ return r; }
+
+    public boolean contain(Point p){
+        return Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2) &lt;= r*r;
+    }
+}</code></pre><p>然后我们再创建一个MonteCarloPiData类专门用来保存和计算点的个数。我们呢在里面画抑恶个圆，并且设计方法得到正方形以及圆内的point的个数。分别用insideCircle表示圆内的点的个数，再用estimatePi方法返回当前得到的PI的值。</p>
+<pre><code>import java.util.LinkedList;
+import java.awt.*;
+
+public class MonteCarloPiData {
+
+    private Circle circle;
+    private LinkedList&lt;Point&gt; points;
+    private int insideCircle = 0;
+
+    public MonteCarloPiData(Circle circle){
+        this.circle = circle;
+        points = new LinkedList&lt;Point&gt;();
+    }
+
+    public Circle getCircle(){
+        return circle;
+    }
+
+    public int getPointsNumber(){
+        return points.size();
+    }
+
+    public Point getPoint(int i){
+        if(i &lt; 0 || i &gt;= points.size())
+            throw new IllegalArgumentException(&quot;out of bound in getPoint!&quot;);
+
+        return points.get(i);
+    }
+
+    public void addPoint(Point p){
+        points.add(p);
+        if(circle.contain(p))
+            insideCircle ++;
+    }
+
+    public double estimatePi(){
+
+        if(points.size() == 0)
+            return 0.0;
+
+        int circleArea = insideCircle;
+        int squareArea = points.size();
+        return (double)circleArea * 4 / squareArea;
+    }
+}</code></pre><p>有了前面的铺垫，我们再去设计框架里面的数据，这里我们呢传入三个数据，分别是生成的高和宽以及传入的点数：</p>
+<pre><code>private static int DELAY = 40;
+private MonteCarloPiData data;
+private AlgoFrame frame;
+private int N;
+
+public AlgoVisualizer(int sceneWidth, int sceneHeight, int N){
+
+    if(sceneWidth != sceneHeight)
+        throw new IllegalArgumentException(&quot;This demo must be run in a square window!&quot;);
+
+    this.N = N;
+    //圆心位置以及半径大小
+    Circle circle = new Circle(sceneWidth/2, sceneHeight/2, sceneWidth/2);
+    data = new MonteCarloPiData(circle);
+
+    // 初始化视图
+    EventQueue.invokeLater(() -&gt; {
+        frame = new AlgoFrame(&quot;Monte Carlo&quot;, sceneWidth, sceneHeight);
+
+        new Thread(() -&gt; {
+            run();
+        }).start();
+    });
+}</code></pre><p>run函数呢就是我们要对数据执行操作，每增加100个点我们就打印依次现在的PI值，并且使运行延迟40ms。我们的点也要生成，生成的位置设为x，y，然后再在界面中画出这个点。</p>
+<pre><code>public void run(){
+
+    for(int i = 0 ; i &lt; N ; i ++){
+
+        if( i % 100 == 0) {
+            frame.render(data);
+            AlgoVisHelper.pause(DELAY);
+            System.out.println(data.estimatePi());
+        }
+
+        int x = (int)(Math.random() * frame.getCanvasWidth());
+        int y = (int)(Math.random() * frame.getCanvasHeight());
+        data.addPoint(new Point(x, y));
+    }
+
+}</code></pre><p>最后呢我们要对界面的类进行数据操作：</p>
+<pre><code>private MonteCarloPiData data;
+public void render(MonteCarloPiData data){
+    this.data = data;
+    repaint();
+}</code></pre><p>并且在我们的绘画中我们实际的绘制为，意思使我们先确定绘制的粗细，然后选择绘制圆的颜色，随后呢我们在for循环中绘制points,如果圆中包含，我们就绘制红色，不包含就就绘制绿色，并且绘制的圆为实心大小为3个像素点：</p>
+<pre><code>AlgoVisHelper.setStrokeWidth(g2d, 3);
+AlgoVisHelper.setColor(g2d, AlgoVisHelper.Blue);
+Circle circle = data.getCircle();
+AlgoVisHelper.strokeCircle(g2d, circle.getX(), circle.getY(), circle.getR());
+
+for(int i = 0 ; i &lt; data.getPointsNumber() ; i ++){
+    Point p = data.getPoint(i);
+    if(circle.contain(p))
+        AlgoVisHelper.setColor(g2d, AlgoVisHelper.Red);
+    else
+        AlgoVisHelper.setColor(g2d, AlgoVisHelper.Green);
+
+    AlgoVisHelper.fillCircle(g2d, p.x, p.y, 3);
+}</code></pre><p>基本上呢我们这样就实现了简单的PI的操作，当然随着我们测试用例数据的增大，我们的值趋向于正确。</p>
+<p><img src="/2019/08/14/算法之蒙特卡洛Demo求PI值/1.PNG" alt></p>
+<p>这是我们测试10000个点的最终结果显示：</p>
+<p><img src="/2019/08/14/算法之蒙特卡洛Demo求PI值/2.PNG" alt></p>
+<p>这是我们每100个点打印一次所计算的PI的值，数据是最后几次计算：</p>
+<p><img src="/2019/08/14/算法之蒙特卡洛Demo求PI值/3.PNG" alt></p>
+<p>这样，我们就可以把实际生活中的一些具体问题通过可视化的方式展现出来，并且做成一个小Demo，不仅训练了思维能力，还提升了coding能力。</p>
+<p>声明：本文章是基于liuyubo老师的代码实例所写。只用于学习。别无其他。</p>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+        <tag>小Demo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>算法之分钱问题小Demo</title>
+    <url>/2019/08/14/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%88%86%E9%92%B1%E9%97%AE%E9%A2%98%E5%B0%8FDemo/</url>
+    <content><![CDATA[<p>分钱问题是这样的：假设房间有100人，每人都有100园区，并且这100个人都自己创造该有的财富，如果你需要别人的商品，你需要拿1元钱去购买。那么最后的结果该会是如何呢？</p>
+<p>显然这个问题就类似于生活在的日常，在持有相同金钱的社会中，随着社会的改变人们会产生商品并且消费。那么结果是如何呢？是持续着平均的经济体系还是加剧社会的分化呢？点击详情即可查看实现。</p>
+<a id="more"></a>
+<p>我们呢先不说结果，来跟着这个小Demo尝试一下自己探索吧。</p>
+<p><strong>环境介绍：</strong></p>
+<ul>
+<li>语言：Java</li>
+<li>使用JDK：java 1.8</li>
+<li>工具：eclipse或者IDEA都可。</li>
+<li>主要技术：Swing awt</li>
+</ul>
+<p>我们这里不介绍swing和awt的实现，而是直接借用模板来操作。模板中封装好了需要的一些简要实现。<br>需要的可以在这里下载模板源代码。</p>
+<p><a href="https://gitee.com/xiangzi1019/template_code/tree/master" target="_blank" rel="noopener">https://gitee.com/xiangzi1019/template_code/tree/master</a></p>
+<p>首先介绍一下模板：</p>
+<pre><code>1.主要包含了一个框架AlgoFrame，其中内容主要用于绘制内部信息，和双缓存的实现。
+2.AlgoVishelper看名称也可以知道，主要封装了一些帮助函数，例如绘制实体或者空心的圆、矩形、颜色等函数
+3.AlgoVisualizer主要就是视图可见的操作，例如你想事先声明功能都可以写在这里，然后调用数据和帮助类就可以实现。</code></pre><p>导入文档包之后呢，我们就先操作AlgoVisualizer类。我们根据我们的需求实现人和钱。这里呢主要创建了100个人，每人100元钱。</p>
+<pre><code>// TODO: 创建自己的数据
+private int[] money;        // 数据
+private AlgoFrame frame;    // 视图
+private static int DELAY = 40;
+public AlgoVisualizer(int sceneWidth, int sceneHeight){
+
+    // 初始化数据
+    //创建100个人，每人手里都有100元钱
+    money = new int[100];
+    for(int i = 0; i &lt; money.length; i++) {
+        money[i] = 100;
+    }</code></pre><p>关于视图对话框呢，这里使用的是JDK1.8的函数实编程，我们呢只需要改变它的标题即可。主要的意思就是，我们申请了一个线程，防止与主线程同步导致我们对话框难以其他操作。线程里调用了run方法实现我们的动画效果。然后直接start开始启动线程。</p>
+<pre><code>// 初始化视图
+EventQueue.invokeLater(() -&gt; {
+    frame = new AlgoFrame(&quot;分钱问题&quot;, sceneWidth, sceneHeight);
+
+    new Thread(() -&gt; {
+        run();
+    }).start();
+});</code></pre><p>run的逻辑基本为，当我们运行时候，对我们人用于钱数排序，sort其实调用的就是快排思想。然后调用frame的重绘着色，线程延迟DELAY（ms）时间，开始实现我们的给钱功能。实际上就是我们每一帧给定每个人都向外给1元钱来保证自己每日的需求。然后呢随机卖商品的人得到一元钱加入自己的总量。（实际上是不科学的，因为现实社会中我们会购买更好的东西或者花更多的钱消费高档次的生活，这里只做模拟，不考虑任何其他消费）</p>
+<pre><code>// 动画逻辑
+private void run(){
+    while(true) {
+        // TODO: 编写自己的动画逻辑
+        //排序输出
+        Arrays.sort(money);
+        //重绘着色
+        frame.render(money);
+        //延迟
+        AlgoVisHelper.pause(DELAY);
+        for(int k = 0; k &lt; 40; k++) {
+            for(int i = 0; i &lt; money.length; i++) {
+                int j = (int)(Math.random()*money.length);
+                money[i]-=1;
+                money[j]+=1;
+            }
+        }
+    }
+}</code></pre><p>其余本函数中不需要再做任何改变。因为得到了数据然后我们去AlgoFrame中去实现画面的显示操作。<br>首先我们也是设置数据，要求呢和之前数据保存一致。</p>
+<pre><code> // TODO: 设置自己的数据
+private int[] money;
+public void render(int[] money){
+    this.money = money;
+    repaint();
+}</code></pre><p>然后就直接跳到具体绘制，因为绘制图形需要着色或者说调用系统函数，所以我们把数据放到绘制中，结合双缓存和抗锯齿实现更加精美的效果。</p>
+<pre><code>//设置宽度
+int w = canvasWidth/money.length;
+for(int i = 0;i &lt; money.length; i++) {
+    //当前为证显示红色，为负显示绿色
+    //g2d为绘制的图形
+    if(money[i] &gt; 0) {
+        AlgoVisHelper.setColor(g2d, AlgoVisHelper.Red);
+        //设置矩形大小
+        AlgoVisHelper.fillRectangle(g2d, i*w+1, canvasHeight/2-money[i], w-1, money[i]);
+    }else {
+        AlgoVisHelper.setColor(g2d, AlgoVisHelper.Green);
+        AlgoVisHelper.fillRectangle(g2d, i*w+1, canvasHeight/2, w-1, -money[i]);
+    }
+}</code></pre><p>我们可以看到，先设置颜色，告诉系统我要什么什么颜色，然后再设置矩形大小，数据依次为：绘制的图形，宽度，左，右像素，宽度，高度。</p>
+<p>鉴于此我们就把这个程序弄完了，现在点击运行，就能得到结果。</p>
+<p>刚开始显示：</p>
+<p><img src="/2019/08/14/算法之分钱问题小Demo/1.PNG" alt></p>
+<p>持续一段时间出现了负值：</p>
+<p><img src="/2019/08/14/算法之分钱问题小Demo/2.PNG" alt></p>
+<p>又一段时间后，出现了函数式的曲线样式：</p>
+<p><img src="/2019/08/14/算法之分钱问题小Demo/3.PNG" alt></p>
+<p>由此可以我们分析一下，这应该挺符合资本社会中贫富差距巨大化的原因吧。提醒一点的是，我们看到的最大正负值不一定是同一个人，因为下一次它可能会给别人钱，然后有的人又成为了新的首富或者最穷。类比一下有可能大老板破产了呢，资金也能为负数。当然负数值意味着花呗？借呗？现在生活中的大量借记卡吧。</p>
+<p>声明：本文章是基于liuyubo老师的代码实例所写。只用于学习。别无其他。</p>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+        <tag>小Demo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Computer_Networking's_简述Web和HTTP</title>
+    <url>/2019/08/13/Computer-Networking-s-%E7%AE%80%E8%BF%B0Web%E5%92%8CHTTP/</url>
+    <content><![CDATA[<p>在网络学习中HTTP和Web学习的深入有利于理解和设计有关Web项目的相关事宜，在学习中深入理解在应用层的各类关系以及传输的模式和协议，记录学习点滴。本概述结合Computer Networking A Top-Down Approachde 的相关讲解和自己体会记录学习的内容。</p>
+<a id="more"></a>
+
+<p>首先要理解为什么要发展Web？其实大家都已经习惯了在网上直接“百度一下”搜索想要的内容，这样快捷方便。我们可以理解web是按需操作的。同理，在Web发展之前呢，我们接收信息都是通过收音机或者报纸得到供应者提供的消息，这样就大大的降低了我们的主观能动性。所以在Web出来的时候就绽放光彩。</p>
+<p><strong>首先介绍HTTP</strong></p>
+<p>web的应用层协议是HTTP（超文本传输协议），它是Web的核心。HTTP由两个程序实现：一个是客户端程序一个是服务器程序。他们在不同的端系统中通过交换HTTP报文进行会话。（PS.在另外博客中，会实现基于java的简单Tomcat的服务器，如有需要可以翻阅）</p>
+<p>Web由对象组成，一个对象就是一个文件他们的通过URL地址寻址。HTML的基本文件呢通过对象的URL地址引用页面的其他对象。要注意的是，每个URL由两部分组成：存放对象的服务器主机名和对象的路径名。例如我们随便点击可以网址：<a href="http://www.nankai.edu.cn/162/list.htm这是南开大学的首页点击概况。其中http://是我们的协议，www.nankai.edu.cn是主机名，而162/list.htm记为对象的路径名。" target="_blank" rel="noopener">http://www.nankai.edu.cn/162/list.htm这是南开大学的首页点击概况。其中http://是我们的协议，www.nankai.edu.cn是主机名，而162/list.htm记为对象的路径名。</a></p>
+<p>HTTP定义了Web客户端向Web向服务器请求Web页面方式，以及服务器向客户端传送web页面的方式。即：当用户请求一个页面时候，浏览器向服务器发送该页面中所包含的对象的HTTP请求报文，服务器呢接收到请求并用包含这些对象的HTTP响应报文进行响应。</p>
+<p><img src="/2019/08/13/Computer-Networking-s-简述Web和HTTP/1.PNG" alt="HTTP相应"></p>
+<p>简单来说呢就好比你给你暗恋的女神送情书（现在看来比较low） :smile: 然后呢女神收到了礼物，并且响应你的请求对你说：“你还是走吧，我有祥子了”。这就是一次简单的Web响应。</p>
+<p>同时要说一点就是HTTP是使用TCP作为运输协议。即：HTTP客户首先发起一个与服务器的TCP连接，一旦连接建立，该浏览器和服务器进程就可以通过套接字接口访问TCP。我们呢在深入一点就是：客户向它的套接字接口发送HTTP请求报文并从它的套接字街廓接收HTTP响应报文。类似的，服务器从他的套接字接口接收HTTP请求报文和他的套接字接口发送HTTP响应报文。一旦客户端向它的套接字接口发的了一个请求报文，<em>该报文就脱离了客户控制并进入了TCP的控制。</em></p>
+<p>这个的意义就类似于，你和我说，你要给你女神送礼物（我可以连接女神）然后我说行，这个忙我帮定你了。于是呢我就接收了你的礼物（实际上等我接收后，礼物就归我管了），由于呢我是TCP，我就完完全全的帮你给了女神（PS.女神就和我在一起了）。哈哈然后女神收到消息，让我告诉你说其实她喜欢的是祥子。然后我就回到你家告诉你还是放弃吧，女神已经是我的了。</p>
+<p>这里看到了分层的最大优点，就是HTTP协议不需要担心数据的丢失，也不用关注TCP从网络数据丢失和乱序恢复的细节，只要关注报文发送成功即可。然后剩下的工作都是给TCP以及协议栈的。</p>
+<p>我们呢通过这个例子啊发现这样一个问题，就是：服务器向客户端发送被请求的文件，而不存储任何关于该客户的状态信息（听起来有点点可悲）。假如某个客户端在很短时间连续请求同一个对象，服务器并不会因为刚才为该用户提供了对象就不再做出反应，而是重新发送该对象。（没办法要再次声明女神是祥子的嘛）。这种方式被称为“无状态协议”。也许啊，就是这可怜的人发明了Cookie。哈哈哈</p>
+<p>注:关于Cookie的在另外的博客有介绍。</p>
+<p><strong>非持续性连接的HTTP</strong></p>
+<p>我们需要了解以下在非持续性连接状况下，服务器向客户端传送Web页面的步骤。</p>
+<pre><code>1.HTTP客户进程在80端口发起一个到服务器的TCP连接。在客户和服务器上分别有一个套接字与该连接相关。
+
+2.HTTP客户经它的套接字向该服务器发送一个HTTP请求报文。
+
+3.HTTP服务器进程经它的套接字接收该服务器请求报文，从其存储器（RAM或者磁盘）中检索对象，在一个HTTP响应报文中封装对象，并通过套接字向客户端发送响应报文。
+
+4.HTTP服务器进程通知TCP断开该TCP连接。（其实直到TCP确认客户已经完整的收到响应报文为止才会断开）
+
+5.HTTP客户端接收到响应报文，TCP连接关闭。
+
+6.对于重复对象要重复前4个步骤。</code></pre><p>由于浏览器与Web服务器之间发起了TCP连接，这便涉及了“三次握手”的过程。于是乎我们要讨论下什么是“三次握手”。</p>
+<p><img src="/2019/08/13/Computer-Networking-s-简述Web和HTTP/2.PNG" alt="三次握手"></p>
+<p>简单来说就是客户向服务器发送一个小TCP报文段，服务器用一个小TCP报文段做出确认和响应，最后客户端向服务器返回确认。我们可以看图知道，三次握手前两部分消耗的时间占一个RTT（往返时间：Round-Trip Time，指一个短分组从客户端到服务器然后再返回客户所花费的时间，包括了分组传播时延，分组在中间节点例如路由器的排队时延以及分组处理时延）。在完成前两个部分后，客户结合三次握手的第三部分（确认）向该TCP连接发送一个HTTP请求报文。一旦该请求报文到大服务器，服务器就在该TCP连接上发送两个HTML文件，可见响应也用掉了一个RTT。因此粗略的计算，总的响应时间就是两个RTT加上服务器传输HTML文件的时间。</p>
+<p><strong>持续连接的HTTP</strong></p>
+<p>因为非持续性连接缺点明显，例如1.必须为每一个请求对象建立和维护一个全新的连接，且都要分配TCP缓存区还要保持TCP变量，可见负担较大，同时每一个对象都要两个RTT交付时延，等待时间长久。所以啊在HTTP 1.1中，服务器发送响应后保持该TCP连接打开。在传输中，可以用单个持续TCP连接进行传输，如同流水线的样子处理请求。当然，连接时保持一定时间间隔的。超过时间间隔未使用就自动关闭。就好像你和朋友打电话，两个人忽然沉默了——过了好久也没人理你或者你也不说话，就关闭了通话。</p>
+<p><strong>HTTP报文格式</strong></p>
+<p>HTTP报文有两种：请求报文和响应报文。</p>
+<p>###请求报文</p>
+<pre><code>GET /user HTTP/1.1      请求行
+Host: www.user.com
+Accept-language： cn
+Connection: Keep-Alive
+User-agent: Mozilla/5.0.      以上是首部行
+（此处必须有一空行）  //空行分割header和请求内容 
+name=world   请求体</code></pre><p>第一行三个字段分别是：方法字段，URL以及HTTP版本</p>
+<p><img src="/2019/08/13/Computer-Networking-s-简述Web和HTTP/3.PNG" alt="请求报文"></p>
+<p>请求方法比较多，包括：GET、POST、HEAD、PUT、DELETE</p>
+<pre><code>1） GET
+传递参数长度受限制，因为传递的参数是直接表示在地址栏中，而特定浏览器和服务器对url的长度是有限制的。
+因此，GET不适合用来传递私密数据，也不适合拿来传递大量数据。
+一般的HTTP请求大多都是GET。
+2）POST
+POST把传递的数据封装在HTTP请求数据中，以名称/值的形式出现，可以传输大量数据，对数据量没有限制，也不会显示在URL中。
+表单的提交用的是POST。
+3）HEAD
+HEAD跟GET相似，不过服务端接收到HEAD请求时只返回响应头，不发送响应内容。所以，如果只需要查看某个页面的状态时，用HEAD更高效，因为省去了传输页面内容的时间。
+4）PUT
+把一个资源存放在指定的位置上。
+本质上来讲， PUT和POST极为相似，都是向服务器发送数据，但它们之间有一个重要区别，PUT通常指定了资源的存放位置，而POST则没有，POST的数据存放位置由服务器自己决定。
+5）DELETE
+允许删除Web服务器上的资源。</code></pre><p>请求头部</p>
+<pre><code>请求头部由关键字/值对组成，每行一对
+
+User-Agent : 产生请求的浏览器类型
+Accept : 客户端希望接受的数据类型，比如 Accept：text/xml（application/json）表示希望接受到的是xml（json）类型
+Content-Type：发送端发送的实体数据的数据类型。
+比如，Content-Type：text/html（application/json）表示发送的是html类型。
+Host : 请求的主机名，允许多个域名同处一个IP地址，即虚拟主机</code></pre><p>###响应报文</p>
+<pre><code>HTTP/1.1 200 OK
+Date：Sat, 13 Aug 2019 15:39:29 GMT
+Server:Apache/2.2.3 
+Last-Modified:Sat, 13 Aug 2019 15:11:29 GMT
+Content-Length: 6666
+Content-Type: text/html
+(空行)                                      
+(响应体)</code></pre><p>状态行也由三部分组成：服务器HTTP协议版本，响应状态码，状态码的文本描述</p>
+<p>状态码：由3位数字组成，第一个数字定义了响应的类别</p>
+<pre><code>1xx：指示信息，表示请求已接收，继续处理
+2xx：成功，表示请求已被成功接受，处理。
+    200 OK：客户端请求成功
+3xx：重定向
+    301 Moved Permanently：永久重定向，表示请求的资源已经永久的搬到了其他位置。
+4xx：客户端错误 
+    404 Not Found：请求资源不存在。比如，输入了错误的url
+5xx：服务器端错误，服务器未能实现合法的请求。 
+    500 Internal Server Error：服务器发生不可预期的错误。</code></pre><p><strong>Web缓存</strong></p>
+<p>Web缓存也叫代理服务器（proxy server）代表初始Web服务器来满足HTTP请求的网络实体。Web缓存器中有自己的磁盘存储空间，并在存储空间中保存最近请求过的对象副本。一旦浏览器被被指，每个对象的浏览器请求首先对定向到该Web缓存。</p>
+<p>工作机制:</p>
+<pre><code>1.浏览器创建一个到Web缓存器的TCP连接，并向Web缓存器中的对象发送一个HTTP请求。
+2.Web缓存器检查看看本地是否有存储该对象的副本。如果有，缓存服务器向客户浏览器用HTTP响应报文返回该对象。
+3.如果Web没有改对象，它就打开抑恶个与该对象的初始服务器的TCP来凝结，并且发送一个HTTP请求。然后服务器向该Web缓存器发送具有该对象的HTTP响应。
+4.当Web缓存器接收到该对象时，就在本地存储空间保存一份副本，并向客户端的浏览器用HTTP响应报文发送该副本。</code></pre><p>所以啊可以看到缓存服务器又是服务器又是客户端。</p>
+<p><img src="/2019/08/13/Computer-Networking-s-简述Web和HTTP/4.PNG" alt="Web缓存"></p>
+<p>为什么要网上部署Web缓存器呢？</p>
+<p>1.减少网络带宽消耗:无论对于网站运营者或者用户，带宽都代表着金钱，过多的带宽消耗，只会便宜了网络运营商。当Web缓存副本被使用时，只会产生极小的网络流量，可以有效的降低运营成本。</p>
+<p>2.降低服务器压力:给网络资源设定有效期之后，用户可以重复使用本地的缓存，减少对源服务器的请求，间接降低服务器的压力。同时，搜索引擎的爬虫机器人也能根据过期机制降低爬取的频率，也能有效降低服务器的压力。</p>
+<p>3.减少网络延迟，加快页面打开速度:带宽对于个人网站运营者来说是十分重要，而对于大型的互联网公司来说，真的不在乎这些花费。对于最终用户，缓存的使用能够明显加快页面打开速度，达到更好的体验。</p>
+<p><img src="/2019/08/13/Computer-Networking-s-简述Web和HTTP/5.PNG" alt="请求报文"></p>
+<p>由图我们来简单分析下花费。如果我们的access link要从1.54升级到154需要花费的资金数同比较与我们部署到网上1Gbps LAN的消费，一个时改变物理花费，而一个只需要部署网上就可享受更快捷更方便的行为。好处不言而喻。</p>
+<p>但是由于高速缓存减少了响应的时间，但是你可否想过这样一个问题，就是因为本地存储了一些网上缓存，但是如果有一天网上更新了内容，你又去找了旧缓存怎么办？就好像说你住到了野外，你身边只有一份报纸，时的，你每天要看报纸的时候都打开它，观看里面的内容发现，原来外面的生活一尘不变啊。其实只是自己的信息没有更新对吧。</p>
+<p>HTTP协议有一种机制，允许缓存器证实它的对象是最新的，这种机制就是条件GET方法。</p>
+<pre><code>HTTP/1.1 200 OK
+Date: Sat, 8 Oct 2018 15:39:29
+Server: Apache/1.3.0 (Unix)
+Last-Modified: Wed, 7 Sep 2018 09:23:24
+Content-Type: image/gif
+
+(data data data ...)</code></pre><p>一段时间以后当我们再去查阅相关网址时候浏览器通过cache请求了相同的对象，并且这个对象仍然在cache里。由于这个对象可能在过去的一周里被修改过，cachejiu 就发起一个conditional GET来做一个更新检查。</p>
+<pre><code>GET /user HTTP/1.1
+Host: www.user.com
+If-modified-since: Wed, 7 Sep 2018 09:23:24</code></pre><p>我们发现If-modified-since的值就是一周前Last-Modified的值。这个条件GET告诉服务器仅在对象在这个时间之后被修改的情况下才发送这个对象给我。</p>
+<p>如果没有被修改：</p>
+<pre><code>HTTP/1.1 304 Not Modified 
+Date: Sat, 15 Oct 2018 15:39:29 
+Server: Apache/1.3.0 (Unix)
+
+(empty entity body)</code></pre><p>我们可以看到，在回复条件GET时，web server依然发送 了一个响应报文但是并没有在响应消息中包含请求的对象。包含请求的对象会浪费带宽，增加用户感知响应时间。</p>
+<p>注意，最后一条响应报文有一个304的状态码，意思是Not Modified。这也就告知了缓存它可以继续了，将这个对象的cached copy发送给请求的browser.</p>
+<p>简单的说就是我们查阅的时候呢，不去关注里面的内容，只需要区看一下时间是否修改，这样就更加快捷。例如刚才的例子，你只需要看看报纸的时间就可以推断是否是以前的报纸。如果是就不需要看了，如果不是，就从新找找是否会有信息报纸送来（海贼王的海鸥）。</p>
+<p>这样呢就基本上简要的理解了Web服务和HTTP协议。</p>
+]]></content>
+      <categories>
+        <category>Computer_Networking</category>
+      </categories>
+      <tags>
+        <tag>Computer_Networking</tag>
+        <tag>HTTP</tag>
+        <tag>Web</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Computer_Networking's_网络核心</title>
+    <url>/2019/08/07/Computer-Networking-s-%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/</url>
+    <content><![CDATA[<p>计算机之间传输信息都是以报文的形式，那么传输过程信息是如何传递的以及其中遇到了什么问题以及有哪些是传输过程中不可避免的，今天在学习了相关的知识后，有感而发，结合Computer Networking A Top-Down Approachde 的相关讲解和自己体会记录学习的内容。</p>
+<a id="more"></a>
+<p><strong>首先要体到的什么是报文？</strong></p>
+<p>报文是一种控制功能也可以包含数据等文件。主要携带了客户端之间交互的信息以及各类协议。</p>
+<p>##既然要传输就要了解传输方式：</p>
+<p>###分组交换</p>
+<p>为了从源端系统向目的端系统发送一个报文，源将长报文划分为众多小的数据块，称之为“分组”。在源和 目的之间，每个分组都通过信息链路和<strong>分组交换机</strong>传送。根据速度=路程/时间，可以推断传输一个分组的时间=一条链路发送一个L比特的分组/链路的传输速率B。</p>
+<p>什么是分组交换机？</p>
+<p>分组交换就主要分两类：<em>路由器</em>和<em>链路层交换机</em>。</p>
+<p><img src="/2019/08/07/Computer-Networking-s-网络传输/1.jpg" alt="路由器和链路层交换机"></p>
+<p><strong>存储转发传输</strong></p>
+<p>多数分组交换机在链路的输入的采用存储转发传输的机制，意思是在未有将全部的分组集合在交换机上的时候，转发信息将会等待，直到所有信息汇集齐全才开始下一步的传输。</p>
+<p><img src="/2019/08/07/Computer-Networking-s-网络传输/2.PNG" alt="分组转发"></p>
+<p>简单的解释就是学校组织全体学生春游，每个班级安排一个bus，当然只有在全班同学全部进入bus以后确认完毕才会发车，如遇一些突发状况，那就是后面要介绍的例如有人缺席有人走丢之类。</p>
+<p><strong>排队时延和分组丢失</strong></p>
+<p>因为每一台分组交换机都会与很多路径相连，对于每一条相连的链路，分组交换机都会有一个<strong>输出缓存</strong>，它用于存储路由器准备发往那条链路的分组。除了存储转发的发送时延，他还要承受输出缓存的<strong>排队时延</strong>，并且因为缓存空间有限，一个到达的分组有可能在等待传输已满的情况下出现丢失。</p>
+<p>类比于上车时候，由于车座有限，且上车门小，每次只能穿越一人，而且当上车人数过多时候，就会发现没有位置可以坐，后上车的只能下车，对于这个班级来说，就是丢失的信息。</p>
+<p><strong>转发表和路由选择协议</strong></p>
+<p>对于数据，路由器怎么知道信息该向那里传输呢？</p>
+<p>其实啊，每一个端系统具有独一无二的IP地址（IP地址在以后细说），当源主机要想目的主机发信息的时候，信息分组，且分组的首部包含了目的IP地址信息，分组在传输的时候就根据IP地址信息就可以找到具体位置。</p>
+<p>在此推荐大家去看看有个搞笑的DNF视频“天空之城怎么走”。虽然没有什么联系，不过就是你知道目的，然后在去询问下一站的主要人，然后他会告诉你下一站怎么走，你好比你想吃红烧排骨，你记得你爸爸给你提过这个话题，你就去问他在那里吃的，你爸爸告诉你说你妈妈告诉他是在那条路吃过，你再去问你妈妈，你妈妈又说你姐姐告诉的他那条路的哪个店铺，你再去问你姐姐，你姐姐就告诉你了全部的详细信息。</p>
+<p><a href="https://tv.sohu.com/v/dXMvNjMyODY0ODMvNTczMDkxMjUuc2h0bWw=.html" target="_blank" rel="noopener">https://tv.sohu.com/v/dXMvNjMyODY0ODMvNTczMDkxMjUuc2h0bWw=.html</a></p>
+<p>###电路交换</p>
+<p><strong>什么是电路交换呢？</strong></p>
+<p>其实传统的电话网络就是电路交换的经典例子。端系统在通信会话期间预留了端系统见沿途路径通信的所需资源。而分组交换是不需要的。但是问题也比较明显就好像说你和别人煲电话粥，两个人不说话，电话却占位。第一不够经济，第二占线情况下别人有事也不能再通信。</p>
+<p><img src="/2019/08/07/Computer-Networking-s-网络传输/3.jpg" alt="电路交换"></p>
+<p><strong>电路中的复用</strong></p>
+<p><img src="/2019/08/07/Computer-Networking-s-网络传输/4.PNG" alt="复用"></p>
+<p>1.频分复用：主要是把电路中频带划分成几个部分，不同的业务逻辑使用不同的频带宽度。</p>
+<p>2.时分复用：主要是把传输的信息按照时间划分，每一次传输都会相应的发送每一个内容，即使这一时间某一端系统没有信息发送，也占用发送的时间带。</p>
+<p>由此可见，电路交换在静默期（没有信息）专用电路变得空闲不够经济和效率。</p>
+<p><strong>因此我们来对比以下两个交换</strong></p>
+<p>简单来讲就好比共享单车，随处放着，想骑就骑。但是如果骑行的人不多，但是共享单车比较多就造成了浪费。而另一个就是严格的公交车，人满了才走。个人以为其实无论好坏，存在即合理。</p>
+<p>##时延，丢包和吞吐量</p>
+<p>###时延分类：</p>
+<p><strong>处理时延</strong></p>
+<p>检查分组首部和决定将改分组导向何处所需要的时间就是<strong>处理时延</strong>的一部份。类比于我们春游时候，上车前会检查你的个人信息正确与否和是否属于这辆车。同时差错检测也是这一时间的一部分，就好比一个人走错了车子，在上车检查时候就会被查到，而被退出。</p>
+<p><strong>排队时延</strong></p>
+<p>分组在链路上的等待时间。就是大家在上车之前找车的时间，简称在链路上。</p>
+<p><strong>传输时延</strong></p>
+<p>就好比第一个人上车了，一个车可以乘坐50人，那么第一个人就要等待剩下49个人一一上车，这就是传输。</p>
+<p><strong>传播时延</strong></p>
+<p>一旦一个比特被推上链路，在源端口和目的端口之间的传输所需要的时间就是传播时延。好了，说白了就是车上路了，在路上行驶的时间不会算到你春游玩的时间吧。</p>
+<p>也可以类比于汽车过收费站的场景。建议自己体会。</p>
+<p><img src="/2019/08/07/Computer-Networking-s-网络传输/5.PNG" alt="时延"></p>
+<p>根据时延的总和，我们就知道了子啊聊天过程中其实信息从发送过去到对方接收到是需要时间的，并且会根据发送的场景来增加发送的时延。就好比你和同教室的人通信，你只要叫一声“你帽子掉了”，就有人回应你，如果在另一个城市，你可能就会连接国内的网络发送信息通信。如果是国际友人呢，你就要通过国际网络的连接发送信息，也就是你知道对方在XX州，信息先去找到所属的县-&gt;市-&gt;省-&gt;国家-&gt;国际-&gt;国家-&gt;省/州-&gt;地区进行连接。如果你要和外星球和人通信呢？有一天你去XX星球了，你想起来了你的好朋友小花，你想邀请他一起开视频述说今生前世，你应该怎么连接呢？这样或许市通过卫星-&gt;卫星之间的通信了。幻想到此结束。</p>
+<p><strong>排队时延和丢包</strong></p>
+<p>之前大致提到了排队时延，相应的，因为数据是以分组传输，每一组可能有很多的报文段，同一时间可能一同挤进去分组交换机，但是数据要有先来后到，好比说有10个团队去参加博物馆，每一次只接待一组，当然可能每一组只派出1个人就证明了顺序，然后依次团队进入。虽然10号是第十个，但是为了集体性，就要等待前9组进去去完毕后在和自己的第10组进去。想象一下，这样的排队时延可能就浪费巨大了。还有要说的是满的情况，例如公交车来了，大家都一窝蜂的想着挤上车，或者排队挤上车。但位置是有限的这就会产生一系列的问题，例如丢包。</p>
+<p>丢包就是当分组满的情况下没有更多的位置去存放进来的数据，就会把进来的数据丢弃，丢包的比例根据流量的强度而增加。当然根据端到端的原则重传会在此发送这些信息到达目的地。</p>
+<p><img src="/2019/08/07/Computer-Networking-s-网络传输/6.PNG" alt="丢失"></p>
+<p>###吞吐量</p>
+<p>网络传输的重要性能指标。可想而知，现在的网络中，吞吐量的限制基本在于接入网。因为作为商家肯定想着更多的浏览量和数据的更多传出。这里主要提一点的是，吞吐量主要取决于最小的传输速率。类似于短板原理，不管你买的奶茶再大杯，吸管的大小决定了你喝奶茶时候<em>出奶率</em>。挺形象哦。另外还有一点要注意的就是可能一杯奶茶10个人喝，中间一个直径5cm的管道为转接口，每个人含住1cm为直径的吸管。这时候每个人尽力喝，也只会出现0.5cm吸管的效果，因为转接口的直径限制了每个人的出奶率。</p>
+<p><img src="/2019/08/07/Computer-Networking-s-网络传输/7.PNG" alt="吞吐量"></p>
+]]></content>
+      <categories>
+        <category>Computer_Networking</category>
+      </categories>
+      <tags>
+        <tag>Computer_Networking</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JSP和Servlet三层模式之小Demo</title>
+    <url>/2019/08/06/JSP%E5%92%8CServlet%E4%B8%89%E5%B1%82%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B0%8FDemo/</url>
+    <content><![CDATA[<p>三层架构模式有别于之前所体到的MVC模式，主要的区别在于C（控制器）进行的M（模型）和V（视图）转交数据操作改变为视图面向服务端操作，服务端数据请求Dao资源包操作，Dao进行访问数据库。实现具体的小应用请点击详情页。</p>
+<a id="more"></a>
+<p>小Demo具体实现了页面对数据库中信息的增删改查操作，运用三层架构进行设计，优化封装了数据层面的冗余信息，这里跟着代码进一步了解简单的实现过程。</p>
+<p><img src="/2019/08/06/JSP和Servlet三层模式之小Demo/%E4%B8%89%E5%B1%82.png" alt="三层架构的整体流程"></p>
+<p>首先在webContent的WEB-INF中创建用于登录的index.jsp文件，在body中写入：</p>
+<pre><code>&lt;table border=&quot;1px&quot;&gt;
+    &lt;tr&gt;
+        &lt;th&gt;学号&lt;/th&gt;
+        &lt;th&gt;姓名&lt;/th&gt;
+        &lt;th&gt;年龄&lt;/th&gt;
+        &lt;th&gt;地址&lt;/th&gt;
+    &lt;/tr&gt;
+        &lt;%
+        //获取request中的数据
+            List&lt;Student&gt; students = (List&lt;Student&gt;)request.getAttribute(&quot;students&quot;)
+            for(Student student:students){
+        %&gt;
+        &lt;tr&gt;
+        &lt;td&gt;&lt;a href=&quot;QueryStudentBySnoServlet?sno=&lt;%=student.getSno() %&gt;&quot;&gt;&lt;%=student.getSno() %&gt;&lt;/a&gt;      &lt;/td&gt;
+
+
+                    &lt;td&gt;&lt;%=student.getSname() %&gt;&lt;/td&gt;
+                    &lt;td&gt;&lt;%=student.getSage() %&gt;&lt;/td&gt;
+                    &lt;td&gt; &lt;a href=&quot;DeleteStudentServlet?sno=&lt;%=student.getSno() %&gt;   &quot;&gt;删除&lt;/a&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+
+        &lt;% 
+            }
+        %&gt;
+
+&lt;/table&gt;</code></pre><p>字段主要实现了显示信息为：学号，姓名，年龄，地址的页面框体。</p>
+<p>再者，由于我们操作的对象是人物，我们可以建立一个基于人物的java文件，我主要写的是Student对象，对数据封装实现其中的set和get方法以及有无实参的构造函数，以待调用：</p>
+<pre><code>public class Student {
+    private int sno;
+    private String sname;
+    private int sage;
+    private String saddress;
+
+    public Student() {
+    }
+    public Student( String sname, int sage, String saddress) {
+        this.sname = sname;
+        this.sage = sage;
+        this.saddress = saddress;
+    }
+    public Student(int sno, String sname, int sage, String saddress) {
+        this.sno = sno;
+        this.sname = sname;
+        this.sage = sage;
+        this.saddress = saddress;
+    }
+    public int getSno() {
+        return sno;
+    }
+    public void setSno(int sno) {
+        this.sno = sno;
+    }
+    public String getSname() {
+        return sname;
+    }
+    public void setSname(String sname) {
+        this.sname = sname;
+    }
+    public int getSage() {
+        return sage;
+    }
+    public void setSage(int sage) {
+        this.sage = sage;
+    }
+    public String getSaddress() {
+        return saddress;
+    }
+    public void setSaddress(String saddress) {
+        this.saddress = saddress;
+    }
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return this.getSno()+&quot;-&quot;+this.getSname()+&quot;-&quot;+this.getSage()+&quot;-&quot;+this.getSaddress();
+    }
+}</code></pre><p>其中的同toString方法主要是对toString的重写操作，便于直接输出我们想要的结果。</p>
+<p><img src="/2019/08/06/JSP和Servlet三层模式之小Demo/%E6%95%B4%E4%BD%93%E5%8C%BA%E5%88%AB.png" alt="MVC和三层架构的区别和联系"></p>
+<p>有人对象也有了页面的显示信息，我们下一步要做的就是连接数据库实现Dao包的对数据的增删改查操作，由于我们是对Demo的三层架构操作，我们应当独一的实现各类操作，然后再在需要的时候调用其中的一个乃至几个操作进行数据操作的封装，类似于我们要增加一个人，就要去先判断这个人是否存在，如果存在则不需要加入，如果不存在就再调用增函数实现数据的增加，然后加入数据库。由此可见，如果我们不进行底层的每一步的封装，那么在操作具体实现的时候就会产生更多的代码冗余。我们再创建具体的包，包名记为Servlet，具体先实现的代码为：</p>
+<p>首先是实现数据库的基本操作：</p>
+<pre><code>//数据访问层是原子性的增删改查
+public class StudentDao {
+    public String URL = &quot;jdbc:mysql://localhost:3306/db_stu&quot;;
+    public String USERNAME = &quot;root&quot;;
+    public String PASSWORD = &quot;xxxx&quot;;
+
+    //判断学生存在与否
+    public boolean isExist(int sno) {
+        return queryStudentBySno(sno)==null?false:true;
+    }
+    //增加学生
+    public boolean addStudent(Student student) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+            conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            String sql = &quot;insert into student(sno,sname,sage,saddress) values(?,?,?,?)&quot;;
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, student.getSno());
+            pstmt.setString(2, student.getSname());
+            pstmt.setInt(3, student.getSage());
+            pstmt.setString(4, student.getSaddress());
+            int count = pstmt.executeUpdate(sql);
+            if(count &gt; 0) {
+                return true;
+            }else {
+                return false;
+            }
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }finally {
+            try {
+                if(pstmt!=null) pstmt.close();
+                if(conn!=null) conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //删除一个学生
+    public boolean deleteStudentBySno(int Sno) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+            conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            String sql = &quot;delete from student where sno=?&quot;;
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, Sno);
+
+            int count = pstmt.executeUpdate(sql);
+            if(count &gt; 0) {
+                return true;
+            }else {
+                return false;
+            }
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }finally {
+            try {
+                if(pstmt!=null) pstmt.close();
+                if(conn!=null) conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }    
+    }
+    //改学生信息,根据Sno改成student的信息
+    public boolean updateStudentBySno(int Sno,Student student) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+            conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            String sql = &quot;update student set sname=?,sage=?,saddress=? where sno=?&quot;;
+            pstmt = conn.prepareStatement(sql);
+            //修改后的样子
+            pstmt.setString(1, student.getSname());
+            pstmt.setInt(2, student.getSage());
+            pstmt.setString(3, student.getSaddress());
+            pstmt.setInt(4, Sno);//修改的人
+
+            int count = pstmt.executeUpdate(sql);
+            if(count &gt; 0) {
+                return true;
+            }else {
+                return false;
+            }
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }finally {
+            try {
+                if(pstmt!=null) pstmt.close();
+                if(conn!=null) conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //查询全部学生
+    public List&lt;Student&gt; queryAllStudent() {
+        List&lt;Student&gt; students = new ArrayList&lt;&gt;();
+
+        Student student = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+            conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            String sql = &quot;selecrt * from student&quot;;
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                int no = rs.getInt(&quot;sno&quot;);
+                String name = rs.getString(&quot;sname&quot;);
+                int age = rs.getInt(&quot;sage&quot;);
+                String address = rs.getString(&quot;saddress&quot;);
+                student = new Student(no,name, age, address);
+                students.add(student);
+            }
+            return students;
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }finally {
+            try {
+                if(rs!=null) rs.close();
+                if(pstmt!=null) pstmt.close();
+                if(conn!=null) conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //根据学号查学生
+    public Student queryStudentBySno(int Sno) {
+        Student student = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+            conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+            String sql = &quot;selecrt * from student where sno=?&quot;;
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, Sno);
+            rs = pstmt.executeQuery();
+
+            if(rs.next()) {
+                int no = rs.getInt(&quot;sno&quot;);
+                String name = rs.getString(&quot;sname&quot;);
+                int age = rs.getInt(&quot;sage&quot;);
+                String address = rs.getString(&quot;saddress&quot;);
+                student = new Student(no,name, age, address);
+            }
+            return student;
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }finally {
+            try {
+                if(rs!=null) rs.close();
+                if(pstmt!=null) pstmt.close();
+                if(conn!=null) conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+}</code></pre><p>因此我们要实现具体的操作，也就是业务逻辑性的增删改查，对Dao的组装，我们将这以操作创建名为service包中，里面的具体操作是根据我们的：</p>
+<pre><code>public class StudentService {
+    StudentDao studentDao = new StudentDao();
+
+    //根据学号查一个人
+    public Student queryStudentBySno(int sno) {
+        return studentDao.queryStudentBySno(sno);
+    }
+    //查询全部学生
+    public List&lt;Student&gt; queryAllStudents() {
+        return studentDao.queryAllStudent();
+    }
+
+
+    public boolean deleteStudentBySno(int sno) {
+        if(studentDao.isExist(sno)) {
+            return studentDao.deleteStudentBySno(sno);
+        }else {
+            return false;
+        }
+    }
+
+    public boolean updateStudentBySno(int sno,Student student) {
+        if(studentDao.isExist(sno)) {
+            return studentDao.updateStudentBySno(sno, student);
+        }else {
+            return false;
+        }
+    }
+
+
+    public boolean addStudent(Student student) {
+        //不存在就添加
+        if(!studentDao.isExist(student.getSno())) {
+            studentDao.addStudent(student);
+            return true;
+        }else {
+            System.out.println(&quot;此人已经存在&quot;);
+            return false;
+        }
+
+    }
+    }</code></pre><p>再者，根据我们以及实现的代码的进行对页面数据的操作：</p>
+<p>首先是增加数据的servlet封装：</p>
+<pre><code>public class AddStudentServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding(&quot;utf-8&quot;);
+        int no = Integer.parseInt(request.getParameter(&quot;sno&quot;));
+        String name = request.getParameter(&quot;sname&quot;);
+        int age = Integer.parseInt(request.getParameter(&quot;sage&quot;));
+        String address = request.getParameter(&quot;saddress&quot;);
+        Student student = new Student(no,name,age,address);
+        //数据的拼接
+        StudentService studentService = new StudentService();
+        boolean result = studentService.addStudent(student);
+
+        response.setContentType(&quot;text/html; charset=UTF-8&quot;);
+        response.setCharacterEncoding(&quot;utf-8&quot;);
+        PrintWriter out = response.getWriter();
+        if(result) {
+
+            out.println(&quot;增加成功！&quot;);
+        }else {
+            out.println(&quot;增减失败！&quot;);
+        }
+
+
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        doGet(request, response);
+    }
+    }</code></pre><p>再者是删除数据的封装：</p>
+<pre><code>public class DeleteStudentServlet extends HttpServlet {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //删除的功能
+        request.setCharacterEncoding(&quot;utf-8&quot;);
+        //接收前端传来的学号
+        int no = Integer.parseInt(request.getParameter(&quot;sno&quot;));
+
+        StudentService service = new StudentService();
+        boolean result = service.deleteStudentBySno(no);
+        response.setContentType(&quot;text/html; charset=UTF-8&quot;);
+        response.setCharacterEncoding(&quot;utf-8&quot;);
+        if(result) {
+            //response.getWriter().println(&quot;删除成功！&quot;);
+            response.sendRedirect(&quot;QueryAllStudentServlrt&quot;);
+        }else {
+            response.getWriter().println(&quot;删除失败！&quot;);
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
+
+}</code></pre><p>更新数据的封装：</p>
+<pre><code>public class UpdateStudentServlet extends HttpServlet {
+
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding(&quot;utf-8&quot;);
+        //获取待修改人的学号
+        int no = Integer.parseInt(request.getParameter(&quot;sno&quot;));
+        //获取修改的内容
+        String name = request.getParameter(&quot;sname&quot;);
+        int age = Integer.parseInt(request.getParameter(&quot;sage&quot;));
+        String address = request.getParameter(&quot;saddress&quot;);
+        //将修改后的内容封装到JavaBean中
+        Student student = new Student(name, age, address);
+
+        StudentService service = new StudentService();
+        boolean result = service.updateStudentBySno(no, student);
+        response.setContentType(&quot;text/html; charset=UTF-8&quot;);
+        response.setCharacterEncoding(&quot;utf-8&quot;);
+        PrintWriter out = response.getWriter();
+        if(result) {
+
+            out.println(&quot;修改成功！&quot;);
+        }else {
+            out.println(&quot;修改失败！&quot;);
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        doGet(request, response);
+    }
+
+}</code></pre><p>根据学号查询学生信息：</p>
+<pre><code>public class QueryStudentBySnoServlet extends HttpServlet {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding(&quot;utf-8&quot;);
+        int no = Integer.parseInt(request.getParameter(&quot;sno&quot;));
+        StudentService service = new StudentService();
+        Student student = service.queryStudentBySno(no);
+        System.out.println(student);
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        doGet(request, response);
+    }
+
+}</code></pre><p>查询所有信息：</p>
+<pre><code>public class QueryAllStudentServlet extends HttpServlet {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding(&quot;utf-8&quot;);
+        StudentService service = new StudentService();
+        List&lt;Student&gt; students = service.queryAllStudents();
+        System.out.println(students);
+        request.setAttribute(&quot;students&quot;, students);
+        //通过请求转发方式跳转
+        request.getRequestDispatcher(&quot;index.jsp&quot;).forward(request, response);
+    }
+
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        doGet(request, response);
+    }
+
+}</code></pre><p>由于Dao包中有着大量冗余的代码，例如我们申请数据库，或者关闭数据库的一些操作，现在这些都可以进行封装成一个类专门调用。我们把这个封装的数据库操作记为Util包，代码实现如下：</p>
+<pre><code>//通用的数据操作方法
+public class DBUtil {
+    private static final String URL = &quot;jdbc:mysql://localhost:3306/db_stu&quot;;
+    private static final String USERNAME = &quot;root&quot;;
+    private static final String PASSWORD = &quot;xxxx&quot;;
+    public static PreparedStatement pstmt = null ;
+    public static Connection connection = null ;
+    public static ResultSet rs = null ; 
+    //通用的增删改
+    public static boolean executeUpdate(String sql,Object[] params) {//{&quot;zs&quot;,1}
+        try {
+             Object[] obs = { name,age ,...,x} ; 
+              String sql = &quot;delete from xxx where Name = ? or id = ?  &quot; ;
+              pstmt.setInt(1,sno );
+              setXxx()方法的个数 依赖于 ?的个数， 而?的个数 又和 数组params的个数一致
+              setXxx()方法的个数 -&gt;数组params的个数一致
+                pstmt = createPreParedStatement(sql,params);
+              int count = pstmt.executeUpdate() ;
+              if(count&gt;0)
+                  return true ;
+              else 
+                  return false ;
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+              return false ;
+        } catch (SQLException e) {
+            e.printStackTrace();
+              return false ;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false ;
+        }
+        finally {
+            closeAll(null,pstmt,connection);
+        }
+}
+    //Statement
+    public static void closeAll(ResultSet rs,Statement stmt,Connection connection)
+    {
+        try {
+            if(rs!=null)rs.close();
+            if(pstmt!=null)pstmt.close();
+            if(connection!=null)connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } 
+
+
+    }
+
+
+    public static Connection getConnection() throws ClassNotFoundException, SQLException {
+         Class.forName(&quot;jdbc:mysql://localhost:3306/db_stu&quot;) ;
+         return  DriverManager.getConnection( URL,USERNAME,PASSWORD ) ;
+    }
+
+    public static PreparedStatement createPreParedStatement(String sql,Object[] params) throws ClassNotFoundException, SQLException {
+          pstmt = getConnection() .prepareStatement( sql) ;
+          if(params!=null ) {
+              for(int i=0;i&lt;params.length;i++) {
+                  pstmt.setObject(i+1, params[i]);
+              }
+          }
+          return pstmt;
+    }
+
+        //通用的查  :通用 表示  适合与 任何查询
+        public static ResultSet executeQuery( String sql ,Object[] params) {//select xxx from xx where name=? or id=?
+            Student student = null;
+
+            List&lt;Student&gt; students = new ArrayList&lt;&gt;();
+            try {
+
+                //                  String sql = &quot;select * from student&quot; ;//select enmae ,job from xxxx where...id&gt;3
+
+                pstmt = createPreParedStatement(sql,params);
+                 rs =  pstmt.executeQuery() ;
+                  return rs ;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                return null ; 
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null ; 
+            }catch (Exception e) {
+                e.printStackTrace();
+                return null ; 
+            }
+//            finally {
+//                    try {
+//                        if(rs!=null)rs.close();
+//                        if(pstmt!=null)pstmt.close();
+//                        if(connection!=null)connection.close();
+//                    } catch (SQLException e) {
+//                        e.printStackTrace();
+//                    } 
+//            }
+        }
+
+}</code></pre><p>鉴于此我们简单的实现了对数据的操作，这是再学习Servlet和JSP中跟着实践写的代码，教程源于<strong>lanqiao</strong>，通过自己的理解和些许天的学习，在Web上有了丝丝见解，而且基本能够读懂相应的代码。也许这就是学习的乐趣所在吧，能够自己见证自己的成长，确实挺好。</p>
+]]></content>
+      <categories>
+        <category>JavaWeb</category>
+      </categories>
+      <tags>
+        <tag>小Demo</tag>
+        <tag>JavaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MVC设计模式看Web编程</title>
+    <url>/2019/08/05/MVC%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9C%8BWeb%E7%BC%96%E7%A8%8B/</url>
+    <content><![CDATA[<p>MVC 是一种使用 MVC（Model View Controller 模型-视图-控制器）设计创建 Web 应用程序的模式： </p>
+<p>Model（模型）表示应用程序核心（比如数据库记录列表），主要面向于开发人员的连接图形和控制器操作。</p>
+<p>View（视图）显示数据（数据库记录），主要是面向视图界面。</p>
+<p>Controller（控制器）处理输入（写入数据库记录），负责控制和数据的显示操作。</p>
+<p>最为一种编程的模式，MVC有着很多的优势和亮点，不过同时也有一些让人嗤之以鼻的漏洞。今天就来结合最近所学的JSP和Servlet细细探索以下优略。</p>
+<a id="more"></a>
+
+<p>M：Model    ，模型：一个功能。用<strong>JavaBean</strong>实现。</p>
+<p>V:View，视图： 用于展示、以及与用户交互。使用html  js  css jsp jquery等前端技术实现</p>
+<p>C:Controller，控制器 ：接受请求，将请求跳转到模型进行处理；模型处理完毕后，再将处理的结果返回给请求处 。可以用jsp实现，但是一般建议使用Servlet实现控制器。</p>
+<p><img src="/2019/08/05/MVC设计模式看Web编程/mvc%E7%90%86%E8%A7%A3.png" alt="思维导图"></p>
+<p>之前提到了JavaBean，那么<strong>什么是JavaBean呢</strong>？</p>
+<p>例如我们将写好的jsp中登录操作的代码转移到了src/LoginDao.java；其中LoginDao类 就称之为JavaBean。</p>
+<p><strong>JavaBean的作用：</strong></p>
+<p>a.减轻的jsp复杂度  </p>
+<p>b.提高代码复用（以后任何地方的登录操作，都可以通过调用LoginDao实现）</p>
+<p>JavaBean（就是一个Java类）的定义：满足一下2点 ，就可以称为JavaBean</p>
+<p>a.public 修饰的类  ,public 无参构造</p>
+<p>b.所有属性(如果有) 都是private，并且提供set/get   (如果boolean 则get可以替换成is)</p>
+<p><strong>使用层面，Java分为2大类：</strong></p>
+<p>a.封装业务逻辑的JavaBean </p>
+<p>b.封装数据的JavaBean</p>
+<p><em>封装数据</em>的JavaBean 对应于数据库中的一张表而<em>封装业务逻辑</em>的JavaBean 用于操作 一个封装数据的JavaBean  </p>
+<p>可以发现，JavaBean可以简化 代码(jsp-&gt;jsp+java)、提供代码复用。</p>
+<p>再者，对于控制器，一般都为Servlet，那么<strong>什么是Servlet呢</strong>？</p>
+<p>Servlet 是在服务器上运行的小程序。Servlet运行于支持Java的应用服务器中。从原理上讲，Servlet可以响应任何类型的请求，但绝大多数情况下Servlet只用来扩展基于HTTP协议的Web服务器。</p>
+<p>*<em>Servlet生命周期：5个阶段 *</em></p>
+<pre><code>1.加载
+2.初始化： init()，该方法会在Servlet被加载并实例化的以后执行
+4.服务  ：service() -&gt;doGet()  doPost
+4.销毁  ：destroy()，  Servlet被系统回收时执行
+5.卸载</code></pre><p>Servlet程序是由WEB服务器调用，web服务器收到客户端的Servlet访问请求后：</p>
+<pre><code>①Web服务器首先检查是否已经装载并创建了该Servlet的实例对象。如果是，则直接执行第④步，否则，执行第②步。
+②装载并创建该Servlet的一个实例对象。 
+③调用Servlet实例对象的init()方法。
+④创建一个用于封装HTTP请求消息的HttpServletRequest对象和一个代表HTTP响应消息的HttpServletResponse对象，然后调用Servlet的service()方法并将请求和响应对象作为参数传递进去。
+⑤WEB应用程序被停止或重新启动之前，Servlet引擎将卸载Servlet，并在卸载之前调用Servlet的destroy()方法。 </code></pre><p>由于客户端是通过URL地址访问web服务器中的资源，所以Servlet程序若想被外界访问，必须把servlet程序映射到一个URL地址上，这个工作在web.xml文件中使用<servlet>元素和<servlet-mapping>元素完成。</servlet-mapping></servlet></p>
+<p><servlet>元素用于注册Servlet，它包含有两个主要的子元素：</servlet></p>
+<p><servlet-name>和<servlet-class>，分别用于设置Servlet的注册名称和Servlet的完整类名。 </servlet-class></servlet-name></p>
+<p>一个<servlet-mapping>元素用于映射一个已注册的Servlet的一个对外访问路径，它包含有两个子元素：<servlet-name>和<url-pattern>，分别用于指定Servlet的注册名称和Servlet的对外访问路径。</url-pattern></servlet-name></servlet-mapping></p>
+<p>以上是基于2.5的操作方式，在3.0中改变为在调用的方法上方出现@（）字段，且在括号中填入<url-pattern>的内容即可。</url-pattern></p>
+<p>最后再来谈谈在设计中对应的MVC的优缺点。</p>
+<p>###优点</p>
+<p><strong>耦合性低：</strong></p>
+<p>视图层和业务层分离，允许更改视图层代码而不用重新编译模型和控制器代码，因为模型与控制器和视图相分离，所以很容易改变应用程序的数据层和业务规则。</p>
+<p><strong>重用性高：</strong></p>
+<p>MVC模式允许使用各种不同样式的视图来访问同一个服务器端的代码，因为多个视图能共享一个模型。</p>
+<p><strong>生命周期成本低</strong></p>
+<p>MVC使开发和维护用户接口的技术含量降低。</p>
+<p><strong>部署快</strong></p>
+<p>使用MVC模式使开发时间得到相当大的缩减。</p>
+<p><strong>可维护性高</strong></p>
+<p>分离视图层和业务逻辑层也使得WEB应用更易于维护和修改。</p>
+<p>###缺点</p>
+<p><strong>没有明确的定义</strong></p>
+<p>完全理解MVC并不是很容易。使用MVC需要精心的计划，由于它的内部原理比较复杂，所以需要花费一些时间去思考。同时由于模型和视图要严格的分离，这样也给调试应用程序带来了一定的困难。每个构件在使用之前都需要经过彻底的测试。</p>
+<p><strong>不适合小型，中等规模的应用程序</strong></p>
+<p>花费大量时间将MVC应用到规模并不是很大的应用程序通常会得不偿失。</p>
+<p><strong>增加系统结构和实现的复杂性</strong></p>
+<p>对于简单的界面，严格遵循MVC，使模型、视图与控制器分离，会增加结构的复杂性，并可能产生过多的更新操作，降低运行效率。</p>
+<p><strong>视图与控制器间的过于紧密的连接</strong></p>
+<p>视图与控制器是相互分离，但却是联系紧密的部件，视图没有控制器的存在，其应用是很有限的，反之亦然，这样就妨碍了他们的独立重用。</p>
+]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>编程模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Servlet-And-JSP学习（二）</title>
+    <url>/2019/08/03/Servlet-And-JSP%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<p>在根据HTTP超文本传输协议中的Cookie机制下引入Session，进一步了解客户端与服务器的对话请求和信息交互以及页面信息的保持连接机制。相关的Cookie知识已经在“浅谈Cookie”中介绍，本次只记录学习中的Session内容。</p>
+<a id="more"></a>
+<p>首先，什么时候要用到session呢？当我们在浏览网站时候的信息开始和关闭中其实就建立了session机制。异或是我们在购物时候输入了个人信息，浏览相关的页面并且留下了信息，再到退出时刻，一致在进行着session连接。</p>
+<p>##session机制：</p>
+<p>客户端第一次请求服务端时，（jsessionid-sessionid）服务端会产生一个session对象（用于保存该客户的信息）；<br>并且每个session对象 都会有一个唯一的 sessionId( 用于区分其他session);<br>服务端由会 产生一个cookie，并且 该cookie的name=JSESSIONID ,value=服务端sessionId的值；<br>然后 服务端会在 响应客户端的同时 将该cookie发送给客户端，至此 客户端就有了 一个cookie(JSESSIONID)；<br>因此，客户端的cookie就可以和服务端的session一一对应（JSESSIONID - sessionID）</p>
+<p>客户端第二/n次请求服务端时:服务端会先用客户端cookie种的JSESSIONID  去服务端的session中匹配sessionid,如果匹配成功（cookie  jsessionid和sesion sessionid），说明此用户 不是第一次访问,无需登录。</p>
+<p>就好比说：我们运动场上的运动员在进场时候，裁判会判断他们是否是运动员并且如果是的话就分给相应的比赛号码，当一段时间后运动员可能出去了但是比赛号码仍在身上，再一次进场的时候，只要号码匹配正确，就证明了是运动员，允许进入并且可以使用之前比赛获得的成绩。当这一届比赛结束后，号码被收回，运动员也失去了相应的成绩信息，然后可能在下一届比赛的时候再进行一次新的号码分发，并且可能上次成绩没有保留下来。</p>
+<p>##深入理解函数和用法</p>
+<p>###针对Cookie<br>1.response :响应对象</p>
+<p>提供的方法：</p>
+<p>void addCookie( Cookie cookie ); 服务端向客户端增加cookie对象</p>
+<p>void sendRedirect(String location ) throws IOException; 页面跳转的一种方式（重定向）</p>
+<p>void setContetType(String type):设置服务端响应的编码（设置服务端的contentType类型）</p>
+<p>2.session(服务端)</p>
+<p>Cookie（客户端，不是内置对象）:Cookie是由 服务端生成的 ，再发送给客户端保存。</p>
+<p>相当于本地缓存的作用： 客户端(hello.mp4,zs/abc)-&gt;服务端(hello.mp4；zs/abc)</p>
+<p>作用：提高访问服务端的效率，但是安全性较差。</p>
+<p>服务端准备Cookie：</p>
+<p>response.addCookie(Cookie cookie)页面跳转（转发，重定向）</p>
+<p>客户端获取cookie:  request.getCookies();</p>
+<p>a.服务端增加cookie :response对象；客户端获取对象：request对象</p>
+<p>b.不能直接获取某一个单独对象，只能一次性将 全部的cookie拿到</p>
+<p>通过F12可以发现除了自己设置的Cookie对象外，还有一个name为 JSESSIONID的cookie</p>
+<p>建议 cookie只保存  英文数字，否则需要进行编码、解码</p>
+<p>###针对Session<br>session:<br>a. session存储在服务端</p>
+<p>b. session是在 同一个用户（客户）请求时 共享</p>
+<p>c. 实现机制：第一次客户请求时 产生一个sessionid 并复制给 cookie的jsessionid 然后发给客户端。最终 通过session的sessionid-cookie的jsessionid</p>
+<p>session方法：</p>
+<p>String getId() :获取sessionId  </p>
+<p>boolean isNew() :判断是否是 新用户（第一次访问）</p>
+<p>void invalidate():使session失效  （退出登录、注销）</p>
+<p>void setAttribute()</p>
+<p>Object getAttribute();</p>
+<p>void setMaxInactiveInterval(秒) ：设置最大有效 非活动时间 </p>
+<p>int getMaxInactiveInterval():获取最大有效 非活动时间 </p>
+<p>客户端在第一次请求服务端时，如果服务端发现 此请求没有 JSESSIONID,则会创建一个 name=JSESIONID的cookie  并返回给客户端</p>
+<p>Cookie：</p>
+<p>a.不是内对对象，要使用必须new</p>
+<p>b.但是，服务端会 自动生成一个(服务端自动new一个cookie) name=JSESIONID的cookie  并返回给客户端</p>
+<p>###cookie和session的区别：</p>
+<pre><code>|--------    |session    |cookie
+
+|保存的位置    |服务端        |客户端
+
+|安全性        |较安全        |较不安全
+
+|保存的内容    |Object        |String        </code></pre><p>##JSP9大内置对象</p>
+<pre><code>pageContext  JSP页面容器
+request   请求对象
+session   会话对象
+appliation 全局对象
+response  响应对象
+config  配置对象（服务器配置信息）
+out    输出对象
+page   当前JSP页面对象（相当于java中的this）
+exception 异常对象
+
+四种范围对象（小-&gt;大）
+pageContext  JSP页面容器(page对象）    当前页面有效
+request        请求对象                 同一次请求有效
+session       会话对象                同一次会话有效
+appliation      全局对象                全局有效（整个项目有效）</code></pre><p><strong>以上4个对象共有的方法：</strong></p>
+<pre><code>Object getAttribute(String name):根据属性名，或者属性值
+void setAttribute(String name,Object obj) :设置属性值（新增，修改）
+setAttribute(&quot;a&quot;,&quot;b&quot;) ;//如果a对象之前不存在，则新建一个a对象 ；如果a之前已经存在，则将a的值改为b
+void removeAttribute(String name)：根据属性名，删除对象
+
+a.pageContext 当前页面有效 (页面跳转后无效)
+b.request   同一次请求有效；其他请求无效 （请求转发后有效；重定向后无效）
+c.session  同一次会话有效  （无论怎么跳转，都有效；关闭/切换浏览器后无效 ； 从 登陆-&gt;退出 之间 全部有效）
+d.application    全局变量；整个项目运行期间 都有效 (切换浏览器 仍然有效)；关闭服务、其他项目 无效</code></pre>]]></content>
+      <categories>
+        <category>JavaWeb</category>
+      </categories>
+      <tags>
+        <tag>JavaEE</tag>
+        <tag>Session机制</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浅谈Cookie</title>
+    <url>/2019/07/31/%E6%B5%85%E8%B0%88Cookie/</url>
+    <content><![CDATA[<p>由于HTTP是无状态连接，这简化了服务器的设计，为了把服务器内容和用户联系起来，HTTP使用了Cookie技术，允许站点对用户进行跟踪。但是这种方式存在一定安全隐患，我们在此进行简要探讨。</p>
+<a id="more"></a>
+<p><strong>定义：</strong>某些网站为了辨别用户身份，进行session跟踪而存储在用户本地终端上的数据（通常经过加密），例如我们的商场购物车，身份认证等。</p>
+<p><strong>例如：</strong></p>
+<pre><code>客户端主机通过普通HTTP请求报文，发送给服务器主机，并且浏览了响应的一些页面信息，或者是把商品加入了本地购物车。
+此时，服务器主机为用户创建了ID（XXXX），且通过普通HTTP响应报文Set-cookie：XXXX发送给客户主机。
+客户主机再通过带有cookie的普通HTTP请求报文访问服务器主机。并且留下痕迹。cookie通过特定动作访问后端数据库。
+后端数据库再把带有需求的cookie信息发送给客户主机。即完成一次带有cookie的通信。
+
+一段时间后，当你再访问上次的服务器时候，普通HTTP请求报文自带上次的cookie信息，然后通过特殊方式在此访问后端数据库。
+同时后端数据库给你上次的信息。鉴于此来实现cookie的功能。</code></pre><p>从实际中我们看到，cookie可以表示一个用户。用户在访问一个站点时候，可能需要提供一个用户标识。在后续的操作中，浏览器向服务器传递一个cookie首部，从而服务器表示了用户。因此cookie可以在无状态上建立一个会话层。</p>
+<p><img src="source/images/cookie.PNG" alt></p>
+<p><strong>cookie的属性</strong></p>
+<p>一般cookie所具有的属性，包括：</p>
+<p><em>Domain：</em>域，表示当前cookie所属于哪个域或子域下面。</p>
+<p>对于服务器返回的Set-Cookie中，如果没有指定Domain的值，那么其Domain的值是默认为当前所提交的http的请求所对应的主域名的。比如访问 <a href="http://www.example.com，返回一个cookie，没有指名domain值，那么其为值为默认的www.example.com。" target="_blank" rel="noopener">http://www.example.com，返回一个cookie，没有指名domain值，那么其为值为默认的www.example.com。</a></p>
+<p><em>Path：</em>表示cookie的所属路径。</p>
+<p>Expire time/Max-age：表示了cookie的有效期。expire的值，是一个时间，过了这个时间，该cookie就失效了。或者是用max-age指定当前cookie是在多长时间之后而失效。如果服务器返回的一个cookie，没有指定其expire time，那么表明此cookie有效期只是当前的session，即是session cookie，当前session会话结束后，就过期了。对应的，当关闭（浏览器中）该页面的时候，此cookie就应该被浏览器所删除了。</p>
+<p><em>secure：</em>表示该cookie只能用https传输。一般用于包含认证信息的cookie，要求传输此cookie的时候，必须用https传输。</p>
+<p><em>httponly：</em>表示此cookie必须用于http或https传输。这意味着，浏览器脚本，比如javascript中，是不允许访问操作此cookie的。</p>
+<p><strong>安全性问题：</strong></p>
+<p>尽管cookie常常简化了用户的因特网的某些活动，但是一些场合或者是使用方式被认为是对用户的隐私一种侵害。例如结合cookie和用户提供的账户信息，WEb站可以知道需要用户的信息，并且可能因此将信息出卖给他人。</p>
+<p>一些别有用心的人不需要知道这个cookie的具体含义，只需要将这个cookie向服务器提交（模拟身份验证），身份验证通过之后，就可以冒充被窃取cookie对应用户来访问网站，甚至获取到用户的隐私信息，对于用户的隐私造成非常严重的危害，这种方式就叫做cookie欺骗。</p>
+<p>并且，cookie以纯文本的形式在浏览器和服务器之间传递，在web通信时极容易被非法用户截获和利用。非法用户截获cookie后，在cookie的有效时间内重新发放给服务器，那么这个非法用户就拥有了这个合法用户的所有权限。</p>
+<p>因此啊，我们设置cookie有效期不要过长，在允许使用https的情况下尽量使用，或者说session和cookie同时使用。</p>
+<p><em>对于http和https的相关信息会在http中专门探讨。这里不做具体细说。</em></p>
+]]></content>
+      <categories>
+        <category>JavaWeb</category>
+      </categories>
+      <tags>
+        <tag>JavaEE</tag>
+        <tag>HTTP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Servlet_And_JSP学习（一）</title>
+    <url>/2019/07/30/Servlet-And-JSP%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+    <content><![CDATA[<p>本章主要记录了学习Servlet和JSP内容时候的初步搭载和HTTP的一些内容，了解了传输内容时候需要的协议以及简要内容。练习和尝试了Tomcat搭载环境下的后端学习简要知识。</p>
+<a id="more"></a>
+
+<p><strong>JSP：动态网页</strong></p>
+<p>所谓动态静态不能简单的认为时“动静”的概念，而是指示网页内容是否会根据时间地点以及用户操作的不同而改变。例如你再北京打开网页查询天气和在上海查询天气，由于地理位置的不同，数据自然的更改。</p>
+<p>动态网页的实现，就需要用到服务器脚本语言JSP（Java Server Pages）</p>
+<p><strong>框架介绍：</strong></p>
+<p>CS：Client Server</p>
+<pre><code>不足：
+    1.当服务器的软件进行升级时候，所有的客户端软件同样需要升级。
+    2.鉴于第一点，每一个客户端软件都需要维护，因此维护显得特别麻烦。
+    3.每一台客户端需要时候的时候都需要安装客户端软件。</code></pre><p>鉴于以实的不足，出现了BS：Broswer Server</p>
+<pre><code>客户端可以通过任意浏览器直接访问服务器。
+但是，由于操作显得简单，需要比CS更多的时间消耗。</code></pre><p><strong>HTTP</strong></p>
+<p>我们在操作网页数据的时候，就需要用到HTTP（HyperText Transfer Protocol,超文本传输协议）</p>
+<p>  HTTP请求由状态行、请求头、请求正文三部分组成：</p>
+<pre><code>状态行：包括请求方式Method、资源路径URL、协议版本Version；
+请求头：包括一些访问的域名、用户代理、Cookie等信息；
+请求正文：就是HTTP请求的数据。</code></pre><p>请求的方式一般为：GET,POST,PUT,DELETE。</p>
+<p>其中：GET,POST为HTTP 1.0版本。其余两个为1.1新增。而且现在大多数协议版本为HTTP 1.1.</p>
+<p>HTTP不是保存状态的协议，即无状态协议。协议对于发送的请求或者响应不做持久化处理。协议本身不保留之前一切请求和响应的信息。</p>
+<p>但是为了实现期望的保持状态功能，在HTTP 1.1中引入了Cookie技术，可以管理状态。就好比说以前为发短信聊天，现在时打电话或者视频通话聊天，可以保证一段时间的状态连续。持久化连接的好处在于减少了TCP连接的重复建立和断开的额外开销，减轻了服务器的负载。</p>
+<p>状态码的介绍：</p>
+<p>状态码表示当前客户端向服务器发送请求时候，描述返回状态的结果。我们常见的网页出现404就是其中一种，表示Not Find，其他常见的还有:</p>
+<pre><code>200：一切正常
+300/301: 页面重定向 （跳转）
+404:资源不存在 
+403：权限不足 （如果访问a目录，但是a目录设置 不可见）
+500：服务器内部错误（代码有误）
+其余的就是见到学习即可。</code></pre><p>其他相关代理，网关，缓存器以及安全性能之类的会专门讲解，这里不深入探究。</p>
+<p><strong>JSP执行流程</strong></p>
+<p>jsp- java(Servlet文件) -class</p>
+<p>D:\study\apache-tomcat-8.5.30\work\Catalina\localhost\JspProject\org\apache\jsp</p>
+<p>Jsp 和Servlet 可以相互转换  </p>
+<p>因为第一请求服务端 会有翻译 和编译的过程，因此比较慢； 后续访问 可以直接访问class,因此速度较快。但是，如果，服务端修改了代码，则再次访问时 就会重新的翻译、编译。</p>
+<p><strong>ecplise配置Tomcat</strong></p>
+<pre><code>1.使用Eclipse开发Web项目(JSP项目)  tomcat
+2. 在Eclipse中创建的Web项目：
+浏览器可以直接访问 WebContent中的文件，
+例如http://localhost:8080/MyJspProject/index.jsp
+其中的index.jsp就在WebContent目录中，且（8080为默认端口号）
+但是WEB-INF中的文件  无法通过客户端（浏览器）直接访问，只能通过请求转发来访问
+注意：并不是任何的内部跳转都能访问WEB-INF；原因是跳转有2种方式：请求转发 、重定向
+3.配置tomcat运行时环境
+    jsp&lt;-&gt;Servlet 可以互转
+a.将tomcat/lib中的servlet-api.jar加入项目的构建路径
+b.右键项目-&gt;Build Path -&gt; Add library -&gt;Server Runtime
+4.部署tomcat
+在servers面板 新建一个 tomcat实例 ，再在该实例中部署项目（右键-add）之后运行
+注意：一般建议将eclipse中的tomcat与本地tomcat的配置信息保持一致：将eclipse中的tomcat设置为托管模式：【第一次】创建tomcat实例之后，双击选择Server Location的第二项
+5.统一字符集编码
+a.编码选择：我们选择国际统一字符集UTF-8
+设置jsp文件的编码（jsp文件中的pageEncoding属性）：  jsp -&gt; java        
+设置浏览器读取jsp文件的编码（jsp文件中content属性）
+一般将上述设置成 一致的编码，推荐使用UTF-8
+文本编码：
+    i.将整个eclipse中的文件 统一设置 （推荐）
+    ii.设置 某一个项目
+    iii.设置单独文件</code></pre>]]></content>
+      <categories>
+        <category>JavaWeb</category>
+      </categories>
+      <tags>
+        <tag>JSP</tag>
+        <tag>Servlet</tag>
+        <tag>JavaEE</tag>
+        <tag>HTTP</tag>
+        <tag>Tomcat</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Javascript基础知识学习（一）</title>
+    <url>/2019/07/30/Javascript%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<p>在学习网页制作知识中涉及到的JavaScript相关的一些知识理论进行整理学习，涉及内容大约为：变量与声明，逻辑运算以及数组，函数，自定义类，事件机制，window对象。具体内容请参阅全文。</p>
+<a id="more"></a>
+
+<p>##Js的概念和声明：</p>
+<p>由于网页的发展历程中，发现网页不能对用户的数据进行自动校验,和<br>提供一些特效，造成用户体验极差。于是引入了JavaScript这一概念。用来解决：</p>
+<pre><code>让网页和用户之间进行直接简单的交互.
+给网页制作特效和动画</code></pre><p>使用：</p>
+<p>声明子啊Js代码域中：</p>
+<pre><code>1.在head标签中使用script声明js代码域
+&lt;head&gt;
+    ....
+&lt;!--声明js代码域--&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+    function test(){
+        alert(&quot;哈哈,js学习起来很简单!!!&quot;);
+    }
+    &lt;/script&gt;
+&lt;/head&gt;
+
+2.在head标签中使用script引入外部声明的js文件
+&lt;head&gt;
+    ....
+&lt;!--声明js代码域--&gt;
+&lt;!--引入外部声明好的js文件--&gt;
+    &lt;script src=&quot;js/my.js&quot;
+        type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;</code></pre><p>##js的变量学习:</p>
+<pre><code>1 js的变量声明
+    使用var关键字进行变量声明,格式如下:
+    var 变量名=初始值;
+    例如: var a=&quot;呵呵&quot;;
+2 js变量的特点
+    a、 变量声明只有var关键字，声明的变量可以存储任意类型的数据。
+    b、 js中的代码可以不适用分号结尾，但是为了提升代码的阅读性，建议使用分号。
+    c、js中的变量允许出现同名变量，但是后面的会将前面的覆盖。
+    d、声明不赋值，默认值是undefined
+3 js的数据类型
+    使用换件typeof判断变量的数据类型
+    number:数值类型
+    string:字符类型,注意：在js中字符可以使用单引号也可以使用双引号
+    boolean:布尔类型
+    object:对象类型
+4 js的变量强转
+    使用Number()函数：将其他数据类型转换为数值类型，转换失败返回NaN(not a number)
+    使用Boolean()函数：将其他数据类型转换为布尔类型，有值返回true，无值返回false;
+5 特殊的值
+    null object
+    undefined undefined
+    NaN number
+作用:
+    变量是用来存储数据的,方便程序进行操作.</code></pre><p>##js的运算符和逻辑结构:</p>
+<pre><code>作用：
+    结合变量进行数据处理
+使用:
+    算术运算符：+,-,*,/,%
+    关系运算符:&gt;,&gt;=,&lt;,&lt;=,!=
+    等值符：==
+    如果类型一致则直接比较值
+    如果类型不一致则先使用Number强转为同一类型后再比较值
+    等同符：===
+    先判断类型，如果类型一致则再比较内容如果类型不一致则直接fasle
+逻辑运算符:
+    &amp;&amp; || !
+逻辑结构：
+    if(){}else if(){} else{}
+    switch(){}
+    for(){}
+    while(){}
+    do{}while()
+注意：
+    判断条件可以直接是变量。
+注意：
+    js中变量是没有类型的，但是数据是有类型的，在进行数据处理的时候要注意数据的类型。</code></pre><p>##js的数组学习：</p>
+<pre><code>问题：
+    使用变量存储数据，如果数据量比较大的时候，会造成需要声明
+    大量的变量去存储数据，代码整洁度及阅读性极差，数据的完整性得不到保证。
+解决：
+    使用数组
+作用：
+    存储数据
+使用：
+    js的数组的声明
+    var arr1=new Array();//声明一个空数组
+    var arr2=new Array(长度)//声明指定长度的数组。
+    var arr3=[]//声明一个空数组，也可以在声明时直接
+赋值：
+    例如：var arr3=[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;];
+js数组的使用
+    数组的赋值
+    数组名[角标]=值；
+注意：
+    js中赋值可以跳跃角标赋值，不存在的角标
+    也可以赋值，会对数组的大小进行改变。
+数组的取值:
+    var 变量名=数组名[角标名]
+注意：
+    如果获取的角标没有数据，则返回undefined;
+js的数组的特点
+特点1：
+    js中的数组可以存储任意类型的数据。
+特点2：
+    js的数组可以通过length属性动态的改变长度。
+    可以增加，也可以缩短。
+注意：
+    如果是增加，则使用逗号进行占位
+    如果是缩减则从后往前减少存储的数据。
+js的数组的遍历：
+    可以使用普通for循环
+    也可以使用增强for循环
+注意：
+    增强for循环中，循环条件声明的变量记录的是角标。
+js的数组的常用操作方法：
+    数组名.pop()//移除并返回最后一个元素。
+    数组名.push(要添加的数据)//在数组最后追加数据，并返回新的长度。
+值得一提的是：
+    由于在Js中使用同样变量var，因此在数组中可以存放任意类型的多种数据，这就是与其他语言不同的地方。</code></pre><p>##js的函数学习：</p>
+<pre><code>问题：
+    一般来说开发就是对现实生活中的问题使用代码进行解决，同类型的问题非常多，这样就需要每次都将代码重新声明一遍，造成代码过于冗余。
+解决：
+    因此基于以上问题，把代码封装成函数，不用重复声明，调用即可。
+使用:
+    函数的声明：
+    第一种声明方式：
+        function 函数名(形参1,形参2,...){函数体....}
+    第二种声明方式：
+        var 变量名=new Function(&quot;形参名1&quot;,&quot;形参名2&quot;,....,&quot;函数体&quot;);
+    注意：
+        在js中函数是作为对象存在的。
+    第三种声明方式：
+        var 变量名=function()(形参1,形参2,...){函数体....}
+    函数的形参:
+        在js中函数的形参在调用的时候可以不赋值，不报错，但是默认为undefined
+    在js中函数的形参在调用的时候可以不完全赋值，依次赋值。
+    注意：
+        js中没有函数重载，只有函数覆盖。
+函数的返回值:
+    在函数内部直接使用return语句返回即可，不需要返回值类型
+    注意：
+        默认返回undefined;
+函数的调用:
+    1、在加上代码域中直接调用(主要进行页面资源初始化)
+    2、使用事件机制(主要实现和用户之间的互动)
+    3、作为实参传递(主要是动态的调用函数)
+    注意：
+    小括号为函数的执行符，函数名()才会被执行，直接函数名则作为对象使用。
+    注意：
+        js的代码区域只有一个,包括引入的js代码，浏览器会将引入的js文件和内部声明的js代码解析成一个文件执行。
+        js代码的调用和声明都在一个区域内。</code></pre><p>##js的事件机制:</p>
+<pre><code>概念：
+    基于监听的。一个动作会触发其他事物的执行。
+作用：
+    根据用户在网页中的不同操作触发执行对应的功能函数。
+使用:
+    单双击事件:
+        单击事件 : onclick.
+        双击事件: ondblclick
+    鼠标移动事件:
+        鼠标悬停事件：onmouseover 当鼠标在HTML元素之上时触发
+        鼠标移出事件：onmouseout 当鼠标移出某个HTML元素时触发
+    键盘事件:
+        键盘下压事件：onkeydown 当键盘被按下时触发
+        键盘弹起事件：onkeyup 当键盘弹起时触发焦点事件：
+        获取焦点:onfocus 当获取焦点时触发
+        失去焦点:onblur 当失去焦点时触发
+    值改变事件：
+        专门给select标签使用：
+        onchange事件 当下拉框的值改变时触发
+        页面加载事件：
+        专门给body标签使用
+        onload 当页面加载成功后触发
+    注意：
+        事件是作为HTML标签的属性来使用的。一个HTML元素可以同时使用多个事件，但是注意事件之间的相互干扰。</code></pre><p>##Js的常用方法和对象学习:</p>
+<pre><code>String对象：操作字符的。
+    使用：字符串.函数名即可
+    大小写转换：
+        toUpperCase() 转换大写
+        toLowerCase() 转换小写
+    字符串截取
+        substr(0,1) 从指定开始位置截取指定长度的子字符串
+        substring(0,1) 从指定位置开始到指定的结束位置的子字符串（含头不含尾）
+    找字符位置
+        indexOf 返回指定字符第一次出现的位置。
+        lastIndexOf 返回指定字符最后一次出现的位置。
+    其他还有很多类似的封装号的方法，必要时再去查阅相关API即可。
+Date对象：
+    使用： var 变量名=new Date();
+    注意：
+        获取的是客户端的时间，不能作为系统功能校验的时间的。
+Math对象：
+    使用：Math.函数名
+    random()产生0-1之内的随机数，想要一定范围内的数时只需要乘以那个数即可。
+    round()方法可把一个数字舍入为最接近的整数。例如Math.round（3.5），结果为4.且括号内必须是数字。
+    ceil()对数进行上舍入。
+    floor()对数进行下舍入。
+    其他还有很多类似的封装号的方法，如同Java。必要时再去查阅相关API即可。
+Global对象
+    描述：
+        全局对象是预定义的对象，作为 JavaScript 的全局函数和全局属性的占位符。通过使用全局对象，可以访问所有其他所有预定义的对象、函数和属性。全局对象不是任何对象的属性，所以它没有名称。
+    相关使用：
+        eval(x)函数可计算某个字符串，并执行其中的的 JavaScript 代码。x必须为string类型数据。要计算的字符串，其中含有要计算的 JavaScript 表达式或要执行的语句。
+        isNaN()检查某个值是否是数字。
+        parseInt()解析一个字符串并返回一个整数。
+        parseFloat()解析一个字符串并返回一个浮点数。</code></pre><p>##window对象的属性学习</p>
+<pre><code>opener属性：
+    它返回的是打开当前窗口的窗口对象.如果窗口A弹出一个窗口B,那么在B中window.opener就是窗口对象A.
+location属性：
+    作用：地址栏属性，该属性是一个对象，封存了浏览器对地址栏的操作信息
+    例如：url
+使用：
+    URL操作:
+    window.location.href//返回当前网页的URL信息
+    window.location.href=&quot;资源路径&quot;//跳转指定的URL资源。
+页面刷新：
+    作用:重新加载页面资源。
+    window.location.reload();
+history属性：
+    forward()//前进，相当于浏览器中的前进功能
+    back()//后退，相当于浏览器中的后退功能
+    go()//跳转指定的历史记录
+screen属性
+    window.screen.width
+    window.screen.height
+    获取分辨率
+再提一句：
+    因为现在很多浏览器再带一些效果，所以即使一些内容我们设置成null值作为浏览器也会显示。</code></pre>]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>网页</tag>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CSS基础知识学习</title>
+    <url>/2019/07/26/CSS%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<p>前端知识学习学习第二部分之CSS学习。</p>
+<p>主要记录了学习CSS的语法和简单的使用，以及跟着学习步骤仿照baidu主页左了一个类似的主页。虽然功能没有加入，不过也是学习的一部分。学习过程”八错”哦。</p>
+<a id="more"></a>
+
+<p>##CSS声明学习:</p>
+<pre><code> 1、在head标签中使用style标签声明：
+         作用：此声明一般声明当前网页的公共样式或者给某个标签的单独样式
+ 2、在标签上使用style属性进行声明：
+         作用：此声明会将css样式直接作用于当前标签。
+ 3、在head标签中使用link标签引入外部声明好的css文件
+        作用：此声明相当于调用,解决了不同网页间样式重复使用的问题
+            一次声明，随处使用
+问题：
+    不同的声明给同一个标签操作了同一个样式，会使用谁的？
+    如果Css的声明全部在head标签中，则遵循就近原则，谁离标签近，谁就会被显示。</code></pre><p>##css的选择器学习：</p>
+<pre><code>    标签选择器：
+        标签名{样式名1：样式值1;……}
+        作用：会将当前网页内的所有该标签增加相同的样式
+    id选择器:
+        #标签的id属性值{样式名1：样式值1;……}
+        作用：给某个指定的标签添加指定的样式
+    类选择器：
+        .类选择器名{样式名1：样式值1;……}
+        作用：给不同的标签添加相同的样式
+    全部选择选择器
+        *{样式名1：样式值1;……}
+        作用：选择所有的HTML标签，并添加相同的样式
+
+    组合选择器：
+        选择器1,选择器2,……{样式名1：样式值1;……}
+        作用：解决不同的选择器之间重复样式的问题
+    子标签选择器
+        选择器1 子标签选择器{样式名1：样式值1;……}
+    属性选择器：
+        标签名[属性名=属性值]{样式名1：样式值1;……}
+        作用：选择某标签指定具备某属性并且属性值为某属性值的标签
+css的使用过程：
+    1、声明css代码域
+    2、使用选择器选择要添加样式的标签
+        根据需求来。
+            使用*选择器来给整个页面添加基础样式
+            使用类选择器给不同的标签添加基础样式
+            使用标签选择器给某类标签添加基础样式
+            使用id、属性选择器、style属性声明方式给某个标签添加个性化样式。
+    3、书写样式单
+        边框设置
+            border:solid 1px;
+        字体设置:
+            font-size:10px;设置字体大小
+            font-family:&quot;黑体&quot;;(设置字体的格式)
+            font-weight：bold;设置字体加粗
+        字体颜色设置
+            color:颜色;
+        背景颜色设置
+            background-color:颜色;
+        背景图片设置
+            background-img:url(图片的相对路径);
+            background-repeate:no-repeate;设置图片不重复
+            bacground-size:cover;图片平铺整个页面
+        高和宽设置
+        浮动设置
+            float:left|right
+        行高设置
+            line-height:10;</code></pre><p>##css的盒子模型学习：</p>
+<pre><code>div标签：
+    块级标签，主要是用来进行网页布局的，会将其中的子元素内容作为一个独立的整体存在。
+    特点：
+        默认宽度是页面的宽度，但是可以设置。
+        高度默认是没有的，但是可以设置。(可以顶开)
+        如果子元素设置了百分比的高或者宽，占据的是div的百分比，不是页面的。
+盒子模型：
+    外边距:margin
+        作用：用来设置元素和元素之间的间隔。
+        居中设置:margin:0px auto;上下间隔是0px,水平居中。
+        可以根据需求单独的设置上下左右的外边距。
+    边框：border
+        作用：用来设置元素的边框大小
+            可以单独设置上下左右
+    内边距：padding
+        作用：设置内容和边框之间的距离
+        注意：内边距不会改变内容区域的大小
+        可以单独的设置上下左右的内边距
+    内容区域：
+        作用：改变内容区域的大小。
+        设置宽和高即可改变内容区域的大小。</code></pre><p>##css的定位学习：</p>
+<pre><code>position
+    相对定位:relative
+        作用：相对元素原有位置移动指定的距离(相对的自己的原有位置)
+            可以使用top,left,right,bottom来进行设置。
+        注意：
+            其他元素的位置是不改变的。
+    绝对定位:absolute
+        作用：可以使用元素参照界面或者相对父元素来进行移动     
+        注意：
+            如果父级元素成为参照元素，必须使用相对定位属性
+            默认情况下是以界面为基准进行移动的。
+    固定定位:fixed
+        作用：将元素固定现在页面的指定位置，不会随着滚动条的移动而改变位置。
+    以上定位都可以使用top,left,right,bottom来进行移动。
+z-index:此属性是用来声明元素的显示级别的。</code></pre><p>##利用百度图标模拟百度页面</p>
+<p>###CSS文件声明</p>
+<pre><code>/*设置页面的基础样式*/
+    *{margin: 0px;padding: 0px;}
+/*设置header头部分的大小*/
+    #header{width: 100%;height: 45px;}
+    /*设置导航栏样式*/
+        #header_nav{position: absolute;right:92px;top:26px;}
+        #header_nav li{float: left;list-style-type: none;margin-left: 24px;}
+        #header_nav li a{color:  #333;font-size: 13px;font-weight: 700;line-height: 24px;}
+/*设置main主体部分的大小*/
+    #main{width:100%;height: 384px;text-align: center;}
+        #img_logo{margin-top: 30px;margin-bottom: 21px;}
+        /*设置搜索框样式*/
+        input[type=text]{height: 34px;width: 539px;border: solid 1px #4992FF;background-image: url(../img/inp.png);background-repeat: no-repeat;background-position-x: 500px;background-position-y: 3px;}
+        input[type=submit]{width: 100px;height: 34px;font-size: 15px;color: #fff;background-color: #2d78f4;border: solid #2d78f4;letter-spacing: 1px;position: relative;right: 5px;top:1px;}
+/*设置footer底部部分的大小*/
+     #footer{width: 100%;height: 206px;text-align: center;}
+/*使用伪类给标签添加样式*/
+    #header_nav li a:hover{color: blue;}</code></pre><p>###HTML页面声明</p>
+<pre><code>&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;百度首页模拟&lt;/title&gt;
+        &lt;meta charset=&quot;UTF-8&quot;/&gt;
+        &lt;!--引入外部声明的css文件--&gt;
+        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;css/baidu01.css&quot;/&gt;
+        &lt;!--引入网页标题图片--&gt;
+        &lt;link href=&quot;img/title.ico&quot; rel=&quot;shortcut icon&quot;/&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;!--声明头 部分--&gt;
+        &lt;div id=&quot;header&quot;&gt;
+            &lt;!--声明导航栏--&gt;
+            &lt;ul id=&quot;header_nav&quot;&gt;
+                &lt;li&gt;&lt;a href=&quot;&quot;&gt;新闻&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;&quot;&gt;hao123&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;&quot;&gt;地图&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;&quot;&gt;视频&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;&quot;&gt;贴吧&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;&quot;&gt;学术&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;&quot;&gt;登录&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;&quot;&gt;设置&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/div&gt;
+        &lt;!--声明主体--&gt;
+        &lt;div id=&quot;main&quot;&gt;
+            &lt;!--引入百度logo--&gt;
+            &lt;img id=&quot;img_logo&quot; src=&quot;img/bd_logo.png&quot; width=&quot;270px&quot; height=&quot;129px&quot;/&gt;
+            &lt;br /&gt;
+            &lt;!--声明搜索框和按钮--&gt;
+            &lt;input type=&quot;text&quot; name=&quot;&quot; id=&quot;&quot; value=&quot;&quot; /&gt;
+            &lt;input type=&quot;submit&quot; name=&quot;&quot; id=&quot;&quot; value=&quot;百度一下&quot; /&gt;
+        &lt;/div&gt;
+        &lt;!--声明底部--&gt;
+        &lt;div id=&quot;footer&quot;&gt;
+            &lt;!--声明网站声明内容--&gt;
+            &lt;img src=&quot;img/footer.png&quot;/&gt;
+        &lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre><p>##成品图展示</p>
+<p><img src="/images/BaiduWebTest.PNG" alt></p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>网页</tag>
+        <tag>HTML</tag>
+        <tag>CSS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HTML基础知识学习</title>
+    <url>/2019/07/24/HTML%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<p>网页设计之HTML基础语法学习。作为网页制作和设计的基础课程，通过两天熟悉了其中的基本语法和简要设计，故记录以下学习的内容概要。</p>
+<a id="more"></a>
+
+
+<p>##标签的使用</p>
+<p>###题目标签</p>
+<p>####h1到h6：</p>
+<p>数据会加粗加黑显示，并且显示依次减缩，且题目自带换行功能。</p>
+<p><strong>属性：</strong>align：center，left，right表示居中居左居右显示</p>
+<p>####水平线标签：</p>
+<p><strong>hr：</strong>会在页面显示一条水平线，默认居中</p>
+<p><strong>属性：</strong></p>
+<ul>
+<li>width = “宽度”  设置水平线的宽度</li>
+<li>size = “高度”   设置水平线的高度</li>
+<li>color = “颜色”  设置水平线的颜色<br>####换行符:  </li>
+</ul>
+<p><strong>br:</strong>告诉浏览器需要在此位置换行</p>
+<p><strong>空格符:</strong><br>&amp;nbsp:告诉浏览器在此位置增加空格</p>
+<p><strong>权重标签:</strong></p>
+<ul>
+<li>b:会将内容加黑显示</li>
+<li>i:会将内容斜体显示</li>
+<li>u:会将内容增加下划线</li>
+<li>del:增加中划线</li>
+</ul>
+<p>以上标签不会自动换行,并且可以嵌套使用.</p>
+<p>###列表标签学习:</p>
+<p>####无序列表<br><strong>ul</strong></p>
+<p><strong>li:</strong>该标签中书写列表内容,一个li标签代表列表中的一行数据</p>
+<p><strong>特点:</strong> 默认数据前有一个黑圆圈符号.</p>
+<p>####有序列表<br><strong>ol</strong></p>
+<p><strong>li:</strong>该标签中书写列表内容,一个li标签代表列表中的一行数据</p>
+<p><strong>特点:</strong><br>会自动的给列表进行顺序编码,格式从小到大并且是连续的.</p>
+<p><strong>属性:</strong><br>type:可以改变顺序编码的值,可以是1 a A I,,默认使用阿拉伯数字进行顺序编码    </p>
+<p>####自定义列表<br><strong>dl</strong></p>
+<p>dt:数据的标题</p>
+<p>dd:数据的具体内容,一个dd表示一条数据.</p>
+<p>###图片标签:</p>
+<p>####img<br><strong>src:图片路径</strong></p>
+<ul>
+<li>本地资源路径:一般本地图片资源使用相对路径即可</li>
+<li>网络资源路径:图片资源的URL地址</li>
+</ul>
+<p><strong>width:</strong>设置图片的宽度,如果是单独设置,则再图片保证不失真的情况下自动缩小或者放大<br><em>单位可以是px也可以是百分比</em></p>
+<p><strong>height:</strong>设置图片的高度,如果是单独设置,则再图片保证不失真的情况下自动缩小或者放大<br><em>单位可以是px也可以是百分比</em></p>
+<p><strong>title:</strong>图片标题,鼠标放在图片上的时候会显示</p>
+<p><strong>alt:</strong>图片加载失败后的提示语</p>
+<p><em>图片是不会自动换行的(行内元素)</em></p>
+<pre><code>相对路径:从当前文件出发查找另一个文件所经过的路径
+绝对路径:从根盘符出发所查找文件的路径</code></pre><p>###超链接标签学习:</p>
+<pre><code>a标签:
+    href:要跳转的网页资源路径
+         本地资源:相对路径
+         网络资源:网络资源(网页)的URL
+    target:指明要跳转的网页资源的显示位置
+         _self   在当前页中刷新显示
+         _blank  在新的标签页中显示
+         _top    在顶层页面中显示
+         _parent    在父级页面中显示
+注意:
+    超链接标签中一定要声明访问方式,访问方式可以是文字也可以是图片.
+锚点学习:
+    作用:在一张网页中进行资源跳转
+    使用:
+        先使用超链接标签在指定的网页位置增加锚点.格式为:
+            &amp;lt;a name=&quot;锚点名&quot; &amp;gt;&amp;lt;/a&amp;gt;
+        使用a标签可以跳转指定的锚点,达到网页内部资源跳转的目的,格式:
+            &amp;lt;a href=&quot;#锚点名&quot; &amp;gt;访问方式&amp;lt;/a&amp;gt;</code></pre><p>###表格标签学习:</p>
+<pre><code>table :声明一个表格
+    tr:声明一行,设置行高及改行所有单元格的高度.
+        th:声明一个单元格,表头格.默认居中加黑显示
+        td:声明一个单元格,默认居左显示原始数据
+注意:
+    行高即改行所有单元格的宽度
+    单元格的宽度即列宽
+属性:
+    border:给表格添加边框
+    width:设置表格的宽度
+    height:设置表格的高度
+    cellpadding:设置内容居边框的距离
+    cellspacing:设置边框的大小    
+特点:
+    默认根据数据的多少进行表格的大小显示
+单元格的合并:
+第一步:
+    首先确保表格是一个规整的表格
+第二步:
+    根据要合并的单元格,找到其所在的源码位置
+第三步:
+    行合并:在要合并的单元格中的第一个单元格上使用属性rowspan=&quot;要合并的单元格的个数&quot;,并删除其他要合并的单元格完成合并
+    列合并:在要合并的单元格中的任意一个上使用属性colspan=&quot;要合并的单元格的个数&quot;,并删除要合并的其他单元格</code></pre><p>###内嵌标签:</p>
+<pre><code>iframe
+    src:要显示的网页资源路径
+        可以是本地(相对路径)也可以是网络资源(URL)
+注意:
+        默认当前页面打开及加载src指向的资源
+    width:设置显示区域的宽度
+    height:设置显示区域的高度
+    name:设置内嵌区域的名字,结合超链接标签的target属性使用.
+作用:
+    在当前网页中加载其他网页的资源,达到不同网页资源之间不相互干扰,并能在同一个页面中展现给用户的目的.</code></pre><p>###框架标签学习:</p>
+<pre><code>frameset
+    rows:按照行进行切分页面
+    cols:按照列进行切分页面
+子标签:
+    frame:进行切分区域的占位,一个frame可以单独加载网页资源.
+    src:资源路径(本地或者网络)
+    name:区域名,结合超链接使用</code></pre><p>###form表单标签学习:</p>
+<pre><code>作用:收集并提交用户数据给指定服务器
+属性:
+    action:收集的数据提交地址也就是URL
+    method:收集的数据的提交方式
+    get    :适合小量数据,表单数据以?隔开拼接在URL后面,不同的键值对使用&amp;符号隔开,不安全.
+    post:适合大量数据,安全,隐式提交
+注意1:
+    表单数据的提交,要提交的表单项必须拥有name属性值,否则不会提交.
+    提交的表单项数据为键值对,键为name属性的值,值为用户书写的数据
+注意2:form标签会收集其标签内部的数据
+注意3:form表单的数据提交需要依赖于submit提交按钮.</code></pre><p>###form表单域标签学习:</p>
+<pre><code>作用:给用户提供可以进行数据书写或者选择的标签.
+使用:
+文本框:
+    input
+        type:
+        text  收集少量的文本数据,用户可见
+        password  收集用户密码数据
+        name:数据提交的键,也会被js使用
+        value: 默认值
+单选框:
+    input
+        type:
+        radio
+        name:name属性值相同的单选框只能选择一项数据
+        value:要提交的数据
+        checked:checked 使用此属性的单选默认是选择状态
+多选框:
+    input:
+        type:
+        checkbox
+        name:一个多选组需要使用相同的name属性值
+        value:要提交的数据
+        checked:checked 使用此属性的多选框默认是选择状态
+单选下拉框:
+        select:
+        name:数据提交的键名,必须声明
+        子标签option:一个option标签表示一个下拉选项
+                value:要提交的数据
+文本域:
+    textarea:声明一个可以书写大量文字的文本区域
+        name:数据提交的键名,js和css也会使用
+        rows:声明文本域的行数
+        cols:声明文本域的列数
+普通按钮:
+    input:
+        type:
+            button
+        value:
+隐藏标签:
+    input
+        type:
+            hidden
+        name
+        value
+    注意:表单数据提交提交的是表单域标签的value值    
+form表单标签的使用:
+    在点击数据提交时,form标签会将其内部所有form表单域标签中用户书写的数据按照method指明的提交方式
+    提交给action属性所指明的提交地址.</code></pre>]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>网页</tag>
+        <tag>HTML</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数据库学习记录（一）</title>
+    <url>/2019/07/24/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>数据库的部分知识，基于MySQL，同时包括了数据库结构，数据库的模型以及大篇幅的在MySQL中的SQL语句用法和JDBC的使用简略步骤。</p>
+<p>作为数据库学习的第一部分，接下来还会继续学习数据库的设计以及数据存储、查询以及事务管理的内容。在接下来的时间还会学习数据仓库和数据挖掘的内容。将会慢慢的添加进来。</p>
+<a id="more"></a>
+
+
+
+
+
+<p>#数据库系统<br>以关系数据库为基础介绍：</p>
+<ul>
+<li>基本关系与模型</li>
+<li>数据库语言</li>
+<li>数据建模与数据库设计</li>
+<li>数据库管理系统的实现</li>
+</ul>
+<hr>
+<p>特点：</p>
+<ul>
+<li>抽象</li>
+<li>思维</li>
+<li>应用</li>
+<li>管理</li>
+<li>案例</li>
+</ul>
+<p>##第一讲 初步认识数据库<br>现在社会处于大数据时代，了解数据以及数据库来给予以往的数据来预测和分析接下来的发展。</p>
+<p>即：数据累积变成数据库，数据库的汇集成为大数据，分析和应用造福相应人。</p>
+<p><strong>Table：表</strong>  按行按列的形式数据。</p>
+<p><strong>Database：数据库</strong> 相关之间有关系的Table的集合。</p>
+<hr>
+<p><strong>数据库管理系统：DBMS</strong>  </p>
+<ul>
+<li><em>数据库定义</em> 数据库中Table的名称、标题等。</li>
+<li><em>数据库操作</em> 向数据库额Table中增加、删除、更新以及进行查询、检索的操作。</li>
+<li><em>数据库控制</em> 控制数据库中数据的使用—哪些用户可以使用，哪些不可以。</li>
+<li><em>数据库维护</em>  转储、恢复、重组、性能检测、分析等。</li>
+</ul>
+<hr>
+<p><strong>数据库语言：</strong></p>
+<ul>
+<li>数据库定义语言： DDL,Data Definition Langelage<pre><code>DBMS提供给用户，以便于用户定义数据格式</code></pre></li>
+<li>数据库操作语言： DML,Data Manipulation Langelage<pre><code>DBMS提供给用户，以便于用户对数据的操作</code></pre></li>
+<li>数据库控制语言： DCL,Data Control Langelage<pre><code>DBMS提供给用户，以便于用户对数据进行控制</code></pre></li>
+<li>数据库各种操作的执行</li>
+</ul>
+<p>以上综述为：SQl语言</p>
+<p><strong>交互式数据库语言：</strong></p>
+<ul>
+<li>SELECT</li>
+<li>FROM</li>
+<li>WHERE</li>
+</ul>
+<p><strong>嵌入式数据库语言：</strong>可以很方便的嵌入到各类编程语言中操作数据库。</p>
+<hr>
+<p>#第二讲 数据库系统的结构抽象与演变</p>
+<p>##数据库的标准结构</p>
+<p>###1）数据库系统的分层抽象<br>DBMS管理数据分为三个层次：</p>
+<ul>
+<li><p>外部层次=用户层次：指只让用户看到的数据的一部分</p>
+</li>
+<li><p>概念层次=逻辑层次：全局角度理解管理数据，还有一些约束</p>
+</li>
+<li><p>内部层次=物理层次：存储在介质上的数据，含有存储的路径、方式以及索引的方式。<br>###2）两个模式<br>数据（视图）与模式：</p>
+</li>
+<li><p><strong>模式：</strong> 对数据库中数据进行的一种结构性的描述</p>
+</li>
+<li><p><strong>视图/数据:</strong> 某一种形式下表现出来的数据库中的数据</p>
+</li>
+</ul>
+<p>三级模式：</p>
+<ul>
+<li><strong>内模式：</strong>存储在介质上的数据的结构描述，喊存储路径，存储方法，索引方法等。</li>
+<li><strong>概念模式=存储模式：</strong>从全局角度理解、管理数据的结构描述，含有相应的关联约束。</li>
+<li><strong>外模式=用户模式：</strong>用户能够看到和处理的数据的结构描述。</li>
+</ul>
+<p>两层映像：</p>
+<ul>
+<li><strong>E-C映像：</strong> 外模式映射为概念模式，便于用户观察和使用</li>
+<li><strong>C-I映像：</strong> 概念模式映射为内模式，便于计算机进行存储和处理。</li>
+</ul>
+<p>###3）数据模型<br>什么是数据模型：</p>
+<p>规定模式统一描述方式的模型，包括：数据结构、操作和约束。</p>
+<p>数据模式：是对模式本身结构的抽象。<br>模式：是对数据本身结构形式的抽象。</p>
+<p>比如：关系模式，所有模式可抽象为表（Table）的形式【数据结构】，而每一个具体的模式都是拥有不同列名的具体的表。是对这种表形式的数据有哪些【操作】和【约束】。</p>
+<p>例如:学生登记表是一个模式A，学生成绩单是模式B，两者综合起来就是关系模型。</p>
+<hr>
+<p>三大经典数据模型：</p>
+<ul>
+<li>关系模型：表的形式组织数据</li>
+<li>层次模型：树的形式组织数据</li>
+<li>网状模型：图的形式组织数据</li>
+</ul>
+<hr>
+<p>数据库的发展阶段：</p>
+<p>不做详细介绍！学习时候去百度，当做小说看即可。</p>
+<p>##关系模型<br>什么是关系模型呢？</p>
+<p>形象的说关系就是一个Table。</p>
+<p>###关系模型的三个要素：</p>
+<ul>
+<li><strong>基本关系：</strong> Relation/Table</li>
+<li><strong>基本操作：</strong> 五个基本操作：并，差，选择，投影，广义积。扩展：交，连接，除。</li>
+<li><strong>完整性约束：</strong> 实体完整性，参照完整性以及用户自定义完整性。</li>
+</ul>
+<p><strong>关系代数和关系运算</strong></p>
+<p>基于数学语言转换成计算机的语言。</p>
+<p>###什么是关系？</p>
+<ul>
+<li><strong>表的严格定义：</strong></li>
+</ul>
+<blockquote>
+<blockquote>
+<p>列的取值范围“域”，成为值得集合，具有相同的数据类型，且集合中元素的个数称为域的“基数”</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>再定义元组（tuple）以及所有可能组合的元组：笛卡尔积</p>
+</blockquote>
+</blockquote>
+<ul>
+<li><strong>关系：</strong> 一组与的笛卡尔积的子集。<blockquote>
+<blockquote>
+<p>笛卡尔积中的具有某一方面意义的那些元组被称为一个关系。</p>
+</blockquote>
+</blockquote>
+###关系模式与关系</li>
+<li>同一模式下，可有很多的关系</li>
+<li>关系模式是关系的结构，关系是关系模式在某一时刻的数据</li>
+<li>关系模式是稳定的，而关系是某一时刻的值，是随时间可能变化的<br>###关系的特性</li>
+<li><strong>列是同性质的：</strong>即每一列的分量来自同一域，是同一类型的数据</li>
+<li><strong>不同的列可以来自同一域：</strong>其中每一列为一个属性，不同的属性要给予不同的属性名。</li>
+<li><strong>关系与行列的位置无关</strong></li>
+<li><strong>理论上，关系的任意两个元组不能完全一样</strong> 但实际上表不一定准守。</li>
+<li><strong>属性不可再分：</strong> 关系第一范式<br>###关系的概念</li>
+</ul>
+<p><strong>候选码/候选键</strong> 关系中一个属性组，其值能唯一表示一个元组，若从该元组中去掉一个属性，他就不具备这个属性了，这样的属性组成为“候选码”</p>
+<p>例如学校中的学生的学号可以唯一标识。</p>
+<p>有时，关系中可能有很多个候选码。</p>
+<p>因此我们要选择一个作为：<strong>主码（Primary Key）/主键</strong></p>
+<p>另一个概念：<strong>外码（Foreign）/外键:</strong>关系R中的一个属性组，他不是R的候选码，，但它与另一个关系S的候选码相对应，我们就成此为外码（Foreign）/外键。</p>
+<p><em>外码</em> 是连接两个或者多个关系的纽带。</p>
+<p>###关系模型中的完整性</p>
+<ul>
+<li>实体完整性： 1.关系的主码中的属性值不能为空。2.空值：不知道或者不存在没有意义的值。关系模型中用‘？’来标识空值。一般性用默认值作为空值。 </li>
+<li>参照完整性：外码要保证两个表之间连接的正确性。不能出现非相关值。</li>
+<li>用户自定义完整性：在很多的环境中，用户针对具体的环境定义完整性约束。</li>
+</ul>
+<p>##关系模型之关系代数<br>关系代数的特点：</p>
+<p>基于集合，提供了一些列的关系代数操作：并，差，笛卡尔积，选择，投影和更名的基本操作。这是一个抽象语言，是学习其他语言的基础。</p>
+<p>###一般操作</p>
+<ul>
+<li><strong>并（Union）</strong>就是离散数学中的集合论部分相同的概念。例如A={1,2,3}，B={2,3,4}，A∪B={1,2,3,4}</li>
+<li><strong>差（Difference）</strong> 同理。R-S就是t∈R,但t∉S。例如A={1,2,3}，B={2,3,4}，A-B={1}，再例如R为计算机院的学生，S为大一的学生。R-S为计算机学院不是大一的学生。S-R为大一并不是计算机学院的学生。</li>
+<li><strong>广义笛卡尔积</strong> 就是叉乘的结果。例如A中有m个关系，B中有n个关系。AxB的结果就是m*n的所有可能的组合。</li>
+<li><strong>选择（Select）</strong> 给定一个关系R，同事给定一个选择的条件condition选择运算的结果也就是一个关系。</li>
+<li><strong>投影操作（Project）</strong> 给分ing一个关系R，投影运算的结果也是一个关系。他从已知的关系中选出属性包含需要的A中的列构成。这个是对列的操作，而选择关系是对于行的操作。<br>###扩展操作</li>
+<li><strong>交（Intersection）</strong>与离散数学标书一样，就是R∩S={t|t∈R^t∈S}，并且可以用差运算表示：R∩S=R-(R-S)=S-(S-R)；例如A={1,2,3}，B={2,3,4}，A∩B={2,3}</li>
+<li><strong>连接（θ-join）</strong> 如同乘积操作，但是不同点在于按照给定的条件筛选出相应的元组。其实DBMS可以直接进行连接操作，不需要我们这样的中间步骤。</li>
+<li><strong>等值连接（Equi-join)</strong> 就是连接的变种，当值相同时候做连接。<strong><em>经常使用</em></strong></li>
+<li><strong>自然连接（Natural-join）</strong> 一种特殊的等值连接，属性名相同属性名相等时候作连接，并且去掉一组相同的属性。就是最自然的两个表的连接。保证一列或者多列相同就好。<strong><em>使用最普遍</em></strong></li>
+</ul>
+<p><strong>接下来就是做一些题目强化一下</strong></p>
+<p>###复杂扩展操作</p>
+<ul>
+<li><strong>除（Division）</strong> R÷S结果为R中的存在S的属性且元素去掉。</li>
+<li><strong>外连接（Outer-join）</strong> 作为失配操作的相对做法。对于没有相匹配元组，与空元组匹配保存。写作：外连接=自然连接+失配的元组。且外连接可分为左外连接，右外连接，全外连接。</li>
+</ul>
+<hr>
+<p>##SQL的讲解<br>SQL讲解给予MySQL应用。</p>
+<pre><code>1.什么是SQL？
+    Structured Query Language：结构化查询语言
+    其实就是定义了操作所有关系型数据库的规则。每一种数据库操作的方式存在不一样的地方，称为“方言”。
+
+2.SQL通用语法
+    1. SQL 语句可以单行或多行书写，以分号结尾。
+    2. 可使用空格和缩进来增强语句的可读性。
+    3. MySQL 数据库的 SQL 语句不区分大小写，关键字建议使用大写。
+    4. 3 种注释
+        * 单行注释: -- 注释内容 或 # 注释内容(mysql 特有) 
+        * 多行注释: /* 注释 */
+    * * MySQL登录
+        1. mysql -uroot -p密码
+        2. mysql -hip -uroot -p连接目标的密码
+        3. mysql --host=ip --user=root --password=连接目标的密码
+    * MySQL退出
+        1. exit
+        2. quit
+3. SQL分类
+    1) DDL(Data Definition Language)数据定义语言
+        用来定义数据库对象：数据库，表，列等。关键字：create, drop,alter 等
+    2) DML(Data Manipulation Language)数据操作语言
+        用来对数据库中表的数据进行增删改。关键字：insert, delete, update 等
+    3) DQL(Data Query Language)数据查询语言
+        用来查询数据库中表的记录(数据)。关键字：select, where 等
+    4) DCL(Data Control Language)数据控制语言(了解)
+        用来定义数据库的访问权限和安全级别，及创建用户。关键字：GRANT， REVOKE 等</code></pre><p>###DDL：操作数据库表<br>    1.操作数据库：CRUD<br>        1. C(Create):创建<br>            * 创建数据库：<br>                * create database 数据库名称;<br>            * 创建数据库，判断不存在，再创建：<br>                * create database if not exists 数据库名称;<br>            * 创建数据库，并指定字符集<br>                * create database 数据库名称 character set 字符集名;</p>
+<pre><code>        * 练习： 创建db4数据库，判断是否存在，并制定字符集为gbk
+            * create database if not exists db4 character set gbk;
+    2. R(Retrieve)：查询
+        * 查询所有数据库的名称:
+            * show databases;
+        * 查询某个数据库的字符集:查询某个数据库的创建语句
+            * show create database 数据库名称;
+    3. U(Update):修改
+        * 修改数据库的字符集
+            * alter database 数据库名称 character set 字符集名称;
+    4. D(Delete):删除
+        * 删除数据库
+            * drop database 数据库名称;
+        * 判断数据库存在，存在再删除
+            * drop database if exists 数据库名称;
+    5. 使用数据库
+        * 查询当前正在使用的数据库名称
+            * select database();
+        * 使用数据库
+            * use 数据库名称;
+
+
+2. 操作表
+    1. C(Create):创建
+        1. 语法：
+            create table 表名(
+                列名1 数据类型1,
+                列名2 数据类型2,
+                ....
+                列名n 数据类型n
+            );
+            * 注意：最后一列，不需要加逗号（,）
+            * 数据库类型：
+                1. int：整数类型
+                    * age int,
+                2. double:小数类型
+                    * score double(5,2)
+                3. date:日期，只包含年月日，yyyy-MM-dd
+                4. datetime:日期，包含年月日时分秒     yyyy-MM-dd HH:mm:ss
+                5. timestamp:时间错类型    包含年月日时分秒     yyyy-MM-dd HH:mm:ss    
+                    * 如果将来不给这个字段赋值，或赋值为null，则默认使用当前的系统时间，来自动赋值
+
+                6. varchar：字符串
+                    * name varchar(20):姓名最大20个字符
+                    * zhangsan 8个字符  张三 2个字符
+
+
+        * 创建表
+            create table student(
+                id int,
+                name varchar(32),
+                age int ,
+                score double(4,1),
+                birthday date,
+                insert_time timestamp
+            );
+        * 复制表：
+            * create table 表名 like 被复制的表名;          
+    2. R(Retrieve)：查询
+        * 查询某个数据库中所有的表名称
+            * show tables;
+        * 查询表结构
+            * desc 表名;
+    3. U(Update):修改
+        1. 修改表名
+            alter table 表名 rename to 新的表名;
+        2. 修改表的字符集
+            alter table 表名 character set 字符集名称;
+        3. 添加一列
+            alter table 表名 add 列名 数据类型;
+        4. 修改列名称 类型
+            alter table 表名 change 列名 新列别 新数据类型;
+            alter table 表名 modify 列名 新数据类型;
+        5. 删除列
+            alter table 表名 drop 列名;
+    4. D(Delete):删除
+        * drop table 表名;
+        * drop table  if exists 表名 ;</code></pre><h2 id="DML：增删改表中数据"><a href="#DML：增删改表中数据" class="headerlink" title="DML：增删改表中数据"></a>DML：增删改表中数据</h2><pre><code>1. 添加数据：
+    * 语法：
+        * insert into 表名(列名1,列名2,...列名n) values(值1,值2,...值n);
+    * 注意：
+        1. 列名和值要一一对应。
+        2. 如果表名后，不定义列名，则默认给所有列添加值
+            insert into 表名 values(值1,值2,...值n);
+        3. 除了数字类型，其他类型需要使用引号(单双都可以)引起来
+2. 删除数据：
+    * 语法：
+        * delete from 表名 [where 条件]
+    * 注意：
+        1. 如果不加条件，则删除表中所有记录。
+        2. 如果要删除所有记录
+            1. delete from 表名; -- 不推荐使用。有多少条记录就会执行多少次删除操作
+            2. TRUNCATE TABLE 表名; -- 推荐使用，效率更高 先删除表，然后再创建一张一样的表。
+3. 修改数据：
+    * 语法：
+        * update 表名 set 列名1 = 值1, 列名2 = 值2,... [where 条件];
+
+    * 注意：
+        1. 如果不加任何条件，则会将表中所有记录全部修改。</code></pre><h2 id="DQL：查询表中的记录"><a href="#DQL：查询表中的记录" class="headerlink" title="DQL：查询表中的记录"></a>DQL：查询表中的记录</h2><pre><code>* select * from 表名;
+
+1. 语法：
+    select
+        字段列表
+    from
+        表名列表
+    where
+        条件列表
+    group by
+        分组字段
+    having
+        分组之后的条件
+    order by
+        排序
+    limit
+        分页限定
+
+
+2. 基础查询
+    1. 多个字段的查询
+        select 字段名1，字段名2... from 表名；
+        * 注意：
+            * 如果查询所有字段，则可以使用*来替代字段列表。
+    2. 去除重复：
+        * distinct
+    3. 计算列
+        * 一般可以使用四则运算计算一些列的值。（一般只会进行数值型的计算）
+        * ifnull(表达式1,表达式2)：null参与的运算，计算结果都为null
+            * 表达式1：哪个字段需要判断是否为null
+            * 如果该字段为null后的替换值。
+    4. 起别名：
+        * as：as也可以省略
+
+
+3. 条件查询
+    1. where子句后跟条件
+    2. 运算符
+        * &gt; 、&lt; 、&lt;= 、&gt;= 、= 、&lt;&gt;
+        * BETWEEN...AND  
+        * IN( 集合) 
+        * LIKE：模糊查询
+            * 占位符：
+                * _:单个任意字符
+                * %：多个任意字符
+        * IS NULL  
+        * and  或 &amp;&amp;
+        * or  或 || 
+        * not  或 !
+
+            -- 查询年龄大于20岁
+
+            SELECT * FROM student WHERE age &gt; 20;
+
+            SELECT * FROM student WHERE age &gt;= 20;
+
+            -- 查询年龄等于20岁
+            SELECT * FROM student WHERE age = 20;
+
+            -- 查询年龄不等于20岁
+            SELECT * FROM student WHERE age != 20;
+            SELECT * FROM student WHERE age &lt;&gt; 20;
+
+            -- 查询年龄大于等于20 小于等于30
+
+            SELECT * FROM student WHERE age &gt;= 20 &amp;&amp;  age &lt;=30;
+            SELECT * FROM student WHERE age &gt;= 20 AND  age &lt;=30;
+            SELECT * FROM student WHERE age BETWEEN 20 AND 30;
+
+            -- 查询年龄22岁，18岁，25岁的信息
+            SELECT * FROM student WHERE age = 22 OR age = 18 OR age = 25
+            SELECT * FROM student WHERE age IN (22,18,25);
+
+            -- 查询英语成绩为null
+            SELECT * FROM student WHERE english = NULL; -- 不对的。null值不能使用 = （!=） 判断
+
+            SELECT * FROM student WHERE english IS NULL;
+
+            -- 查询英语成绩不为null
+            SELECT * FROM student WHERE english  IS NOT NULL;
+
+
+
+            -- 查询姓马的有哪些？ like
+            SELECT * FROM student WHERE NAME LIKE &apos;马%&apos;;
+            -- 查询姓名第二个字是化的人
+
+            SELECT * FROM student WHERE NAME LIKE &quot;_化%&quot;;
+
+            -- 查询姓名是3个字的人
+            SELECT * FROM student WHERE NAME LIKE &apos;___&apos;;
+
+
+            -- 查询姓名中包含德的人
+            SELECT * FROM student WHERE NAME LIKE &apos;%德%&apos;;</code></pre><h1 id="DQL-查询语句"><a href="#DQL-查询语句" class="headerlink" title="DQL:查询语句"></a>DQL:查询语句</h1><pre><code>1. 排序查询
+    * 语法：order by 子句
+        * order by 排序字段1 排序方式1 ，  排序字段2 排序方式2...
+
+    * 排序方式：
+        * ASC：升序，默认的。
+        * DESC：降序。
+
+    * 注意：
+        * 如果有多个排序条件，则当前边的条件值一样时，才会判断第二条件。
+
+
+2. 聚合函数：将一列数据作为一个整体，进行纵向的计算。
+    1. count：计算个数
+        1. 一般选择非空的列：主键
+        2. count(*)
+    2. max：计算最大值
+    3. min：计算最小值
+    4. sum：计算和
+    5. avg：计算平均值
+
+
+    * 注意：聚合函数的计算，排除null值。
+        解决方案：
+            1. 选择不包含非空的列进行计算
+            2. IFNULL函数
+
+3. 分组查询:
+    1. 语法：group by 分组字段；
+    2. 注意：
+        1. 分组之后查询的字段：分组字段、聚合函数
+        2. where 和 having 的区别？
+            1. where 在分组之前进行限定，如果不满足条件，则不参与分组。having在分组之后进行限定，如果不满足结果，则不会被查询出来
+            2. where 后不可以跟聚合函数，having可以进行聚合函数的判断。
+
+        -- 按照性别分组。分别查询男、女同学的平均分
+
+        SELECT sex , AVG(math) FROM student GROUP BY sex;
+
+        -- 按照性别分组。分别查询男、女同学的平均分,人数
+
+        SELECT sex , AVG(math),COUNT(id) FROM student GROUP BY sex;
+
+        --  按照性别分组。分别查询男、女同学的平均分,人数 要求：分数低于70分的人，不参与分组
+        SELECT sex , AVG(math),COUNT(id) FROM student WHERE math &gt; 70 GROUP BY sex;
+
+        --  按照性别分组。分别查询男、女同学的平均分,人数 要求：分数低于70分的人，不参与分组,分组之后。人数要大于2个人
+        SELECT sex , AVG(math),COUNT(id) FROM student WHERE math &gt; 70 GROUP BY sex HAVING COUNT(id) &gt; 2;
+
+        SELECT sex , AVG(math),COUNT(id) 人数 FROM student WHERE math &gt; 70 GROUP BY sex HAVING 人数 &gt; 2;
+
+
+
+4. 分页查询
+    1. 语法：limit 开始的索引,每页查询的条数;
+    2. 公式：开始的索引 = （当前的页码 - 1） * 每页显示的条数
+        -- 每页显示3条记录 
+
+        SELECT * FROM student LIMIT 0,3; -- 第1页
+
+        SELECT * FROM student LIMIT 3,3; -- 第2页
+
+        SELECT * FROM student LIMIT 6,3; -- 第3页
+
+    3. limit 是一个MySQL&quot;方言&quot;</code></pre><h2 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h2><pre><code>* 概念： 对表中的数据进行限定，保证数据的正确性、有效性和完整性。    
+* 分类：
+    1. 主键约束：primary key
+    2. 非空约束：not null
+    3. 唯一约束：unique
+    4. 外键约束：foreign key
+
+* 非空约束：not null，值不能为null
+    1. 创建表时添加约束
+        CREATE TABLE stu(
+            id INT,
+            NAME VARCHAR(20) NOT NULL -- name为非空
+        );
+    2. 创建表完后，添加非空约束
+        ALTER TABLE stu MODIFY NAME VARCHAR(20) NOT NULL;
+
+    3. 删除name的非空约束
+        ALTER TABLE stu MODIFY NAME VARCHAR(20);
+
+
+* 唯一约束：unique，值不能重复
+    1. 创建表时，添加唯一约束
+        CREATE TABLE stu(
+            id INT,
+            phone_number VARCHAR(20) UNIQUE -- 添加了唯一约束
+
+        );
+        * 注意mysql中，唯一约束限定的列的值可以有多个null
+
+
+    2. 删除唯一约束
+
+        ALTER TABLE stu DROP INDEX phone_number;
+
+    3. 在创建表后，添加唯一约束
+        ALTER TABLE stu MODIFY phone_number VARCHAR(20) UNIQUE;
+
+* 主键约束：primary key。
+    1. 注意：
+        1. 含义：非空且唯一
+        2. 一张表只能有一个字段为主键
+        3. 主键就是表中记录的唯一标识
+
+    2. 在创建表时，添加主键约束
+        create table stu(
+            id int primary key,-- 给id添加主键约束
+            name varchar(20)
+        );
+
+    3. 删除主键
+        -- 错误 alter table stu modify id int ;
+        ALTER TABLE stu DROP PRIMARY KEY;
+
+    4. 创建完表后，添加主键
+        ALTER TABLE stu MODIFY id INT PRIMARY KEY;
+
+    5. 自动增长：
+        1.  概念：如果某一列是数值类型的，使用 auto_increment 可以来完成值得自动增长
+
+        2. 在创建表时，添加主键约束，并且完成主键自增长
+        create table stu(
+            id int primary key auto_increment,-- 给id添加主键约束
+            name varchar(20)
+        );
+
+
+        3. 删除自动增长
+        ALTER TABLE stu MODIFY id INT;
+        4. 添加自动增长
+        ALTER TABLE stu MODIFY id INT AUTO_INCREMENT;
+
+
+* 外键约束：foreign key,让表于表产生关系，从而保证数据的正确性。
+    1. 在创建表时，可以添加外键
+        * 语法：
+            create table 表名(
+                ....
+                外键列
+                constraint 外键名称 foreign key (外键列名称) references 主表名称(主表列名称)
+            );
+
+    2. 删除外键
+        ALTER TABLE 表名 DROP FOREIGN KEY 外键名称;
+
+    3. 创建表之后，添加外键
+        ALTER TABLE 表名 ADD CONSTRAINT 外键名称 FOREIGN KEY (外键字段名称) REFERENCES 主表名称(主表列名称);
+
+
+    4. 级联操作
+        1. 添加级联操作
+            语法：ALTER TABLE 表名 ADD CONSTRAINT 外键名称 
+                    FOREIGN KEY (外键字段名称) REFERENCES 主表名称(主表列名称) ON UPDATE CASCADE ON DELETE CASCADE  ;
+        2. 分类：
+            1. 级联更新：ON UPDATE CASCADE 
+            2. 级联删除：ON DELETE CASCADE </code></pre><h2 id="数据库的设计"><a href="#数据库的设计" class="headerlink" title="数据库的设计"></a>数据库的设计</h2><pre><code>1. 多表之间的关系
+    1. 分类：
+        1. 一对一(了解)：
+            * 如：人和身份证
+            * 分析：一个人只有一个身份证，一个身份证只能对应一个人
+        2. 一对多(多对一)：
+            * 如：部门和员工
+            * 分析：一个部门有多个员工，一个员工只能对应一个部门
+        3. 多对多：
+            * 如：学生和课程
+            * 分析：一个学生可以选择很多门课程，一个课程也可以被很多学生选择
+    2. 实现关系：
+        1. 一对多(多对一)：
+            * 如：部门和员工
+            * 实现方式：在多的一方建立外键，指向一的一方的主键。
+        2. 多对多：
+            * 如：学生和课程
+            * 实现方式：多对多关系实现需要借助第三张中间表。中间表至少包含两个字段，这两个字段作为第三张表的外键，分别指向两张表的主键
+        3. 一对一(了解)：
+            * 如：人和身份证
+            * 实现方式：一对一关系实现，可以在任意一方添加唯一外键指向另一方的主键。
+
+    3. 案例
+        -- 创建旅游线路分类表 tab_category
+        -- cid 旅游线路分类主键，自动增长
+        -- cname 旅游线路分类名称非空，唯一，字符串 100
+        CREATE TABLE tab_category (
+            cid INT PRIMARY KEY AUTO_INCREMENT,
+            cname VARCHAR(100) NOT NULL UNIQUE
+        );
+
+        -- 创建旅游线路表 tab_route
+        /*
+        rid 旅游线路主键，自动增长
+        rname 旅游线路名称非空，唯一，字符串 100
+        price 价格
+        rdate 上架时间，日期类型
+        cid 外键，所属分类
+        */
+        CREATE TABLE tab_route(
+            rid INT PRIMARY KEY AUTO_INCREMENT,
+            rname VARCHAR(100) NOT NULL UNIQUE,
+            price DOUBLE,
+            rdate DATE,
+            cid INT,
+            FOREIGN KEY (cid) REFERENCES tab_category(cid)
+        );
+
+        /*创建用户表 tab_user
+        uid 用户主键，自增长
+        username 用户名长度 100，唯一，非空
+        password 密码长度 30，非空
+        name 真实姓名长度 100
+        birthday 生日
+        sex 性别，定长字符串 1
+        telephone 手机号，字符串 11
+        email 邮箱，字符串长度 100
+        */
+        CREATE TABLE tab_user (
+            uid INT PRIMARY KEY AUTO_INCREMENT,
+            username VARCHAR(100) UNIQUE NOT NULL,
+            PASSWORD VARCHAR(30) NOT NULL,
+            NAME VARCHAR(100),
+            birthday DATE,
+            sex CHAR(1) DEFAULT &apos;男&apos;,
+            telephone VARCHAR(11),
+            email VARCHAR(100)
+        );
+
+        /*
+        创建收藏表 tab_favorite
+        rid 旅游线路 id，外键
+        date 收藏时间
+        uid 用户 id，外键
+        rid 和 uid 不能重复，设置复合主键，同一个用户不能收藏同一个线路两次
+        */
+        CREATE TABLE tab_favorite (
+            rid INT, -- 线路id
+            DATE DATETIME,
+            uid INT, -- 用户id
+            -- 创建复合主键
+            PRIMARY KEY(rid,uid), -- 联合主键
+            FOREIGN KEY (rid) REFERENCES tab_route(rid),
+            FOREIGN KEY(uid) REFERENCES tab_user(uid)
+        );
+
+
+2. 数据库设计的范式
+    * 概念：设计数据库时，需要遵循的一些规范。要遵循后边的范式要求，必须先遵循前边的所有范式要求
+
+        设计关系数据库时，遵从不同的规范要求，设计出合理的关系型数据库，这些不同的规范要求被称为不同的范式，各种范式呈递次规范，越高的范式数据库冗余越小。
+        目前关系数据库有六种范式：第一范式（1NF）、第二范式（2NF）、第三范式（3NF）、巴斯-科德范式（BCNF）、第四范式(4NF）和第五范式（5NF，又称完美范式）。
+
+    * 分类：
+        1. 第一范式（1NF）：每一列都是不可分割的原子数据项
+        2. 第二范式（2NF）：在1NF的基础上，非码属性必须完全依赖于码（在1NF基础上消除非主属性对主码的部分函数依赖）
+            * 几个概念：
+                1. 函数依赖：A--&gt;B,如果通过A属性(属性组)的值，可以确定唯一B属性的值。则称B依赖于A
+                    例如：学号--&gt;姓名。  （学号，课程名称） --&gt; 分数
+                2. 完全函数依赖：A--&gt;B， 如果A是一个属性组，则B属性值得确定需要依赖于A属性组中所有的属性值。
+                    例如：（学号，课程名称） --&gt; 分数
+                3. 部分函数依赖：A--&gt;B， 如果A是一个属性组，则B属性值得确定只需要依赖于A属性组中某一些值即可。
+                    例如：（学号，课程名称） -- &gt; 姓名
+                4. 传递函数依赖：A--&gt;B, B -- &gt;C . 如果通过A属性(属性组)的值，可以确定唯一B属性的值，在通过B属性（属性组）的值可以确定唯一C属性的值，则称 C 传递函数依赖于A
+                    例如：学号--&gt;系名，系名--&gt;系主任
+                5. 码：如果在一张表中，一个属性或属性组，被其他所有属性所完全依赖，则称这个属性(属性组)为该表的码
+                    例如：该表中码为：（学号，课程名称）
+                    * 主属性：码属性组中的所有属性
+                    * 非主属性：除过码属性组的属性
+
+        3. 第三范式（3NF）：在2NF基础上，任何非主属性不依赖于其它非主属性（在2NF基础上消除传递依赖）</code></pre><h2 id="多表查询："><a href="#多表查询：" class="headerlink" title="多表查询："></a>多表查询：</h2><pre><code>* 查询语法：
+    select
+        列名列表
+    from
+        表名列表
+    where....
+* 准备sql
+    # 创建部门表
+    CREATE TABLE dept(
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        NAME VARCHAR(20)
+    );
+    INSERT INTO dept (NAME) VALUES (&apos;开发部&apos;),(&apos;市场部&apos;),(&apos;财务部&apos;);
+    # 创建员工表
+    CREATE TABLE emp (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        NAME VARCHAR(10),
+        gender CHAR(1), -- 性别
+        salary DOUBLE, -- 工资
+        join_date DATE, -- 入职日期
+        dept_id INT,
+        FOREIGN KEY (dept_id) REFERENCES dept(id) -- 外键，关联部门表(部门表的主键)
+    );
+    INSERT INTO emp(NAME,gender,salary,join_date,dept_id) VALUES(&apos;孙悟空&apos;,&apos;男&apos;,7200,&apos;2013-02-24&apos;,1);
+    INSERT INTO emp(NAME,gender,salary,join_date,dept_id) VALUES(&apos;猪八戒&apos;,&apos;男&apos;,3600,&apos;2010-12-02&apos;,2);
+    INSERT INTO emp(NAME,gender,salary,join_date,dept_id) VALUES(&apos;唐僧&apos;,&apos;男&apos;,9000,&apos;2008-08-08&apos;,2);
+    INSERT INTO emp(NAME,gender,salary,join_date,dept_id) VALUES(&apos;白骨精&apos;,&apos;女&apos;,5000,&apos;2015-10-07&apos;,3);
+    INSERT INTO emp(NAME,gender,salary,join_date,dept_id) VALUES(&apos;蜘蛛精&apos;,&apos;女&apos;,4500,&apos;2011-03-14&apos;,1);
+* 笛卡尔积：
+    * 有两个集合A,B .取这两个集合的所有组成情况。
+    * 要完成多表查询，需要消除无用的数据
+* 多表查询的分类：
+    1. 内连接查询：
+        1. 隐式内连接：使用where条件消除无用数据
+            * 例子：
+            -- 查询所有员工信息和对应的部门信息
+
+            SELECT * FROM emp,dept WHERE emp.`dept_id` = dept.`id`;
+
+            -- 查询员工表的名称，性别。部门表的名称
+            SELECT emp.name,emp.gender,dept.name FROM emp,dept WHERE emp.`dept_id` = dept.`id`;
+
+            SELECT 
+                t1.name, -- 员工表的姓名
+                t1.gender,-- 员工表的性别
+                t2.name -- 部门表的名称
+            FROM
+                emp t1,
+                dept t2
+            WHERE 
+                t1.`dept_id` = t2.`id`;
+
+
+        2. 显式内连接：
+            * 语法： select 字段列表 from 表名1 [inner] join 表名2 on 条件
+            * 例如：
+                * SELECT * FROM emp INNER JOIN dept ON emp.`dept_id` = dept.`id`;    
+                * SELECT * FROM emp JOIN dept ON emp.`dept_id` = dept.`id`;    
+
+        3. 内连接查询：
+            1. 从哪些表中查询数据
+            2. 条件是什么
+            3. 查询哪些字段
+    2. 外链接查询：
+        1. 左外连接：
+            * 语法：select 字段列表 from 表1 left [outer] join 表2 on 条件；
+            * 查询的是左表所有数据以及其交集部分。
+            * 例子：
+                -- 查询所有员工信息，如果员工有部门，则查询部门名称，没有部门，则不显示部门名称
+                SELECT     t1.*,t2.`name` FROM emp t1 LEFT JOIN dept t2 ON t1.`dept_id` = t2.`id`;
+        2. 右外连接：
+            * 语法：select 字段列表 from 表1 right [outer] join 表2 on 条件；
+            * 查询的是右表所有数据以及其交集部分。
+            * 例子：
+                SELECT     * FROM dept t2 RIGHT JOIN emp t1 ON t1.`dept_id` = t2.`id`;
+    3. 子查询：
+        * 概念：查询中嵌套查询，称嵌套查询为子查询。
+            -- 查询工资最高的员工信息
+            -- 1 查询最高的工资是多少 9000
+            SELECT MAX(salary) FROM emp;
+
+            -- 2 查询员工信息，并且工资等于9000的
+            SELECT * FROM emp WHERE emp.`salary` = 9000;
+
+            -- 一条sql就完成这个操作。子查询
+            SELECT * FROM emp WHERE emp.`salary` = (SELECT MAX(salary) FROM emp);
+
+        * 子查询不同情况
+            1. 子查询的结果是单行单列的：
+                * 子查询可以作为条件，使用运算符去判断。 运算符： &gt; &gt;= &lt; &lt;= =
+                * 
+                -- 查询员工工资小于平均工资的人
+                SELECT * FROM emp WHERE emp.salary &lt; (SELECT AVG(salary) FROM emp);
+            2. 子查询的结果是多行单列的：
+                * 子查询可以作为条件，使用运算符in来判断
+                -- 查询&apos;财务部&apos;和&apos;市场部&apos;所有的员工信息
+                SELECT id FROM dept WHERE NAME = &apos;财务部&apos; OR NAME = &apos;市场部&apos;;
+                SELECT * FROM emp WHERE dept_id = 3 OR dept_id = 2;
+                -- 子查询
+                SELECT * FROM emp WHERE dept_id IN (SELECT id FROM dept WHERE NAME = &apos;财务部&apos; OR NAME = &apos;市场部&apos;);
+
+            3. 子查询的结果是多行多列的：
+                * 子查询可以作为一张虚拟表参与查询
+                -- 查询员工入职日期是2011-11-11日之后的员工信息和部门信息
+                -- 子查询
+                SELECT * FROM dept t1 ,(SELECT * FROM emp WHERE emp.`join_date` &gt; &apos;2011-11-11&apos;) t2
+                WHERE t1.id = t2.dept_id;
+
+                -- 普通内连接
+                SELECT * FROM emp t1,dept t2 WHERE t1.`dept_id` = t2.`id` AND t1.`join_date` &gt;  &apos;2011-11-11&apos;
+
+    * 多表查询练习
+
+            -- 部门表
+            CREATE TABLE dept (
+              id INT PRIMARY KEY PRIMARY KEY, -- 部门id
+              dname VARCHAR(50), -- 部门名称
+              loc VARCHAR(50) -- 部门所在地
+            );
+
+            -- 添加4个部门
+            INSERT INTO dept(id,dname,loc) VALUES 
+            (10,&apos;教研部&apos;,&apos;北京&apos;),
+            (20,&apos;学工部&apos;,&apos;上海&apos;),
+            (30,&apos;销售部&apos;,&apos;广州&apos;),
+            (40,&apos;财务部&apos;,&apos;深圳&apos;);
+
+
+
+            -- 职务表，职务名称，职务描述
+            CREATE TABLE job (
+              id INT PRIMARY KEY,
+              jname VARCHAR(20),
+              description VARCHAR(50)
+            );
+
+            -- 添加4个职务
+            INSERT INTO job (id, jname, description) VALUES
+            (1, &apos;董事长&apos;, &apos;管理整个公司，接单&apos;),
+            (2, &apos;经理&apos;, &apos;管理部门员工&apos;),
+            (3, &apos;销售员&apos;, &apos;向客人推销产品&apos;),
+            (4, &apos;文员&apos;, &apos;使用办公软件&apos;);
+
+
+
+            -- 员工表
+            CREATE TABLE emp (
+              id INT PRIMARY KEY, -- 员工id
+              ename VARCHAR(50), -- 员工姓名
+              job_id INT, -- 职务id
+              mgr INT , -- 上级领导
+              joindate DATE, -- 入职日期
+              salary DECIMAL(7,2), -- 工资
+              bonus DECIMAL(7,2), -- 奖金
+              dept_id INT, -- 所在部门编号
+              CONSTRAINT emp_jobid_ref_job_id_fk FOREIGN KEY (job_id) REFERENCES job (id),
+              CONSTRAINT emp_deptid_ref_dept_id_fk FOREIGN KEY (dept_id) REFERENCES dept (id)
+            );
+
+            -- 添加员工
+            INSERT INTO emp(id,ename,job_id,mgr,joindate,salary,bonus,dept_id) VALUES 
+            (1001,&apos;孙悟空&apos;,4,1004,&apos;2000-12-17&apos;,&apos;8000.00&apos;,NULL,20),
+            (1002,&apos;卢俊义&apos;,3,1006,&apos;2001-02-20&apos;,&apos;16000.00&apos;,&apos;3000.00&apos;,30),
+            (1003,&apos;林冲&apos;,3,1006,&apos;2001-02-22&apos;,&apos;12500.00&apos;,&apos;5000.00&apos;,30),
+            (1004,&apos;唐僧&apos;,2,1009,&apos;2001-04-02&apos;,&apos;29750.00&apos;,NULL,20),
+            (1005,&apos;李逵&apos;,4,1006,&apos;2001-09-28&apos;,&apos;12500.00&apos;,&apos;14000.00&apos;,30),
+            (1006,&apos;宋江&apos;,2,1009,&apos;2001-05-01&apos;,&apos;28500.00&apos;,NULL,30),
+            (1007,&apos;刘备&apos;,2,1009,&apos;2001-09-01&apos;,&apos;24500.00&apos;,NULL,10),
+            (1008,&apos;猪八戒&apos;,4,1004,&apos;2007-04-19&apos;,&apos;30000.00&apos;,NULL,20),
+            (1009,&apos;罗贯中&apos;,1,NULL,&apos;2001-11-17&apos;,&apos;50000.00&apos;,NULL,10),
+            (1010,&apos;吴用&apos;,3,1006,&apos;2001-09-08&apos;,&apos;15000.00&apos;,&apos;0.00&apos;,30),
+            (1011,&apos;沙僧&apos;,4,1004,&apos;2007-05-23&apos;,&apos;11000.00&apos;,NULL,20),
+            (1012,&apos;李逵&apos;,4,1006,&apos;2001-12-03&apos;,&apos;9500.00&apos;,NULL,30),
+            (1013,&apos;小白龙&apos;,4,1004,&apos;2001-12-03&apos;,&apos;30000.00&apos;,NULL,20),
+            (1014,&apos;关羽&apos;,4,1007,&apos;2002-01-23&apos;,&apos;13000.00&apos;,NULL,10);
+
+
+
+            -- 工资等级表
+            CREATE TABLE salarygrade (
+              grade INT PRIMARY KEY,   -- 级别
+              losalary INT,  -- 最低工资
+              hisalary INT -- 最高工资
+            );
+
+            -- 添加5个工资等级
+            INSERT INTO salarygrade(grade,losalary,hisalary) VALUES 
+            (1,7000,12000),
+            (2,12010,14000),
+            (3,14010,20000),
+            (4,20010,30000),
+            (5,30010,99990);
+
+            -- 需求：
+
+            -- 1.查询所有员工信息。查询员工编号，员工姓名，工资，职务名称，职务描述
+            /*
+                分析：
+                    1.员工编号，员工姓名，工资，需要查询emp表  职务名称，职务描述 需要查询job表
+                    2.查询条件 emp.job_id = job.id
+
+            */
+            SELECT 
+                t1.`id`, -- 员工编号
+                t1.`ename`, -- 员工姓名
+                t1.`salary`,-- 工资
+                t2.`jname`, -- 职务名称
+                t2.`description` -- 职务描述
+            FROM 
+                emp t1, job t2
+            WHERE 
+                t1.`job_id` = t2.`id`;
+
+
+
+            -- 2.查询员工编号，员工姓名，工资，职务名称，职务描述，部门名称，部门位置
+            /*
+                分析：
+                    1. 员工编号，员工姓名，工资 emp  职务名称，职务描述 job  部门名称，部门位置 dept
+                    2. 条件： emp.job_id = job.id and emp.dept_id = dept.id
+            */
+
+            SELECT 
+                t1.`id`, -- 员工编号
+                t1.`ename`, -- 员工姓名
+                t1.`salary`,-- 工资
+                t2.`jname`, -- 职务名称
+                t2.`description`, -- 职务描述
+                t3.`dname`, -- 部门名称
+                t3.`loc` -- 部门位置
+            FROM 
+                emp t1, job t2,dept t3
+            WHERE 
+                t1.`job_id` = t2.`id` AND t1.`dept_id` = t3.`id`;
+
+            -- 3.查询员工姓名，工资，工资等级
+            /*
+                分析：
+                    1.员工姓名，工资 emp  工资等级 salarygrade
+                    2.条件 emp.salary &gt;= salarygrade.losalary and emp.salary &lt;= salarygrade.hisalary
+                        emp.salary BETWEEN salarygrade.losalary and salarygrade.hisalary
+            */
+            SELECT 
+                t1.ename ,
+                t1.`salary`,
+                t2.*
+            FROM emp t1, salarygrade t2
+            WHERE t1.`salary` BETWEEN t2.`losalary` AND t2.`hisalary`;
+
+
+
+            -- 4.查询员工姓名，工资，职务名称，职务描述，部门名称，部门位置，工资等级
+            /*
+                分析：
+                    1. 员工姓名，工资 emp ， 职务名称，职务描述 job 部门名称，部门位置，dept  工资等级 salarygrade
+                    2. 条件： emp.job_id = job.id and emp.dept_id = dept.id and emp.salary BETWEEN salarygrade.losalary and salarygrade.hisalary
+
+            */
+            SELECT 
+                t1.`ename`,
+                t1.`salary`,
+                t2.`jname`,
+                t2.`description`,
+                t3.`dname`,
+                t3.`loc`,
+                t4.`grade`
+            FROM 
+                emp t1,job t2,dept t3,salarygrade t4
+            WHERE 
+                t1.`job_id` = t2.`id` 
+                AND t1.`dept_id` = t3.`id`
+                AND t1.`salary` BETWEEN t4.`losalary` AND t4.`hisalary`;
+
+
+
+            -- 5.查询出部门编号、部门名称、部门位置、部门人数
+
+            /*
+                分析：
+                    1.部门编号、部门名称、部门位置 dept 表。 部门人数 emp表
+                    2.使用分组查询。按照emp.dept_id完成分组，查询count(id)
+                    3.使用子查询将第2步的查询结果和dept表进行关联查询
+
+            */
+            SELECT 
+                t1.`id`,t1.`dname`,t1.`loc` , t2.total
+            FROM 
+                dept t1,
+                (SELECT
+                    dept_id,COUNT(id) total
+                FROM 
+                    emp
+                GROUP BY dept_id) t2
+            WHERE t1.`id` = t2.dept_id;
+
+
+            -- 6.查询所有员工的姓名及其直接上级的姓名,没有领导的员工也需要查询
+
+            /*
+                分析：
+                    1.姓名 emp， 直接上级的姓名 emp
+                        * emp表的id 和 mgr 是自关联
+                    2.条件 emp.id = emp.mgr
+                    3.查询左表的所有数据，和 交集数据
+                        * 使用左外连接查询
+
+            */
+            /*
+            select
+                t1.ename,
+                t1.mgr,
+                t2.`id`,
+                t2.ename
+            from emp t1, emp t2
+            where t1.mgr = t2.`id`;
+
+            */
+
+            SELECT 
+                t1.ename,
+                t1.mgr,
+                t2.`id`,
+                t2.`ename`
+            FROM emp t1
+            LEFT JOIN emp t2
+            ON t1.`mgr` = t2.`id`;</code></pre><h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><pre><code>1. 事务的基本介绍
+    1. 概念：
+        *  如果一个包含多个步骤的业务操作，被事务管理，那么这些操作要么同时成功，要么同时失败。
+
+    2. 操作：
+        1. 开启事务： start transaction;
+        2. 回滚：rollback;
+        3. 提交：commit;
+    3. 例子：
+        CREATE TABLE account (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            NAME VARCHAR(10),
+            balance DOUBLE
+        );
+        -- 添加数据
+        INSERT INTO account (NAME, balance) VALUES (&apos;zhangsan&apos;, 1000), (&apos;lisi&apos;, 1000);
+
+
+        SELECT * FROM account;
+        UPDATE account SET balance = 1000;
+        -- 张三给李四转账 500 元
+
+        -- 0. 开启事务
+        START TRANSACTION;
+        -- 1. 张三账户 -500
+
+        UPDATE account SET balance = balance - 500 WHERE NAME = &apos;zhangsan&apos;;
+        -- 2. 李四账户 +500
+        -- 出错了...
+        UPDATE account SET balance = balance + 500 WHERE NAME = &apos;lisi&apos;;
+
+        -- 发现执行没有问题，提交事务
+        COMMIT;
+
+        -- 发现出问题了，回滚事务
+        ROLLBACK;
+    4. MySQL数据库中事务默认自动提交
+
+        * 事务提交的两种方式：
+            * 自动提交：
+                * mysql就是自动提交的
+                * 一条DML(增删改)语句会自动提交一次事务。
+            * 手动提交：
+                * Oracle 数据库默认是手动提交事务
+                * 需要先开启事务，再提交
+        * 修改事务的默认提交方式：
+            * 查看事务的默认提交方式：SELECT @@autocommit; -- 1 代表自动提交  0 代表手动提交
+            * 修改默认提交方式： set @@autocommit = 0;
+
+
+2. 事务的四大特征：
+    1. 原子性：是不可分割的最小操作单位，要么同时成功，要么同时失败。
+    2. 持久性：当事务提交或回滚后，数据库会持久化的保存数据。
+    3. 隔离性：多个事务之间。相互独立。
+    4. 一致性：事务操作前后，数据总量不变
+3. 事务的隔离级别（了解）
+    * 概念：多个事务之间隔离的，相互独立的。但是如果多个事务操作同一批数据，则会引发一些问题，设置不同的隔离级别就可以解决这些问题。
+    * 存在问题：
+        1. 脏读：一个事务，读取到另一个事务中没有提交的数据
+        2. 不可重复读(虚读)：在同一个事务中，两次读取到的数据不一样。
+        3. 幻读：一个事务操作(DML)数据表中所有记录，另一个事务添加了一条数据，则第一个事务查询不到自己的修改。
+    * 隔离级别：
+        1. read uncommitted：读未提交
+            * 产生的问题：脏读、不可重复读、幻读
+        2. read committed：读已提交 （Oracle）
+            * 产生的问题：不可重复读、幻读
+        3. repeatable read：可重复读 （MySQL默认）
+            * 产生的问题：幻读
+        4. serializable：串行化
+            * 可以解决所有的问题
+
+        * 注意：隔离级别从小到大安全性越来越高，但是效率越来越低
+        * 数据库查询隔离级别：
+            * select @@tx_isolation;
+        * 数据库设置隔离级别：
+            * set global transaction isolation level  级别字符串;
+
+    * 演示：
+        set global transaction isolation level read uncommitted;
+        start transaction;
+        -- 转账操作
+        update account set balance = balance - 500 where id = 1;
+        update account set balance = balance + 500 where id = 2;</code></pre><h2 id="DCL："><a href="#DCL：" class="headerlink" title="DCL："></a>DCL：</h2><pre><code>* SQL分类：
+    1. DDL：操作数据库和表
+    2. DML：增删改表中数据
+    3. DQL：查询表中数据
+    4. DCL：管理用户，授权
+
+* DBA：数据库管理员
+
+* DCL：管理用户，授权
+    1. 管理用户
+        1. 添加用户：
+            * 语法：CREATE USER &apos;用户名&apos;@&apos;主机名&apos; IDENTIFIED BY &apos;密码&apos;;
+        2. 删除用户：
+            * 语法：DROP USER &apos;用户名&apos;@&apos;主机名&apos;;
+        3. 修改用户密码：
+
+            UPDATE USER SET PASSWORD = PASSWORD(&apos;新密码&apos;) WHERE USER = &apos;用户名&apos;;
+            UPDATE USER SET PASSWORD = PASSWORD(&apos;abc&apos;) WHERE USER = &apos;lisi&apos;;
+
+            SET PASSWORD FOR &apos;用户名&apos;@&apos;主机名&apos; = PASSWORD(&apos;新密码&apos;);
+            SET PASSWORD FOR &apos;root&apos;@&apos;localhost&apos; = PASSWORD(&apos;123&apos;);
+
+            * mysql中忘记了root用户的密码？
+                1. cmd -- &gt; net stop mysql 停止mysql服务
+                    * 需要管理员运行该cmd
+
+                2. 使用无验证方式启动mysql服务： mysqld --skip-grant-tables
+                3. 打开新的cmd窗口,直接输入mysql命令，敲回车。就可以登录成功
+                4. use mysql;
+                5. update user set password = password(&apos;你的新密码&apos;) where user = &apos;root&apos;;
+                6. 关闭两个窗口
+                7. 打开任务管理器，手动结束mysqld.exe 的进程
+                8. 启动mysql服务
+                9. 使用新密码登录。
+        4. 查询用户：
+            -- 1. 切换到mysql数据库
+            USE myql;
+            -- 2. 查询user表
+            SELECT * FROM USER;
+
+            * 通配符： % 表示可以在任意主机使用用户登录数据库
+
+    2. 权限管理：
+        1. 查询权限：
+            -- 查询权限
+            SHOW GRANTS FOR &apos;用户名&apos;@&apos;主机名&apos;;
+            SHOW GRANTS FOR &apos;lisi&apos;@&apos;%&apos;;
+
+        2. 授予权限：
+            -- 授予权限
+            grant 权限列表 on 数据库名.表名 to &apos;用户名&apos;@&apos;主机名&apos;;
+            -- 给张三用户授予所有权限，在任意数据库任意表上
+
+            GRANT ALL ON *.* TO &apos;zhangsan&apos;@&apos;localhost&apos;;
+        3. 撤销权限：
+            -- 撤销权限：
+            revoke 权限列表 on 数据库名.表名 from &apos;用户名&apos;@&apos;主机名&apos;;
+            REVOKE UPDATE ON db3.`account` FROM &apos;lisi&apos;@&apos;%&apos;;</code></pre><hr>
+]]></content>
+      <categories>
+        <category>DataBase</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>DataBase</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2019/07/24/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<a id="more"></a>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+]]></content>
+  </entry>
+</search>
