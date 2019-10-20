@@ -1,10 +1,645 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>LeetCode_Simple_第四周</title>
-    <url>/2019/10/13/LeetCode-Simple-%E7%AC%AC%E5%9B%9B%E5%91%A8/</url>
+    <title>基于SSM的项目登录设计流程</title>
+    <url>/2019/10/20/%E5%9F%BA%E4%BA%8ESSM%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%99%BB%E5%BD%95%E8%AE%BE%E8%AE%A1%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[<p>这里主要实现的是基于SSM框架的一个用户信息的设定，包括了用户的登录和退出，以及登录状态的密码修改还有忘记密码的问题验证修改密码等功能。</p>
+<p>如果感兴趣可以点击内容查阅。</p>
+<a id="more"></a>
+<p>#登录页面底层设计</p>
+<p>###储备知识<br><strong>横向越权，纵向越权的安全漏洞</strong></p>
+<pre><code>横向越权：
+    攻击者尝试访问与他拥有相同权限的用户资源
+纵向越权：
+    低级别攻击者尝试访问高级别用户资源</code></pre><p><strong>高复用服务器响应对象的设计思想及抽象封装</strong></p>
+<p><strong>数据库表设计</strong></p>
+<p>其实表设计已经在之前的设计中说过了，这里再专门拿出来。我们这一个模块主要就是面向这个数据库的一些内容设计的。</p>
+<pre><code>DROP TABLE IF EXISTS `mmall_user`;
+CREATE TABLE `mmall_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT &apos;用户表id&apos;,
+  `username` varchar(50) NOT NULL COMMENT &apos;用户名&apos;,
+  `password` varchar(50) NOT NULL COMMENT &apos;用户密码，MD5加密&apos;,
+  `email` varchar(50) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `question` varchar(100) DEFAULT NULL COMMENT &apos;找回密码问题&apos;,
+  `answer` varchar(100) DEFAULT NULL COMMENT &apos;找回密码答案&apos;,
+  `role` int(4) NOT NULL COMMENT &apos;角色0-管理员,1-普通用户&apos;,
+  `create_time` datetime NOT NULL COMMENT &apos;创建时间&apos;,
+  `update_time` datetime NOT NULL COMMENT &apos;最后一次更新时间&apos;,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_name_unique` (`username`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;</code></pre><p><strong>接口设计</strong></p>
+<p>前台用户接口设计：</p>
+<pre><code>1.登录（post(代码需要post方式请求),开放get，方便调试）
+    我们只需要写用户名和密码，如果返回1，则说明密码错误。
+2.注册 
+    当我们没有登录权限的时候需要注册后登录，且返回0时，校验成功。如果返回1说明用户已经存在
+3.检查用户名是否有效
+    我们之前就说了，用户名要唯一，不能起重复姓名。所以我们的用户名也需要检验。返回0就证明脚丫成功，失败返回1.
+4.获取登录用户信息 
+    主要针对后台编写，成功不做返回值，失败返回1，表示无法获取用户信息。
+5.忘记密码
+    输入用户名然后选取选项找到相对于的问题设置的密码。
+6.提交问题答案
+    用户设置的找回密码提交校验操作，进行后台的校验，如果成功返回0，失败返回1，表示问题答案错误。
+7.忘记密码的重设密码
+    再提交问题答案后返回对应的i西南西，0表示修改密码成功，1表示密码失败或者token失效。（token表示校验时间，用户保护信息）
+8.登录中状态重置密码
+    在登录状态下，如果密码修改成功就返回0，反之返回1。表示旧密码输入错误
+9.登录状态更新个人信息
+    更新后，当返回0表示成功，1表示用户未登录。
+10.获取当前登录用户的详细信息，并强制登录
+    成功后后台获取全部用户信息，失败返回10，强制登录。
+11.推出登录
+    返回0表示退出成功，1表示服务器异常</code></pre><p>后台用户接口设计：</p>
+<pre><code>1.后台管理员登录
+    成功即可获取用户的全部信息，失败就向前端发送1，表示密码错误
+2.用户列表
+    获取用户的信息列表，包含密码问题等等。失败返回10表示为登录，或1表示没有权限</code></pre><p>有了以上的内容，我们现在可以设计登录的底层代码了。</p>
+<p>首先我们在commmon包中创建一个能够满足上面要求的java类：</p>
+<pre><code>//根据要传输的信息我们声明三个类型
+private int status;
+private String msg;
+private T data;</code></pre><p>然后再创建他们的私有和公有的构造函数，以供内部和外部调用:</p>
+<pre><code>private ServerResponse(int status){
+    this.status = status;
+}
+private ServerResponse(int status, T data){
+    this.status = status;
+    this.data = data;
+}
+private ServerResponse(int status, String msg, T data){
+    this.status = status;
+    this.msg = msg;
+    this.data = data;
+}
+private ServerResponse(int status, String msg){
+    this.status = status;
+    this.msg = msg;
+}
+
+//如果成功就显示在前端页面，增加注解后不会显示在json中
+@JsonIgnore
+public boolean isSuccess(){
+    return this.status == ResponseCode.SUCCESS.getCode();
+}
+public T getData(){
+    return data;
+}
+public String getMsg(){
+    return msg;
+}
+
+//正确情况下给前端传参
+public static &lt;T&gt; ServerResponse&lt;T&gt; createBySuccess(){
+    return new ServerResponse&lt;T&gt;(ResponseCode.SUCCESS.getCode());
+}
+public static &lt;T&gt; ServerResponse&lt;T&gt; createBySuccessMessage(String msg){
+    return new ServerResponse&lt;T&gt;(ResponseCode.SUCCESS.getCode(),msg);
+}
+public static &lt;T&gt; ServerResponse&lt;T&gt; createBySuccess(T data){
+    return new ServerResponse&lt;T&gt;(ResponseCode.SUCCESS.getCode(),data);
+}
+public static &lt;T&gt; ServerResponse&lt;T&gt; createBySuccess(String msg, T data){
+    return new ServerResponse&lt;T&gt;(ResponseCode.SUCCESS.getCode(),msg,data);
+}
+
+//失败情况下传输的信息
+public static &lt;T&gt; ServerResponse&lt;T&gt; createByError(){
+    return new ServerResponse&lt;T&gt;(ResponseCode.ERROR.getCode(),ResponseCode.ERROR.getDesc());
+}
+public static &lt;T&gt; ServerResponse&lt;T&gt; createByErrorMessage(String errorMessage){
+    return new ServerResponse&lt;T&gt;(ResponseCode.ERROR.getCode(),errorMessage);
+}
+public static &lt;T&gt; ServerResponse&lt;T&gt; createByErrorCodeMessage(int errorCode, String errorMessage){
+    return new ServerResponse&lt;T&gt;(errorCode,errorMessage);
+}</code></pre><p>以上呢是我们针对登录信息下的成功和失败的情况做出的调用。我们拿其中的一个ResponseCode.ERROR.getDesc()举例说明一下：其实这是我们又创建的一个专门保存数据的枚举类对象，主要用于保存成功状态和失败状态的数据以及需要注册啊错误信息等。这样再传输的时候就更加直观。他包含了传输码和描述信息。</p>
+<p>有了这些信息呢，我们就可以去设计实现了，我们呢在controller中写入相对于的实现。主要实现的就是从service-&gt;mybatis-&gt;dao的调用方式。就是我们从服务器获取信息再到mybatis实现后进入dao层在于数据对比操作。我们以控制层的登录为例：</p>
+<pre><code>这里呢我们传入用户名和密码以及session，如果用户名密码正确，就进入主页。
+
+/**
+ * 用户名登录
+ * @param username
+ * @param password
+ * @param session
+ * @return
+ */
+@RequestMapping(value = &quot;login.do&quot;,method = RequestMethod.POST)
+@ResponseBody
+public ServerResponse&lt;User&gt; login(String username, String password, HttpSession session){
+    //service -&gt; mybatis -&gt; dao
+    ServerResponse&lt;User&gt; response = iUserService.login(username,password);
+    if(response.isSuccess()){
+        session.setAttribute(Const.CURRENT_USER,response.getData());
+    }
+    return response;
+}</code></pre><p>其中User是pojo中自动生成的对应于数据库中的类文件。包含了数据库的相对数据。我们想要登录呢就需要传入用户名，密码以及对应的session，再通过调用服务层的login函数检验是否正确。既然讲到了service层，我们就讲一下它的接口和实现类。首先就是再接口中生成对应的功能，例如登录，再创建实现类：</p>
+<pre><code>检验的方法就是去数据库中查询对应的用户名然后根据用户名找到对应的密码，如果两个同时正确就返回登录成功。
+
+@Override
+public ServerResponse&lt;User&gt; login(String username, String password) {
+    //先校验用户名存在与否
+    int resultCount = userMapper.checkUserName(username);
+    if (resultCount == 0) {
+        return ServerResponse.createByErrorMessage(&quot;用户名不存在&quot;);
+    }
+    //密码登录MD5
+    String md5Password = MD5Util.MD5EncodeUtf8(password);
+    User user = userMapper.selectLogin(username, md5Password);
+    if (user == null) {
+        return ServerResponse.createByErrorMessage(&quot;密码错误&quot;);
+    }
+
+    user.setPassword(StringUtils.EMPTY);
+    return ServerResponse.createBySuccess(&quot;登录成功&quot;, user);
+}</code></pre><p>这个先不用管我妈妈的MD5的实现（其实就是引用一个工具）这里校验的方法就是去查询相对于的dao包中的数据检测函数。当然只有函数没有对应的sql查询也是不可能实现的，于是我们就要去创建（或者说系统自动创建好了相对于的sql语句）。由于安装了free mybatis plugin，所以只需要在实现了的前提下点即箭头即可。于是定位到了：</p>
+<pre><code>在Mapping中的sql实现，我们的id名为checkUserName，返回值为int类型，输入的类型是String。sql的内容不做额外的讲解。
+
+&lt;select id=&quot;checkUserName&quot; resultType=&quot;int&quot; parameterType=&quot;String&quot;&gt;
+select count(1) from mmall_user
+where username = #{username}
+&lt;/select&gt;</code></pre><p>然后我们再去判断相对于的输出结果，最后返回一个response值给前端显示。</p>
+<hr>
+<p>好了我们这样就完成了一个从数据库中获取数据再到分析数据并且传送到前端显示的简单实现。那么我们再用这个方法考虑应该如何写注册功能:</p>
+<p>我们要写的话而不是读，就应该先要创建一个注册和接口，然后去实现这个接口：</p>
+<pre><code>public ServerResponse&lt;String&gt; register (User user);</code></pre><p>然后再去实现这个功能：</p>
+<pre><code>这里呢我们主要实现注册，主要是我们先检测名字，因为名字id唯一。然后查询email是否重用，也是唯一，如果都行在输入密码即可。
+
+public ServerResponse&lt;String&gt; register (User user){
+    int resultCount = userMapper.checkUserName(user.getUsername());
+    if (resultCount &gt; 0){
+        return ServerResponse.createByErrorMessage(&quot;用户名已存在&quot;);
+    }
+    resultCount = userMapper.checkEmail(user.getEmail());
+    if (resultCount &gt; 0){
+        return ServerResponse.createByErrorMessage(&quot;email已存在&quot;);
+    }
+    user.setRole(Const.Role.ROLE_CUSTOMER);
+    //MD5加密
+    user.setPassword(MD5Util.MD5EncodeUtf8(user.getPassword()));
+    int resultCount = userMapper.insert(user);
+    if(resultCount == 0){
+        return ServerResponse.createByErrorMessage(&quot;注册失败&quot;);
+    }
+    return ServerResponse.createBySuccessMessage(&quot;注册成功&quot;);
+}</code></pre><p>这里呢哦我们做的步骤就是先去查找一下用户名是否存在，如果存在就“报错”，查找的方法就在mapper中写入了，我们先去看看有没有这个方法没有的话我们需要自己加入（显然dao只有增删改查，于是我们写入即可）：</p>
+<pre><code>所以我们这里需要两个sql查询名字和email。
+
+&lt;select id=&quot;checkUserName&quot; resultType=&quot;int&quot; parameterType=&quot;String&quot;&gt;
+select count(1) from mmall_user
+where username = #{username}
+&lt;/select&gt;
+
+&lt;select id=&quot;checkEmail&quot; resultType=&quot;int&quot; parameterType=&quot;String&quot;&gt;
+select count(1) from mmall_user
+where email = #{email}
+&lt;/select&gt;</code></pre><p>如果都没事，那就可以注册了。我们就在controller里面加入注册的实现就可以啦：</p>
+<pre><code>通过实现的判断，我们这里去验证用户即可。
+
+@RequestMapping(value=&quot;register.do&quot;,method = RequestMethod.GET)
+@ResponseBody
+public ServerResponse&lt;String&gt; register(User user){
+    return iUserService.register(user);
+}</code></pre><p>可以看到的是我们在分析代码和读取代码的步骤是不同的哈。</p>
+<hr>
+<p>现在写一个专门用来检验的类，然后检验用户名和邮箱是否存在。</p>
+<pre><code>检测类的时间主要是验证用户名是否存在，email是否已经被使用
+
+public ServerResponse&lt;String&gt; checkValid(String str,String type){
+    //校验空格是否有效，空格不占字符
+    if(org.apache.commons.lang3.StringUtils.isNoneBlank(type)){
+        //开始检验
+        if(Const.USERNAME.equals(type)){
+            int resultCount = userMapper.checkUserName(str);
+            if (resultCount &gt; 0){
+                return ServerResponse.createByErrorMessage(&quot;用户名已存在&quot;);
+            }
+        }
+        if(Const.EMAIL.equals(type)){
+            int resultCount = userMapper.checkEmail(type);
+            if (resultCount &gt; 0){
+                return ServerResponse.createByErrorMessage(&quot;email已存在&quot;);
+            }
+        }
+    }else{
+        return ServerResponse.createByErrorMessage(&quot;参数错误&quot;);
+    }
+    return ServerResponse.createBySuccessMessage(&quot;校验成功&quot;);
+}</code></pre><p>然后在接口处加入：</p>
+<pre><code>ServerResponse&lt;String&gt; checkValid(String str,String type);</code></pre><p>然后再向控制层写入，我们呢传入两个值，一个用户名一个邮箱，然后访问是否有效把结果传递出去：</p>
+<pre><code>//检验信息是否正确
+@RequestMapping(value=&quot;checkValid.do&quot;,method = RequestMethod.POST)
+@ResponseBody
+public ServerResponse&lt;String&gt; checkValid(String str,String type){
+    return iUserService.checkValid(str,type);
+}</code></pre><hr>
+<p>当然了，除了登录和注册，我们还需要实现如果用户忘记了自己的密码，就需要申请找回，找回的方式就是用设定的问题校验身份后修改密码。</p>
+<pre><code>public ServerResponse selectQuestion(String username){
+    ServerResponse validResponse = this.checkValid(username,Const.USERNAME);
+    if(validResponse.isSuccess()){
+        return ServerResponse.createByErrorMessage(&quot;用户名不存在&quot;);
+    }
+    String question = userMapper.selectQuestionByUsername(username);
+    if(org.apache.commons.lang3.StringUtils.isNoneBlank(question)){
+        return ServerResponse.createBySuccess(question);
+    }
+    return ServerResponse.createByErrorMessage(&quot;找回密码的问题是空的&quot;);
+}</code></pre><p>我们为什么要先写这里的impl实现类呢，主要是因为有时候我们的传参问题变化，我们可以先写好实现类之后再把接口定义，这样就避免了因为临时写实现类时候的传参不同问题。</p>
+<p>接下来我们就要去写它的Mapping层数据了，只有结合数据库的查找才能直到是否正确验证信息。</p>
+<p>首先在接口出写，方便调用：</p>
+<pre><code>String selectQuestionByUsername(String username);</code></pre><p>然后进入对应的Mapping写对应的Sql语句:</p>
+<pre><code>  &lt;select id=&quot;selectQuestionByUsername&quot; resultType=&quot;String&quot; parameterType=&quot;String&quot;&gt;
+select question
+from mmall_user
+where username = #{username}
+  &lt;/select&gt;</code></pre><p>一切都整理好之后呢我们也获得了返回值直到是否成功，然后我们可以写它的控制层的代码：</p>
+<pre><code>@RequestMapping(value=&quot;forget_get_question.do&quot;,method = RequestMethod.POST)
+@ResponseBody
+public ServerResponse&lt;String&gt; forgetGetQuestion(String username){
+    return iUserService.selectQuestion(username);
+}</code></pre><p>这样我们就把找回密码的问题逻辑写好了，然后等待数据（用户给定的问题答案），我们要做的就是检验这个答案是否正确，然后给定一个返回值给前端：</p>
+<pre><code> public ServerResponse&lt;String&gt; checkAnswer(String username,String question,String answer){
+    int resultCount = userMapper.checkAnswer(username,question,answer);
+    if(resultCount&gt;0){
+        //说明问题以及问题答案是这个用户的
+        String forgetToken = UUID.randomUUID().toString();
+        TokenCache.setKey(TokenCache.TOKEN_PREFIX+username,forgetToken);
+        return ServerResponse.createBySuccess(forgetToken);
+    }
+    return ServerResponse.createByErrorMessage(&quot;问题答案错误&quot;);
+}</code></pre><p>当然了我们要判断问题正确与否肯定要去数据库找到这个人的问题答案，然后验证。所以我们就要进入Mapping写对应的SQL语句：</p>
+<pre><code>定义接口：
+int checkAnswer(@Param(&quot;username&quot;)String username,@Param(&quot;question&quot;)String question,@Param(&quot;answer&quot;)String answer);
+
+实现查找的sql：
+  &lt;select id=&quot;checkAnswer&quot; resultType=&quot;int&quot; parameterType=&quot;map&quot;&gt;
+select count(1)
+from mmall_user
+where username=#{username}
+and question=#{question}
+and answer =#{answer}
+  &lt;/select&gt;</code></pre><p>有了这个验证后，我们再进入控制层，把我们的结果答案传给实现类：</p>
+<pre><code>//校验回答是否正确
+@RequestMapping(value=&quot;forget_check_answer.do&quot;,method = RequestMethod.POST)
+@ResponseBody
+public ServerResponse&lt;String&gt; forgetCheckAnswer(String username,String question,String answer){
+    return iUserService.checkAnswer(username,question,answer);
+}</code></pre><p>可想而知啊，问题的答案正确了，我们就要给他权力去修改自己的密码：</p>
+<pre><code>public ServerResponse&lt;String&gt; forgetResePassword(String username,String passwordNew,String forgetToken){
+    if(org.apache.commons.lang3.StringUtils.isBlank(forgetToken)){
+        return ServerResponse.createByErrorMessage(&quot;参数错误，token需要传递&quot;);
+    }
+    ServerResponse validResponse = this.checkValid(username,Const.USERNAME);
+    if(validResponse.isSuccess()){
+            return ServerResponse.createByErrorMessage(&quot;用户名不存在&quot;);
+    }
+    String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX+username);
+    if(org.apache.commons.lang3.StringUtils.isBlank(token)){
+        return ServerResponse.createByErrorMessage(&quot;token无效或者过期&quot;);
+    }
+    if(org.apache.commons.lang3.StringUtils.equals(forgetToken,token)){
+        String md5Password = MD5Util.MD5EncodeUtf8(passwordNew);
+        int rowCount = userMapper.updatePasswordByUsername(username,md5Password);
+
+        if(rowCount &gt; 0){
+            return ServerResponse.createBySuccessMessage(&quot;密码修改成功&quot;);
+        }
+        }else{
+            return ServerResponse.createByErrorMessage(&quot;token错误，请重新获取重置密码的token&quot;);
+    }
+    return ServerResponse.createByErrorMessage(&quot;修改密码失败&quot;);
+    }</code></pre><p>这里呢我们还是要传递一个token，有什么作用呢，就是再给定的时间内去修改密码密码，如果时间不限定，被外部用户窃取后自行修改了就麻烦了，token的设定呢我们在初始化阶段就设置好了的，以供后续使用。然后呢我们就要去实现用户旧密码的更新操作：</p>
+<pre><code>给定接口：
+int updatePasswordByUsername(@Param(&quot;username&quot;)String username,@Param(&quot;passwordNew&quot;)String passwordNew);
+实现的SQL语句：
+ &lt;update id=&quot;updatePasswordByUsername&quot; parameterType=&quot;map&quot;&gt;
+update mmall_user
+set password = #{passwordNew},updata_time = now()
+where username = #{username}
+  &lt;/update&gt;</code></pre><p>然后呢我们把数据给了控制层，再有控制层把结果给实现类即可：</p>
+<pre><code>//忘记密码中的重置密码
+@RequestMapping(value=&quot;forget_reset_password.do&quot;,method = RequestMethod.POST)
+@ResponseBody
+public ServerResponse&lt;String&gt; forgetResetPassword(String username,String passwordNew,String forgetToken){
+    return iUserService.forgetResePassword(username,passwordNew,forgetToken);
+}</code></pre><hr>
+<p>现在呢又来问题了，我们实现了忘记密码用问题找回，那么如果我在登录状态下也想修改密码怎么办呢？</p>
+<pre><code>public ServerResponse&lt;String&gt; resetPassword(String passwordOld,String passwordNew,User user){
+//防止横向越权，要检验一下这个用户的旧密码，一定要指定是这个用户
+    int resultCount = userMapper.checkPassword(MD5Util.MD5EncodeUtf8(passwordOld),user.getId());
+    if(resultCount == 0){
+        return ServerResponse.createByErrorMessage(&quot;旧密码错误&quot;);
+    }
+    user.setPassword(MD5Util.MD5EncodeUtf8(passwordNew));
+    int updateCount = userMapper.updateByPrimaryKeySelective(user);
+    if(updateCount &gt; 0){
+        return ServerResponse.createBySuccessMessage(&quot;密码更新成功&quot;);
+    }
+    return ServerResponse.createByErrorMessage(&quot;密码更新失败&quot;);
+}</code></pre><p>我们呢根据旧密码是否正确来设定新密码，旧密码是否正确就涉及到了数据库的查询，于是我们就进入设置相对应的SQL：</p>
+<pre><code>接口设定:
+int checkPassword(@Param(&quot;password&quot;)String password,@Param(&quot;userId&quot;)Integer userId);
+实现SQL：
+  &lt;select id=&quot;checkPassword&quot; resultType=&quot;int&quot; parameterType=&quot;map&quot;&gt;
+select count(1)
+from mmall_user
+where id = #{userId}
+and password = #{password}
+  &lt;/select&gt;</code></pre><p>由此然后再进入控制层：</p>
+<pre><code>//登录状态的重置密码
+@RequestMapping(value=&quot;forget_password.do&quot;,method = RequestMethod.POST)
+@ResponseBody
+public ServerResponse&lt;String&gt; resetPassword(HttpSession session,String passwordOld,String passwordNew){
+    User user = (User)session.getAttribute(Const.CURRENT_USER);
+    if(user == null){
+        return ServerResponse.createByErrorMessage(&quot;用户未登录&quot;);
+    }
+    return iUserService.resetPassword(passwordOld,passwordNew,user);
+}</code></pre><p>这样就设定完了相应的在登录情况下修改密码操作。</p>
+<hr>
+<p>对于用于自己来说，有时候信息变更了，也想把网站的个人信息更新一下，所以我们就要实现对于的个人信息更新的代码：</p>
+<pre><code>public ServerResponse&lt;User&gt; updateInformation(User user){
+    //username是不能更新了
+    //email也要进行校验，校验新的email是不是已经存在，并且存在的email如果相同的话不能是我们当前这个用户的
+    int resultCount = userMapper.checkEmailByUserId(user.getEmail(),user.getId());
+    if(resultCount &gt; 0){
+        return ServerResponse.createBySuccessMessage(&quot;email已经存在，请更换email重新尝试&quot;);
+    }
+    User updateUser = new User();
+    updateUser.setId(user.getId());
+    updateUser.setEmail(user.getEmail());
+    updateUser.setPhone(user.getPhone());
+    updateUser.setQuestion(user.getQuestion());
+    updateUser.setAnswer(user.getAnswer());
+
+    int updateCount = userMapper.updateByPrimaryKeySelective(updateUser);
+    if(updateCount &gt; 0){
+        return ServerResponse.createBySuccess(&quot;更新个人信息成功&quot;,updateUser);
+    }
+    return ServerResponse.createByErrorMessage(&quot;更新个人信息失败&quot;);
+}</code></pre><p>然后还是老套路：</p>
+<pre><code>int checkEmailByUserId(@Param(&quot;email&quot;)String email,@Param(&quot;userId&quot;)Integer userId);
+实现：
+  &lt;select id=&quot;checkEmailByUserId&quot; resultType=&quot;int&quot; parameterType=&quot;map&quot;&gt;
+select count(1)
+from mmall_user
+where email = #{email}
+and id != #{userId}
+  &lt;/select&gt;</code></pre><p>再是控制层代码：</p>
+<pre><code>//更新用户个人信息接口设置
+@RequestMapping(value=&quot;update_information.do&quot;,method = RequestMethod.POST)
+@ResponseBody
+public ServerResponse&lt;User&gt; update_information(HttpSession session,User user){
+    User currentUser = (User)session.getAttribute(Const.CURRENT_USER);
+    if(currentUser == null){
+        return ServerResponse.createByErrorMessage(&quot;用户未登录&quot;);
+    }
+    user.setId(currentUser.getId());
+    user.setUsername(currentUser.getUsername());
+    ServerResponse&lt;User&gt; response = iUserService.updateInformation(user);
+    if(response.isSuccess()){
+        session.setAttribute(Const.CURRENT_USER,response.getData());
+    }
+    return response;
+}</code></pre><p>至此我们的用户登录基本写完了。</p>
+<p>我们还需要介绍的呢就是“注解”功能需要事先了解一下Spring的知识。</p>
+<pre><code>@RequestMapping（value=&quot;&quot;,method=&quot;&quot;）：
+    类级别的注解负责将一个特定（或符合某种模式）的请求路径映射到一个控制器上，
+    同时通过方法级别的注解来细化映射，即根据特定的HTTP请求方法（GET、POST 方法等）、HTTP请求中是否携带特定参数等条件，将请求映射到匹配的方法上
+@ResponseBody:
+    将controller的方法返回的对象通过适当的转换器转换为指定的格式之后，写入到response对象的body区，通常用来返回JSON数据或者是XML数据。
+    需要注意的呢，在使用此注解之后不会再走试图处理器，而是直接将数据写入到输入流中，他的效果等同于通过response对象输出指定格式的数据。
+    　　@RequestMapping(&quot;/login&quot;)
+    　　@ResponseBody
+    　　public User login(User user){
+    　　　　return user;
+    　　}
+        -----------------------
+    　　@RequestMapping(&quot;/login&quot;)
+    　　public void login(User user, HttpServletResponse response){
+    　　　　response.getWriter.write(JSONObject.fromObject(user).toString());
+    　　}
+    分析就是上面两行的作用是一样的。
+@Controller：
+    用于标记在一个类上，使用它标记的类就是一个SpringMvc Controller对象，分发处理器会扫描使用该注解的类的方法，并检测该方法是否使用了@RequestMapping注解。
+    @Controller只是定义了一个控制器类，而使用@RequestMapping注解的方法才是处理请求的处理器。 
+    @Controller标记在一个类上还不能真正意义上说它就是SpringMvc的控制器，应为这个时候Spring还不认识它，这个时候需要把这个控制器交给Spring来管理。
+@Autowired：
+    它可以对类成员变量、方法及构造函数进行标注，完成自动装配的工作。 通过 @Autowired的使用来消除 set ，get方法。
+    当容器扫描到@Autowied时，就会在IoC容器自动查找需要的bean，并装配给该对象的属性
+@Service(&quot;iUserService&quot;) ：
+    括号内信息是以代码为例的，就是将iUserService的信息注入到Spring的Ioc容器中。不需要用new。
+@JsonSerialize：
+    主要用于数据转换,该注解作用在该属性的getter()方法上。
+    前端显示和后台存储数据单位不统一，而且各有各自的理由，统一不了，那就转换吧。每次返回给前端时再转换一遍，返回给前端的json数据，在后端里定义的往往是一个对象因此用到本注解。</code></pre><p>具体代码和整个项目可以点击：<a href="xiangzi1019.github.io">xiangzi1019.github.io</a></p>
+]]></content>
+      <categories>
+        <category>java项目</category>
+      </categories>
+      <tags>
+        <tag>SSM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LeetCode_Simple_第五周</title>
+    <url>/2019/10/20/LeetCode-Simple-%E7%AC%AC%E4%BA%94%E5%91%A8/</url>
     <content><![CDATA[<a id="more"></a>
 ]]></content>
+  </entry>
+  <entry>
+    <title>LeetCode_Simple_第四周</title>
+    <url>/2019/10/13/LeetCode-Simple-%E7%AC%AC%E5%9B%9B%E5%91%A8/</url>
+    <content><![CDATA[<p>忙忙碌碌又一周，生活太难了。学习太难了。感觉头发都不够用了。不吐槽了，来吧来吧。</p>
+<p>第四周，算法给生活加点料。</p>
+<a id="more"></a>
+<p><strong>1.判断两个字符串是否为变形词</strong></p>
+<p>例如：</p>
+<pre><code>str1 = &quot;1234&quot;  str2 = &quot;4321&quot;  返回true
+str1 = &quot;12345&quot;  str2 = &quot;64321&quot;  返回false</code></pre><p>想法：记得这类题目大致可以用桶排序思想来解决。首先判断两个字符串是否相等，不相等直接返回false，还有是否有空字符串。又因为字符类型为char 占1个字节，那么就是128最多了。所以我们只需要申请一个128的数组，然后依次判断str1，放入对应的ASCII码对应的下标即可。然后再遍历str2，如果出现负的情况直接返回。</p>
+<pre><code>public boolean isDeformation(String str1,String str2){
+    //首先判断情况
+    if(str1 == null || str2 == null || str1.length() != str2.length()){
+        return false;
+    }
+    //转成两个对应的数组好操作
+    char[] chas1 = str1.toCharArray();
+    char[] chas2 = str2.toCharArray();
+    //用于辅助的数组
+    int[] map = new int[128];
+    for(int i = 0; i &lt; chas1.length; i++){
+        map[chas1[i]]++;
+    }
+    for (int i = 0; i &lt; chas2.length; i++) {
+        //当当前下标值为0的时候（因为还要执行--操作）返回false
+        if(map[chas2[i]]-- == 0){
+            return false;
+        }
+    }
+    return false;
+}</code></pre><p><strong>2.判断两个字符串是否为旋转词</strong></p>
+<p>首先了解一下什么是旋转词：就好比A=”abcdef”,B=”defabc”可以看出哦abc直接再def之后了，所以返回true。如果不是这样，就是返回false。</p>
+<p>想法：首先可以确定的就是，如果两个字符串不相等，肯定不是旋转词啦，然后呢就是该怎么判断了。有个想法啊就是我们让一个数先走然后找到依次对比另一个数的开头，如果一样就继续遍历，不一样就走下一位，直到走到自己的尾巴，然后再从头开始走，与另一个的当前位置对比，如果一样啊就下一个，直到另一个走到尾巴，如果其间断掉，就返回false。</p>
+<pre><code>public boolean isRotation(String a,String b){
+    if(a == null || a == null || a.length() != b.length()){
+        return false;
+    }
+    //转成两个对应的数组好操作
+    char[] chas1 = a.toCharArray();
+    char[] chas2 = b.toCharArray();
+    int cur=0;
+    //用于保存另一个数组的中间节点
+    int j = 0;
+    for (int i = 0; i &lt; chas1.length; i++) {
+        //依次从i遍历找到当前数组的最后返回，否则返回false
+        if(chas1[i++] == chas2[j++]){
+            cur = j;
+            if(i == chas1.length-1)
+                break;
+        }else{
+            continue;
+        }
+    }
+    //再遍历开头如果有一个不匹配就可以返回false
+    for (int i = 0; i &lt; chas1.length; i++) {
+        if(chas1[i++] == chas2[cur++]){
+            if(cur == chas1.length-1)
+                return true;
+        }
+        break;
+    }
+    return false;
+}</code></pre><p><strong>3.字符串的统计字符串</strong></p>
+<p>给定一个字符串，然后统计该字符串，例如str = “aaabbabdddf”,那么统计结果 = “a_3_b_2_a_1_b_1_d_3_f_1”。（字符串只包含字母情况）</p>
+<p>想法：就是变成数组后，你只需要依次遍历，如果相等就让计数的num++，不相等的时候，就返回字符串包括”_”字符。</p>
+<pre><code>public String getCountString(String str){
+    if(str == null || str.equals(&quot;&quot;)){
+        return &quot;&quot;;
+    }
+    char[] chas = str.toCharArray();
+    //保存首位元素
+    String res = String.valueOf(chas[0]);
+    int num = 1;
+    for (int i = 0; i &lt; chas.length; i++) {
+        //当当前的元素不等于前一个元素的时候就添加然后num置为1，否则num++
+        if(chas[i] != chas[i-1]) {
+            res = concat(res, String.valueOf(num), String.valueOf(chas[i]));
+            num = 1;
+        }else{
+            num++;
+        }
+    }
+    return concat(res,String.valueOf(num),&quot;&quot;);
+}
+//用于字符串拼接的函数
+public String concat(String s1,String s2,String s3){
+    return s1 + &quot;_&quot; + s2 + (s3.equals(&quot;&quot;)?s3:&quot;_&quot;+s3);
+}</code></pre><p>在一个问题就是，如何根据所写的字符串个数判断某一个位置的值是什么字母？</p>
+<p>其实这就是一个逆向的思维过程。方法也很简单，我们只需要从首个数字开始，每次跳四个单位，然后依次相加，如果加一个数等于或者大于的时候就输出这个位置前面的字母即可。</p>
+<pre><code>public char getCharAt(String str,int index){
+    if(str == null || str.equals(&quot;&quot;)){
+        return 0;
+    }
+    char[] chs = str.toCharArray();
+    int sum = 0;
+    int i = 2;
+    //一直遍历到最终
+    while(i&lt;str.length()){
+        sum = chs[i];
+        //当找到的时候就返回值
+        if(sum &gt;= index){
+            return chs[i-2];
+        }
+        i = i+4;
+    }
+    return 0;
+}</code></pre><p><strong>4.一个字符串里面只有数字1—9和✳号，然后把所有的✳号移到字符串最左边，并且数字顺序不变</strong></p>
+<p>思想：其实这个题目可以用快排的思想做，也可以直接把✳前面的数组后移即可。最后再数组前面添加就够了。</p>
+<pre><code>public void modify(char[] chas){
+    if(chas == null || chas.length == 0){
+        return;
+    }
+    int j = chas.length - 1;
+    for (int i = chas.length -1; i &gt; -1; i--) {
+        if(chas[i] != &apos;*&apos;){
+            chas[j--] = chas[i];
+        }
+    }
+    for (;j&gt;-1;)
+        chas[j--] = &apos;*&apos;;
+}</code></pre><p><strong>5.给定一个字符串数组，做单词之间的逆序调整</strong></p>
+<p>例如：str = “dog and cat”  -&gt;”cat and dog”</p>
+<p>要求：时间O(n)  空间O(1)</p>
+<p>想法：我们可以先把整体的字符串逆序，变为：”god dna tac”然后再根据空格，逆序每一个单词即可”dog and cat”。</p>
+<pre><code>public void rotateWord(char[] chas){
+    if(chas == null || chas.length == 0){
+        return;
+    }
+    //先整体反转
+    reverse(chas,0,chas.length-1);
+    int l = -1;
+    int r = -1;
+    //遍历一遍数组
+    for(int i = 0; i &lt; chas.length; i++){
+        //进行单词的反转前要确定位置
+        if(chas[i] != &apos; &apos;){
+            //如果前一个为空格，就把下标为当前的l计数
+            l = i == 0 || chas[i-1] == &apos; &apos; ? i : 1;
+            //这里同上，记录尾巴节点
+            r = i == chas.length -1 || chas[i+1] == &apos; &apos;? i : r;
+        }
+        //当把一个单词的位置确定后执行反转，再把l和r都置为-1
+        if( l != -1 &amp;&amp; r != -1){
+            reverse(chas,1,r);
+            l = -1;
+            r = -1;
+        }
+    }
+}
+//作为反转数组，按照给定的位置反转指定的数组
+public void reverse(char[] chas,int start,int end){
+    char temp = 0;
+    while(start &lt; end){
+        //我们每次反转都是首位两个转
+        temp = chas[start];
+        chas[start] = chas[end];
+        chas[end] = temp;
+        //然后每次都做++--操作
+        start++;
+        end--;
+    }
+}</code></pre><p>类型加强一下：如果给定一个字符串和一个整数，把整数的左边整体移到右边，右边移到左边。且左右顺寻不变。例如：A = “abcde” size = 3,所以：”deabc”</p>
+<p>想法:就是先按照size的值左右反转，然后再整体反转即可。</p>
+<pre><code>public void rotateBySize(char[] chas,int size){
+    if(chas == null || size &lt; 0 || size &gt; chas.length){
+        return ;
+    }
+    //三次旋转
+    reverse(chas,0,size-1);
+    reverse(chas, size,chas.length-1);
+    reverse(chas,0,chas.length-1);
+}
+
+//作为反转数组，按照给定的位置反转指定的数组
+public void reverse(char[] chas,int start,int end){
+    char temp = 0;
+    while(start &lt; end){
+        //我们每次反转都是首位两个转
+        temp = chas[start];
+        chas[start] = chas[end];
+        chas[end] = temp;
+        //然后每次都做++--操作
+        start++;
+        end--;
+    }
+}</code></pre>]]></content>
+      <categories>
+        <category>算法与数据结构面试</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+        <tag>DataStructure</tag>
+        <tag>面试</tag>
+      </tags>
   </entry>
   <entry>
     <title>数据结构之设计的考虑</title>
@@ -3202,9 +3837,9 @@ a.编码选择：我们选择国际统一字符集UTF-8
         <category>JavaWeb</category>
       </categories>
       <tags>
+        <tag>JavaEE</tag>
         <tag>JSP</tag>
         <tag>Servlet</tag>
-        <tag>JavaEE</tag>
         <tag>HTTP</tag>
         <tag>Tomcat</tag>
       </tags>

@@ -94,14 +94,18 @@
   };
 </script>
 
-  <meta property="og:type" content="article">
+  <meta name="description" content="忙忙碌碌又一周，生活太难了。学习太难了。感觉头发都不够用了。不吐槽了，来吧来吧。 第四周，算法给生活加点料。">
+<meta name="keywords" content="Algorithm,DataStructure,面试">
+<meta property="og:type" content="article">
 <meta property="og:title" content="LeetCode_Simple_第四周">
 <meta property="og:url" content="http://xiangzi1019.github.io/2019/10/13/LeetCode-Simple-第四周/index.html">
 <meta property="og:site_name" content="小骚鸡de博客">
+<meta property="og:description" content="忙忙碌碌又一周，生活太难了。学习太难了。感觉头发都不够用了。不吐槽了，来吧来吧。 第四周，算法给生活加点料。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-10-13T12:42:08.306Z">
+<meta property="og:updated_time" content="2019-10-20T08:01:52.453Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="LeetCode_Simple_第四周">
+<meta name="twitter:description" content="忙忙碌碌又一周，生活太难了。学习太难了。感觉头发都不够用了。不吐槽了，来吧来吧。 第四周，算法给生活加点料。">
 
 
 
@@ -257,7 +261,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">25</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">26</span></a>
 
   </li>
         
@@ -275,7 +279,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">11</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">12</span></a>
 
   </li>
         
@@ -293,7 +297,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">37</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">39</span></a>
 
   </li>
 
@@ -389,7 +393,37 @@
           
 
           
+            
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-10-20 16:01:52" itemprop="dateModified" datetime="2019-10-20T16:01:52+08:00">2019-10-20</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法与数据结构面试/" itemprop="url" rel="index">{<i class="fa fa-tag"></i>
+                  #}<span itemprop="name">算法与数据结构面试</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -432,8 +466,189 @@
       
 
       
-        <a id="more"></a>
+        <p>忙忙碌碌又一周，生活太难了。学习太难了。感觉头发都不够用了。不吐槽了，来吧来吧。</p>
+<p>第四周，算法给生活加点料。</p>
+<a id="more"></a>
+<p><strong>1.判断两个字符串是否为变形词</strong></p>
+<p>例如：</p>
+<pre><code>str1 = &quot;1234&quot;  str2 = &quot;4321&quot;  返回true
+str1 = &quot;12345&quot;  str2 = &quot;64321&quot;  返回false</code></pre><p>想法：记得这类题目大致可以用桶排序思想来解决。首先判断两个字符串是否相等，不相等直接返回false，还有是否有空字符串。又因为字符类型为char 占1个字节，那么就是128最多了。所以我们只需要申请一个128的数组，然后依次判断str1，放入对应的ASCII码对应的下标即可。然后再遍历str2，如果出现负的情况直接返回。</p>
+<pre><code>public boolean isDeformation(String str1,String str2){
+    //首先判断情况
+    if(str1 == null || str2 == null || str1.length() != str2.length()){
+        return false;
+    }
+    //转成两个对应的数组好操作
+    char[] chas1 = str1.toCharArray();
+    char[] chas2 = str2.toCharArray();
+    //用于辅助的数组
+    int[] map = new int[128];
+    for(int i = 0; i &lt; chas1.length; i++){
+        map[chas1[i]]++;
+    }
+    for (int i = 0; i &lt; chas2.length; i++) {
+        //当当前下标值为0的时候（因为还要执行--操作）返回false
+        if(map[chas2[i]]-- == 0){
+            return false;
+        }
+    }
+    return false;
+}</code></pre><p><strong>2.判断两个字符串是否为旋转词</strong></p>
+<p>首先了解一下什么是旋转词：就好比A=”abcdef”,B=”defabc”可以看出哦abc直接再def之后了，所以返回true。如果不是这样，就是返回false。</p>
+<p>想法：首先可以确定的就是，如果两个字符串不相等，肯定不是旋转词啦，然后呢就是该怎么判断了。有个想法啊就是我们让一个数先走然后找到依次对比另一个数的开头，如果一样就继续遍历，不一样就走下一位，直到走到自己的尾巴，然后再从头开始走，与另一个的当前位置对比，如果一样啊就下一个，直到另一个走到尾巴，如果其间断掉，就返回false。</p>
+<pre><code>public boolean isRotation(String a,String b){
+    if(a == null || a == null || a.length() != b.length()){
+        return false;
+    }
+    //转成两个对应的数组好操作
+    char[] chas1 = a.toCharArray();
+    char[] chas2 = b.toCharArray();
+    int cur=0;
+    //用于保存另一个数组的中间节点
+    int j = 0;
+    for (int i = 0; i &lt; chas1.length; i++) {
+        //依次从i遍历找到当前数组的最后返回，否则返回false
+        if(chas1[i++] == chas2[j++]){
+            cur = j;
+            if(i == chas1.length-1)
+                break;
+        }else{
+            continue;
+        }
+    }
+    //再遍历开头如果有一个不匹配就可以返回false
+    for (int i = 0; i &lt; chas1.length; i++) {
+        if(chas1[i++] == chas2[cur++]){
+            if(cur == chas1.length-1)
+                return true;
+        }
+        break;
+    }
+    return false;
+}</code></pre><p><strong>3.字符串的统计字符串</strong></p>
+<p>给定一个字符串，然后统计该字符串，例如str = “aaabbabdddf”,那么统计结果 = “a_3_b_2_a_1_b_1_d_3_f_1”。（字符串只包含字母情况）</p>
+<p>想法：就是变成数组后，你只需要依次遍历，如果相等就让计数的num++，不相等的时候，就返回字符串包括”_”字符。</p>
+<pre><code>public String getCountString(String str){
+    if(str == null || str.equals(&quot;&quot;)){
+        return &quot;&quot;;
+    }
+    char[] chas = str.toCharArray();
+    //保存首位元素
+    String res = String.valueOf(chas[0]);
+    int num = 1;
+    for (int i = 0; i &lt; chas.length; i++) {
+        //当当前的元素不等于前一个元素的时候就添加然后num置为1，否则num++
+        if(chas[i] != chas[i-1]) {
+            res = concat(res, String.valueOf(num), String.valueOf(chas[i]));
+            num = 1;
+        }else{
+            num++;
+        }
+    }
+    return concat(res,String.valueOf(num),&quot;&quot;);
+}
+//用于字符串拼接的函数
+public String concat(String s1,String s2,String s3){
+    return s1 + &quot;_&quot; + s2 + (s3.equals(&quot;&quot;)?s3:&quot;_&quot;+s3);
+}</code></pre><p>在一个问题就是，如何根据所写的字符串个数判断某一个位置的值是什么字母？</p>
+<p>其实这就是一个逆向的思维过程。方法也很简单，我们只需要从首个数字开始，每次跳四个单位，然后依次相加，如果加一个数等于或者大于的时候就输出这个位置前面的字母即可。</p>
+<pre><code>public char getCharAt(String str,int index){
+    if(str == null || str.equals(&quot;&quot;)){
+        return 0;
+    }
+    char[] chs = str.toCharArray();
+    int sum = 0;
+    int i = 2;
+    //一直遍历到最终
+    while(i&lt;str.length()){
+        sum = chs[i];
+        //当找到的时候就返回值
+        if(sum &gt;= index){
+            return chs[i-2];
+        }
+        i = i+4;
+    }
+    return 0;
+}</code></pre><p><strong>4.一个字符串里面只有数字1—9和✳号，然后把所有的✳号移到字符串最左边，并且数字顺序不变</strong></p>
+<p>思想：其实这个题目可以用快排的思想做，也可以直接把✳前面的数组后移即可。最后再数组前面添加就够了。</p>
+<pre><code>public void modify(char[] chas){
+    if(chas == null || chas.length == 0){
+        return;
+    }
+    int j = chas.length - 1;
+    for (int i = chas.length -1; i &gt; -1; i--) {
+        if(chas[i] != &apos;*&apos;){
+            chas[j--] = chas[i];
+        }
+    }
+    for (;j&gt;-1;)
+        chas[j--] = &apos;*&apos;;
+}</code></pre><p><strong>5.给定一个字符串数组，做单词之间的逆序调整</strong></p>
+<p>例如：str = “dog and cat”  -&gt;”cat and dog”</p>
+<p>要求：时间O(n)  空间O(1)</p>
+<p>想法：我们可以先把整体的字符串逆序，变为：”god dna tac”然后再根据空格，逆序每一个单词即可”dog and cat”。</p>
+<pre><code>public void rotateWord(char[] chas){
+    if(chas == null || chas.length == 0){
+        return;
+    }
+    //先整体反转
+    reverse(chas,0,chas.length-1);
+    int l = -1;
+    int r = -1;
+    //遍历一遍数组
+    for(int i = 0; i &lt; chas.length; i++){
+        //进行单词的反转前要确定位置
+        if(chas[i] != &apos; &apos;){
+            //如果前一个为空格，就把下标为当前的l计数
+            l = i == 0 || chas[i-1] == &apos; &apos; ? i : 1;
+            //这里同上，记录尾巴节点
+            r = i == chas.length -1 || chas[i+1] == &apos; &apos;? i : r;
+        }
+        //当把一个单词的位置确定后执行反转，再把l和r都置为-1
+        if( l != -1 &amp;&amp; r != -1){
+            reverse(chas,1,r);
+            l = -1;
+            r = -1;
+        }
+    }
+}
+//作为反转数组，按照给定的位置反转指定的数组
+public void reverse(char[] chas,int start,int end){
+    char temp = 0;
+    while(start &lt; end){
+        //我们每次反转都是首位两个转
+        temp = chas[start];
+        chas[start] = chas[end];
+        chas[end] = temp;
+        //然后每次都做++--操作
+        start++;
+        end--;
+    }
+}</code></pre><p>类型加强一下：如果给定一个字符串和一个整数，把整数的左边整体移到右边，右边移到左边。且左右顺寻不变。例如：A = “abcde” size = 3,所以：”deabc”</p>
+<p>想法:就是先按照size的值左右反转，然后再整体反转即可。</p>
+<pre><code>public void rotateBySize(char[] chas,int size){
+    if(chas == null || size &lt; 0 || size &gt; chas.length){
+        return ;
+    }
+    //三次旋转
+    reverse(chas,0,size-1);
+    reverse(chas, size,chas.length-1);
+    reverse(chas,0,chas.length-1);
+}
 
+//作为反转数组，按照给定的位置反转指定的数组
+public void reverse(char[] chas,int start,int end){
+    char temp = 0;
+    while(start &lt; end){
+        //我们每次反转都是首位两个转
+        temp = chas[start];
+        chas[start] = chas[end];
+        chas[end] = temp;
+        //然后每次都做++--操作
+        start++;
+        end--;
+    }
+}</code></pre>
       
     </div>
 
@@ -515,6 +730,19 @@
 
     <footer class="post-footer">
       
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+          
+            <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
+          
+            <a href="/tags/面试/" rel="tag"># 面试</a>
+          
+        </div>
+      
 
       
       
@@ -533,6 +761,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/20/LeetCode-Simple-第五周/" rel="prev" title="LeetCode_Simple_第五周">
+                LeetCode_Simple_第五周 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -602,7 +834,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -641,7 +873,9 @@
         
           
         
-        <span class="site-state-item-count">11</span>
+          
+        
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -708,7 +942,9 @@
         
           
         
-        <span class="site-state-item-count">25</span>
+          
+        
+        <span class="site-state-item-count">26</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
