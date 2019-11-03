@@ -636,84 +636,9 @@ public void reverse(char[] chas,int start,int end){
         <category>算法与数据结构面试</category>
       </categories>
       <tags>
-        <tag>Algorithm</tag>
         <tag>DataStructure</tag>
+        <tag>Algorithm</tag>
         <tag>面试</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数据结构之设计的考虑</title>
-    <url>/2019/10/10/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E8%AE%BE%E8%AE%A1%E7%9A%84%E8%80%83%E8%99%91/</url>
-    <content><![CDATA[<p>对于数据结构和算法，来来回回啃了小半年了，算是有一些收获也有一些为难。可能就是训练不够导致很多时候没有头绪，也没有真正实践过具体的操作。现在开始跟着项目开始慢慢着手联系。也为了明年的春招所以再学一遍对应的知识。有兴趣可以查阅详情。</p>
-<a id="more"></a>
-<p>首先引出来一个问题：设计一个加法，实现输入两个数，并且打印对应加法的答案。</p>
-<p>我仍记得刚开始学C++的时候就遇到过这个问题，大不了就是int一个a，b。然后再定义一个c=a+b，最后cout即可。那时候大学更接触编程，输出的结果正确也能让我沾沾自喜。不过随着后续的学习，尤其是到了学习《数据结构》这门课的时候，再去回想这一题，发现真的大有学问。</p>
-<p>问题存在：</p>
-<pre><code>如果我输入了一个浮点数，例如1.1和一个1.2，那么程序肯定输出错误，因为浮点数会清空小数点后面而输出2。
-其次，如果我输入了一个a1和2，程序肯定报错了，因为对于a来说不能用int类型表示。
-亦或者是，我输入一个极大的数据，也许你会说用long类型。但是大于long类型之后呢？
-更有问题为1.1.1和2，那么如何报错呢？
-种种问题接踵而至。</code></pre><p>现在再来开始我们的介绍吧。</p>
-<p><strong>时间复杂度</strong></p>
-<p>百度中给出的定义：</p>
-<p><em>在计算机科学中，时间复杂性，又称时间复杂度，算法的时间复杂度是一个函数，它定性描述该算法的运行时间。这是一个代表算法输入值的字符串的长度的函数。时间复杂度常用大O符号表述，不包括这个函数的低阶项和首项系数。使用这种方式时，时间复杂度可被称为是渐近的，亦即考察输入值大小趋近无穷时的情况。</em></p>
-<p>实际上就是我们大致估算程序在执行完我们的程序所需要的步数的估计值。因为我们在面对一个程序时候，不可能准确描述时间而只能估计其时间性能，然后根据估计值寻求优化的策略。时间复杂度浅层次的我们分为：O（N），O（log2 N），O（N²），O（2^N）,O（N^M）。</p>
-<p><strong>空间复杂度</strong></p>
-<p>百度中给出的定义：</p>
-<p><em>空间复杂度(Space Complexity)是对一个算法在运行过程中临时占用存储空间大小的量度，记做S(n)=O(f(n))。比如直接插入排序的时间复杂度是O(n^2),空间复杂度是O(1) 。而一般的递归算法就要有O(n)的空间复杂度了，因为每次递归都要存储返回信息。一个算法的优劣主要从算法的执行时间和所需要占用的存储空间两个方面衡量。</em></p>
-<p>对于一个算法，其时间复杂度和空间复杂度往往是相互影响的。当追求一个较好的时间复杂度时，可能会使空间复杂度的性能变差，即可能导致占用较多的存储空间；反之，当追求一个较好的空间复杂度时，可能会使时间复杂度的性能变差，即可能导致占用较长的运行时间。另外，算法的所有性能之间都存在着或多或少的相互影响。因此，当设计一个算法(特别是大型算法)时，要综合考虑算法的各项性能，算法的使用频率，算法处理的数据量的大小，算法描述语言的特性，算法运行的机器系统环境等各方面因素，才能够设计出比较好的算法。算法的时间复杂度和空间复杂度合称为算法的复杂度。</p>
-<p><strong>斐波那契数列的深入思考</strong></p>
-<p>首先要知道什么市斐波那契数列：形如list[1, 1, 2, 3, 5, 8, 13, 21 …]的数据，从第三项开始每一项都是前两项的和。例如list[5]=list[3]+list[4]。那么问题来了，就是如果我要得到第38项的值，该如何计算呢？</p>
-<p>首先呢我们可以想到的就是递归嘛，来看看代码如何实现：</p>
-<pre><code>public long Fib(int number) {
-    if(number == 1 || number == 2) {
-        return 1;
-    }
-    return Fib(number - 1) + Fib(number -2);
-}</code></pre><p><img src="/2019/10/10/数据结构之设计的考虑/01.png" alt></p>
-<p>显然这是一个正确的答案，即：我们要得到第38项，就去找第37和36嘛。那么任务就分给了下面的数，现在就是我们不知道37和36的值，那么就继续像领导一样分给下面吧！然后任务给了36 和35，以及35和34。层层递归之后，终于到了基层有人懂了也就是1和2的时候就会告诉上层，我知道等于1，好了你去告诉你的上一级吧。我的天，想一下多可怕，每一个人都去找对于的下级，只有1和2才能给定答案，那么中间会有多少节点在调用下面呢！我们仅以8作为一个例子画图试一下好了，然后看看多少是“混吃等死”的吧</p>
-<p>再来看看另一个方法然后对比一下吧:</p>
-<pre><code>public long Fib(int number) {
-    int A = 1;
-    int B = 0;
-    while(number-- &gt; 0) {
-        B += A;
-        A = B - A;
-    }
-    return B;
-}</code></pre><p>如果以上代码没有一次性理解的话可以这样理解一下：</p>
-<pre><code>A = A + B；
-B = A + B；</code></pre><p>实质上就是互相赋值然后依次得到对应的答案。不过第二种的方法需要 /2 来求相对应的取值。</p>
-<p>那么这个方法和第一种方法有上面区别呢？首先我们来考虑一下时间的对比吧。第一个来说虽然好懂且结果显而易见，但是时间复杂度根据图片来看也是O(2^n)量级的，那么所用到的内存虽然不是同时间一样的量级，不过依照图片看也是很消耗资源。那么第二个呢？我们只循环了依次编次，且遍历时候执行程序时间复杂度为O(n)，然后空间消耗呢？无非就定义了一个整型的A和B。</p>
-<p>现在到我们选择的时候了。算了别选了，就第二个吧。</p>
-<p><strong>位运算的引入</strong></p>
-<p>再者我们来一个问题，给定一个数，求其二进制数中1的个数。</p>
-<p>这个问题似乎有些意思，我们要了解二进制的内容我们知道 按位运算符&gt;&gt;和&lt;&lt; ,分别表示右移一位（/2），和左移一位（*2）也就是说如果校验8为1000，那么我们右移的时候就会变成100显然与1做按位与的时候不为1就不操作，然后继续操作，直到为1是才发现正确，然后记为1。</p>
-<p>那么代码为：</p>
-<pre><code>public int CountOne(int n) {
-    int sum = 0;
-    while(n &gt; 0) {
-        sum += n &amp; 1;
-        n &gt;&gt;= 1;
-    }
-    return sum;
-}</code></pre><p>我们可以看到，循环的次数就是字节的长度，如果二进制代码太大所以执行时间就更久。能否优化呢？</p>
-<pre><code>public int CountOne(int n) {
-    int sum = 0;
-    while(n &gt; 0) {
-        sum++;
-        n &amp;= (n - 1);
-    }
-    return sum;
-}</code></pre><p>为什么这样会优化呢？首先我们要理解一下n &amp;= (n - 1)是什么意思。我们给定这样一个数n = 111110000 ,那么n-1 = 111101111,试想一下，当我们执行只一句话的时候，会有什么效果呢？显然我们的n = 111100000，我们虽然只执行了一步，但是却找到了最右边的一个1，那么这一题的问题就变为了执行的效率为1的个数，那么他就是一个上限为上一个程序的效率（最差情况），或者是只执行一步完成结果（最优情况）。这样看是否算是优化呢程序呢？</p>
-<p><strong>学习与思考</strong></p>
-<p>接触数据结构的同时优化自己的代码，并且想着全方位的去构思自己程序的优良，不仅仅是提高自己的代码能力，同时也提高自己面对一个问题时候的各方考虑是否严谨与可行。</p>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
       </tags>
   </entry>
   <entry>
@@ -994,8 +919,8 @@ public class Demo13 {
         <category>算法与数据结构面试</category>
       </categories>
       <tags>
-        <tag>Algorithm</tag>
         <tag>DataStructure</tag>
+        <tag>Algorithm</tag>
         <tag>面试</tag>
       </tags>
   </entry>
@@ -1172,8 +1097,8 @@ public class Demo13 {
         <category>算法与数据结构面试</category>
       </categories>
       <tags>
-        <tag>Algorithm</tag>
         <tag>DataStructure</tag>
+        <tag>Algorithm</tag>
         <tag>面试</tag>
       </tags>
   </entry>
@@ -1514,8 +1439,8 @@ public class Demo05 {
         <category>算法与数据结构面试</category>
       </categories>
       <tags>
-        <tag>Algorithm</tag>
         <tag>DataStructure</tag>
+        <tag>Algorithm</tag>
         <tag>面试</tag>
       </tags>
   </entry>
@@ -2306,222 +2231,6 @@ Innodb：5.5版本之后默认引擎，后续主要介绍对象。</code></pre><
       <tags>
         <tag>Algorithm</tag>
         <tag>小Demo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数据结构之二叉树</title>
-    <url>/2019/08/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/</url>
-    <content><![CDATA[<p>树，作为一种数据结构有着庞大的家族而且在程序设计中有着特殊的含义，学习树结构是学习数据结构基础中的基础，只有学好树这种结构才能深入的去学习相关的高级算法，例如简单的BST树，AVL树，伸展树，红黑书。这次介绍简单的树这种实现。</p>
-<a id="more"></a>
-
-<p>例如一场球赛，我们先从32强开始，意味着有32个队伍进行比赛胜出的队伍进入16强，依次类推再是8强，4强以及决胜出冠军。我们可以看到的是，每一个队伍的胜出都是由它和之前的一个队伍比赛，我们称其为左右节点。这样由冠军出发，每一个节点都有两个左右节点，这样我们可以称之为“满二叉树”，但是很不巧可能在某一场比赛的时候，一个队伍错过了自己的比赛，那么另一个队伍直接晋级，所以晋级的队伍下面就只有自己一个节点，所以我们是允许存在某一节点为空的情况。当然了，有的队伍实力强劲，可能是上一届的金牌，然后他被允许在16强才参加比赛。那么它的比赛就从16强开始，自然的，在32强比赛中，它没有左右节点。</p>
-<p><img src="/2019/08/15/数据结构之二叉树/1.jpg" alt="二叉树"></p>
-<p>鉴于此我们可以在Java中创建节点来保存这种数据结构：</p>
-<pre><code>/**
- * 定义接口以及构造函数，分别是无参构造函数以及全参和传入值构造函数
- * @param &lt;AnyType&gt;
- */
-public class BinaryNode&lt;AnyType&gt;{
-    AnyType element;   //包含的值
-    //左右节点
-    BinaryNode&lt;AnyType&gt; left; 
-    BinaryNode&lt;AnyType&gt; right;
-    //构造函数
-    public BinaryNode(AnyType element) {
-        this(element,null,null);
-    }
-
-    public BinaryNode() {
-    }
-
-    public BinaryNode(AnyType element, BinaryNode&lt;AnyType&gt; left, BinaryNode&lt;AnyType&gt; right) {
-        this.element = element;
-        this.left = left;
-        this.right = right;
-    }
-}</code></pre><p>首先我们来查找一下是否包含某个节点，做法很简单，由于二叉树的生成我们给定了要求，左节点小于右节点。如同二分查找一样，我们只需要比较根节点root，就可以判断出来我们是向左还是向右。当然在那之前，我们要看看树是否为空。，然后就可以递归的遍历查找了。</p>
-<p><img src="https://img-blog.csdn.net/20180419222035657?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p4enh6eDAxMTk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
-<pre><code>//是否包含某个节点
-    private boolean contains(AnyType x, BinaryNode&lt;AnyType&gt; t){
-        if(t == null){
-            return false;
-        }
-        int compareResult = x.compareTo(t.element);
-        if(compareResult &lt; 0){
-            return contains(x,t.left);
-        }else if(compareResult &gt; 0){
-            return contains(x,t.right);
-        }else{
-            return true;
-        }
-    }</code></pre><p>这里我们实现了查找最大最小值的操作，思想很简单，如果你要找最小值呢，我们知道左边用于小于右边，所以我们只需要向左持续的遍历就能够找到最小的值，同理最大的就是向右。我们呢实现了递归和非递归的两种方式。非递归的方式就是找到下一个值赋给当前值，递归则是持续找下一个阶层的数据。</p>
-<pre><code>/**
- * 使用非递归的方式
- * @param t
- * @return
- */
-private BinaryNode&lt;AnyType&gt; findMax(BinaryNode&lt;AnyType&gt; t){
-    if(t != null){
-        while(t.right != null){
-            t = t.right;
-        }
-    }
-    return t;
-}
-
-/**
- * 使用递归的方式
- * @param t
- * @return
- */
-private BinaryNode&lt;AnyType&gt; findMin(BinaryNode&lt;AnyType&gt; t){
-    if(t == null){
-        return null;
-    }else if(t.left == null){
-        return t;
-    }else{
-        return findMin(t.left);
-    }
-}</code></pre><p>增加某个节点呢，我们要先找到他应该存在的父亲节点，然后判断应该放入左还是右。加入即可。</p>
-<p><img src="https://img-blog.csdn.net/20180419223559883?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p4enh6eDAxMTk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
-<pre><code>//增加某个节点
-private BinaryNode&lt;AnyType&gt; insert(AnyType x,BinaryNode&lt;AnyType&gt; t){
-    if(t == null){
-        return new BinaryNode&lt;&gt;(x,null,null);
-    }
-    int compareResult = x.compareTo(t.element);
-    if(compareResult &lt; 0){
-        t.left = insert(x,t.left);
-    }else if(compareResult &gt; 0){
-        t.right = insert(x,t.right);
-    }else{
-        ;// do nothing
-    }
-    return t;
-}</code></pre><p>删除同理。不过区别就是我们要判断它是否有孩子节点，当有一个节点的时候，我们直接吧节点上提，当有两个节点的时候再去找到右节点的最小值（或者左节点的最大值）加入即可。</p>
-<pre><code>//删除某个节点
-private BinaryNode&lt;AnyType&gt; remove(AnyType x,BinaryNode&lt;AnyType&gt; t){
-    if(t == null){
-        return t;
-    }
-    int compareResult = x.compareTo(t.element);
-    if(compareResult &lt; 0){
-        t.left = remove(x,t.left);
-    }else if(compareResult &gt; 0){
-        t.right = remove(x,t.right);
-    }else if(t.left != null &amp;&amp; t.right != null){   //两个孩子的时候
-        t.element = findMin(t.right).element;
-        t.right = remove(t.element,t.right);
-    }else{  //一个孩子的时候
-        t = (t.left != null)?t.left:t.right;
-    }
-    return t;
-}</code></pre><p>打印树的操作分别有三个，我们这里使用了中序的递归打印，还有先序，后序两种方式，当然也有非递归的方式。任选其一即可。</p>
-<pre><code>//递归的中序打印整棵树
-private void printTree(BinaryNode&lt;AnyType&gt; t){
-    if(t != null){
-        printTree(t.left);
-        System.out.println(t.element);
-        printTree(t.right);
-    }
-}</code></pre><p>这样我们就实现了二叉树的创建以及基本的操作接口。</p>
-<p>为了使用方便，我们呢把其中私有的方法创建共有的接口，这样就实现了调用而又保证了内部信息的安全。方法如下：</p>
-<pre><code>public BinarySearchTree(){
-        root = null;
-    }
-
-    public void makeEmpty(){
-        root = null;
-    }
-
-    public boolean isEmpty(){
-        return root == null;
-    }
-
-    public boolean contains(AnyType x) {
-        return contains(x,root);
-    }
-
-    public AnyType findMax(){
-        if(isEmpty()) return null;
-        return findMax(root).element;
-    }
-
-    public AnyType findMin(){
-        if(isEmpty()) return null;
-        return findMin(root).element;
-    }
-
-    public void insert(AnyType x){
-        root = insert(x,root);
-    }
-
-    public void remove(AnyType x){
-        root = remove(x,root);
-    }
-
-    public void printTree(){
-        if(isEmpty())
-            System.out.println(&quot;空树&quot;);
-        else
-            printTree(root);
-    }</code></pre><hr>
-<p>另外，再额外增加一些其他的操作，可以自行加入。</p>
-<p><strong>统计树中结点的个数</strong></p>
-<p>树中结点的个数等于根节点(1) + 左子树结点个数 + 右子树的个数，递归求解即可。</p>
-<pre><code>//统计结点个数
-private int count(AnyType T) {
-    if (T == null)
-        return 0;
-    else
-        return count(T.left) + count(T.right) + 1;
-}</code></pre><p><strong>计算树的高度</strong></p>
-<p>也是递归求解，左右子树的高度中的比较高的加上根节点就是树的高度。</p>
-<pre><code>//计算二叉树的深度
-private int depth(AnyType T) {
-    if (T == null)
-        return 0;
-    return Math.max(depth(T.left), depth(T.right)) + 1;
-}</code></pre><p><strong>层次遍历</strong></p>
-<p>很简单。利用队列BFS即可，每次访问完<code>p</code>，若左右节点存在，则入队，直至队空。因为队列是先进先出，当我们根节点有左右节点，在把根节点出队时候左右节点压就紧跟着压入队列，这样就形成了层遍历效果。</p>
-<pre><code>public void levelOrder(AnyType root) {
-    if (root == null)
-        return;
-    Queue&lt;AnyType&gt; queue = new LinkedList&lt;&gt;();
-    queue.add(root);
-    while (!queue.isEmpty()) {
-        AnyType now = queue.poll();
-        System.out.print(now.val + &quot; &quot;);
-        if (now.left != null) queue.add(now.left);
-        if (now.right != null) queue.add(now.right);
-    }
-}</code></pre><p><strong>非递归前序</strong></p>
-<p>由于之前我们实现的是递归的中序输出，这里我们实现前序的非递归方法。<br>前序遍历顺序为: <em>根结点-&gt;左子树-&gt;右子树</em>，所以对于正在访问的根结点，可以直接访问，访问完之后，按照相同的方式访问左子树，再访问右子树，过程如下 : </p>
-<ul>
-<li>如果当前节点<code>p</code>不为空，访问结点<code>p</code>，并将结点<code>p</code>入栈，并继续访问左子树(直到左子树为空)；</li>
-<li>否则将栈顶元素出栈，并访问栈顶的元素的右子树；</li>
-<li>直到栈为空且<code>p</code>为空，循环结束。</li>
-</ul>
-<p>-</p>
-<pre><code>public void iterativePre(AnyType root) {
-    Stack&lt;AnyType&gt; s = new Stack&lt;&gt;();
-    AnyType p = root;
-    while (!s.empty() || p != null) {
-        while (p != null) { // while循环，直到左子树为空
-            s.push(p);
-            System.out.print(p.val + &quot; &quot;);
-            p = p.left;
-        }
-        p = s.pop();
-        p = p.right;
-    }
-}</code></pre>]]></content>
-      <categories>
-        <category>DataStructure</category>
-      </categories>
-      <tags>
-        <tag>DataStructure</tag>
-        <tag>Tree</tag>
       </tags>
   </entry>
   <entry>
@@ -3837,9 +3546,9 @@ a.编码选择：我们选择国际统一字符集UTF-8
         <category>JavaWeb</category>
       </categories>
       <tags>
-        <tag>JavaEE</tag>
         <tag>JSP</tag>
         <tag>Servlet</tag>
+        <tag>JavaEE</tag>
         <tag>HTTP</tag>
         <tag>Tomcat</tag>
       </tags>
