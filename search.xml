@@ -443,8 +443,153 @@ public ServerResponse&lt;User&gt; update_information(HttpSession session,User us
   <entry>
     <title>LeetCode_Simple_第五周</title>
     <url>/2019/10/20/LeetCode-Simple-%E7%AC%AC%E4%BA%94%E5%91%A8/</url>
-    <content><![CDATA[<a id="more"></a>
+    <content><![CDATA[<p>竟然耽搁了两周没有，我是怎么了？？ 好了好了加油。</p>
+<p>第五周，算法给生活加点料。</p>
+<a id="more"></a>
+<p><strong>1.不用额外变量交换两个整数的值</strong></p>
+<p>如果时不用额外变量的话我们可用想到的就是利用位运算。</p>
+<p>首先来介绍一下什么时位运算：就是直接操作数据的二进制代码实现相应的功能。因为涉及到交换我们这里可用使用异或运算^来实现。主要的知识点就是位数不同时候为1，相同为0，因此一个数只要执行两次异或运算这个位就是0，再做异或的时候就保证了另一个数据，因为相同的全为0了。例如我们用101和110异或，第一次结果为：011，在于他们依次异或结果为：110和101</p>
+<pre><code>a = a ^ b;
+b = a ^ b;
+a = a ^ b;</code></pre><p><strong>2.需要排序的最短子数组长度</strong></p>
+<p>要求：时间复杂度O(N),额外空间O(1)</p>
+<p>例如：arr=[1,5,3,4,2,6,7]   answer=[5,3,4,2]</p>
+<p>想法:依次从左和右边遍历找到有序数组的最小和最大值，然后打印中间范围即可。例如我们从左开始找，找到6开始有顺序，且6的有序的最小值，记录位置，相同的从右开始找到1作为最大的有序位置，然后就确定了范围再1和6之间。</p>
+<pre><code>public int getMaxLength(int[] arr){
+    //数组不仅符合规则就退出
+    if(arr == null || arr.length &lt; 2){
+        return 0;
+    }
+    //定义一个查找最小值的遍历和下标
+    int min = arr[arr.length-1];
+    int noMinIndex = -1;
+    //从后向前遍历
+    for(int i = arr.length-2;i != -1;i--){
+        //如果这个数大于当前最小值，我们就给定下标位置记录，否则说明有序不记录。
+        if(arr[i] &gt;min){
+            noMinIndex = i;
+        }else{
+            min = Math.min(min,arr[i]);
+        }
+    }
+    //如果没有满足条件的状况直接退出
+    if(noMinIndex == -1){
+        return 0;
+    }
+    //同上
+    int max = arr[0];
+    int noMaxIndex = -1;
+    for(int i = 1; i &lt; arr.length; i++){
+        if(arr[i] &lt; max){
+            noMaxIndex = i;
+        }else{
+            max = Math.max(max,arr[i]);
+        }
+    }
+    return noMaxIndex - noMinIndex +1;
+}</code></pre><p><strong>3.在行列有序的数组中找到指定的数</strong></p>
+<p>要求：时间复杂度O(NxM),空间复杂度O(1)</p>
+<p>例如：</p>
+<pre><code>0    1    2    5
+2    3    4    7
+4    4    4    8
+5    7    7    9</code></pre><p>如果存在就返回true，不存在就返回false。</p>
+<p>想法：我们呢如果找6，就顺着第一行开始，找到不大于这个数的值。发现最大5不大于6，那么就定位到5，因为行列有序，所以我们找5的下面（因为右边肯定大于6），发现下面是7，大于了6，就去找它的左边，发现是4，小于6，那就紧接着去找他的下面，发现也是4，小于6，那么就继续找它的下面发现是7，就找它的左边然后发现也是7，再找左边发现到了首列，也没有6，就说明了没有6。</p>
+<pre><code>public boolean isContains(int[][] matrix,int K){
+    int row = 0;
+    //先去找第一行
+    int col = matrix[0].length - 1;
+    //持续判断直到找到第一列
+    while (row &lt; matrix.length &amp;&amp; col &gt; -1){
+        if(matrix[row][col] == K){
+            return true;
+        }else if(matrix[row][col] &gt; K){
+            col--;
+        }else{
+            row++;
+        }
+    }
+    return false;
+}</code></pre><p><strong>4.螺旋打印矩阵</strong></p>
+<p>要求：额外空间复杂度为O(1)即可；</p>
+<p>例如：</p>
+<pre><code>0    1    2    5
+2    3    4    7
+4    4    4    8
+5    7    7    9</code></pre><p>结果为：0 1 2 5 7 8 9 7 7 5 4 2 3 4 4 4</p>
+<p>想法：矩阵分圈处理想法，依次处理最外圈然后内部。内部的方法只需要递归处理即可。那么如何处理最外圈呢？就是找到下标位置的最大值然后转向下一个方向遍历即可。所以我们就要传输开始位置和最右下角位置。</p>
+<pre><code>public void spiralOrderPrint(int[][] martix){
+    //定义四个位置坐标
+    int tR = 0;
+    int tC = 0;
+    int dR = martix.length-1;
+    int dC = martix[0].length - 1;
+    //递归的遍历外层和内层
+    while(tR &lt;= dR &amp;&amp; tC &lt;= dC){
+        printEdge(martix,tR++,tC++,dR--,dC--);
+    }
+}
+//查找输出的函数方法
+public void printEdge(int[][] m,int tR,int tC,int dR,int dC) {
+    //子矩阵只有一行情况
+    if (tR == dR) {
+        for (int i = tC; i &lt; dC; i++) {
+            System.out.print(m[tR][i] + &quot; &quot;);
+        }
+        //子矩阵只有一列情况
+    } else if (tC == dC) {
+        for (int i = tR; i &lt; dR; i++) {
+            System.out.print(m[i][tC] + &quot; &quot;);
+        }
+        //一般情况，就是要从开头一直输出整个矩阵的一圈
+    } else {
+        //用来标识位置而不改变tC和tR原始位置
+        int curC = tC;
+        int curR = tR;
+        //首先就是打印第一行
+        while (curC != dC) {
+            System.out.print(m[tR][curC] + &quot; &quot;);
+            curC++;
+        }
+        //然后最后一列
+        while (curR != dR) {
+            System.out.print(m[curR][dC] + &quot; &quot;);
+            curR++;
+        }
+        //最下面一行
+        while (curC != tC) {
+            System.out.print(m[dR][curC] + &quot; &quot;);
+            curC--;
+        }
+        //最首列
+        while (curR != tR) {
+            System.out.print(m[curR][tC] + &quot; &quot;);
+            curR--;
+        }
+    }
+}</code></pre><p><strong>5.矩阵旋转90°</strong></p>
+<p>要求：额外空间复杂度为O(1)即可；</p>
+<p>例如：</p>
+<pre><code>1    2    3    4
+5    6    7    8
+9    10    11    12
+13    14    15    16
+
+变换后
+
+13    9    5    1
+14    10    6    2
+15    11    7    3
+16    12    8    4</code></pre><p>想法：其实这个可用和上面题目一样使用矩阵分圈处理想法，具体做法不拿了出来了。基本和上面一样。</p>
 ]]></content>
+      <categories>
+        <category>算法与数据结构面试</category>
+      </categories>
+      <tags>
+        <tag>DataStructure</tag>
+        <tag>Algorithm</tag>
+        <tag>面试</tag>
+      </tags>
   </entry>
   <entry>
     <title>LeetCode_Simple_第四周</title>
